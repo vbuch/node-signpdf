@@ -1,7 +1,6 @@
-import signpdf, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
 import PDFDocument from 'pdfkit';
-
-const p12base64 = '';
+import fs from 'fs';
+import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
 
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
@@ -105,24 +104,28 @@ const createPdf = () => {
 describe('Test signpdf', () => {
     it('expects PDF to be Buffer', () => {
         expect(() => {
-            signpdf.sign('non-buffer', Buffer.from(''));
+            signer.sign('non-buffer', Buffer.from(''));
         }).toThrow();
     });
     it('expects P12 certificate to be Buffer', () => {
         expect(() => {
-            signpdf.sign(Buffer.from(''), 'non-buffer');
+            signer.sign(Buffer.from(''), 'non-buffer');
         }).toThrow();
     });
     it('expects PDF to contain a ByteRange placeholder', () => {
         expect(() => {
-            signpdf.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
+            signer.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
         }).toThrow();
     });
     it('signs input PDF', async (done) => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = Buffer.from(p12base64);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
 
-        pdfBuffer = signpdf.sign(pdfBuffer, p12Buffer);
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        expect(pdfBuffer instanceof Buffer).toBe(true);
+
+        // TODO: Not verifying the signature in any way currently.
+        // Not even verifying if it exists in the output.
 
         done();
     });
