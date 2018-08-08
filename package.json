@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "",
     "license": "",
-    "main": "signpdf.js",
+    "main": "dist/signpdf.js",
     "engines": {
         "node": ">=8.9"
     },
