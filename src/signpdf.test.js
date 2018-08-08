@@ -1,5 +1,7 @@
-import signpdf from './signpdf';
+import signpdf, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
 import PDFDocument from 'pdfkit';
+
+const p12base64 = '';
 
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
@@ -17,11 +19,11 @@ const addSignaturePlaceholder = (pdf, reason) => {
         SubFilter: 'adbe.pkcs7.detached',
         ByteRange: [
             0,
-            signpdf.BYTERANGE_PLACEHOLDER,
-            signpdf.BYTERANGE_PLACEHOLDER,
-            signpdf.BYTERANGE_PLACEHOLDER,
+            DEFAULT_BYTE_RANGE_PLACEHOLDER,
+            DEFAULT_BYTE_RANGE_PLACEHOLDER,
+            DEFAULT_BYTE_RANGE_PLACEHOLDER,
         ],
-        Contents: Buffer.from(String.fromCharCode(0).repeat(signpdf.SIGNATURE_MAX_LENGTH)),
+        Contents: Buffer.from(String.fromCharCode(0).repeat(DEFAULT_SIGNATURE_MAX_LENGTH)),
         Reason: new String(reason),
         M: new Date(),
     });
@@ -54,7 +56,7 @@ const addSignaturePlaceholder = (pdf, reason) => {
         form,
         widget,
     }
-}
+};
 
 /**
  * Creates a Buffer containing a PDF.
@@ -111,9 +113,17 @@ describe('Test signpdf', () => {
             signpdf.sign(Buffer.from(''), 'non-buffer');
         }).toThrow();
     });
+    it('expects PDF to contain a ByteRange placeholder', () => {
+        expect(() => {
+            signpdf.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
+        }).toThrow();
+    });
     it('signs input PDF', async (done) => {
-        const pdfBuffer = await createPdf();
-        console.log('it does not yet sign...');
+        let pdfBuffer = await createPdf();
+        const p12Buffer = Buffer.from(p12base64);
+
+        pdfBuffer = signpdf.sign(pdfBuffer, p12Buffer);
+
         done();
     });
 });
