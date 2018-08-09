@@ -6,11 +6,12 @@ import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} fr
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
  * Also includes a placeholder for the actual signature.
  * Returns an Object with all the added PDFReferences.
- * @param {PDFDocument} pdf 
- * @param {string} reason 
+ * @param {PDFDocument} pdf
+ * @param {string} reason
  * @returns {object}
  */
 const addSignaturePlaceholder = (pdf, reason) => {
+    /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
@@ -23,7 +24,7 @@ const addSignaturePlaceholder = (pdf, reason) => {
             DEFAULT_BYTE_RANGE_PLACEHOLDER,
         ],
         Contents: Buffer.from(String.fromCharCode(0).repeat(DEFAULT_SIGNATURE_MAX_LENGTH)),
-        Reason: new String(reason),
+        Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
     });
 
@@ -34,14 +35,12 @@ const addSignaturePlaceholder = (pdf, reason) => {
         FT: 'Sig',
         Rect: [0, 0, 0, 0],
         V: signature,
-        T: new String('Signature1'),
+        T: new String('Signature1'), // eslint-disable-line no-new-wrappers
         F: 4,
-        P: pdf._root.data.Pages.data.Kids[0],
+        P: pdf._root.data.Pages.data.Kids[0], // eslint-disable-line no-underscore-dangle
     });
     // Include the widget in a page
-    pdf._root.data.Pages.data.Kids[0].data.Annots = [
-        widget,
-    ];
+    pdf._root.data.Pages.data.Kids[0].data.Annots = [widget];
 
     // Create a form (with the widget) and link in the _root
     const form = pdf.ref({
@@ -54,7 +53,8 @@ const addSignaturePlaceholder = (pdf, reason) => {
         signature,
         form,
         widget,
-    }
+    };
+    /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
 
 /**
@@ -93,7 +93,7 @@ const createPdf = () => {
         const refs = addSignaturePlaceholder(pdf, 'I am the author');
         // Externally end the streams of the created objects.
         // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach((key) => refs[key].end());
+        Object.keys(refs).forEach(key => refs[key].end());
 
         // Also end the PDFDocument stream.
         // See pdf.on('end'... on how it is then converted to Buffer.

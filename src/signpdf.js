@@ -18,8 +18,7 @@ function strHex(s) {
     return a;
 }
 
-export class signpdf {
-
+export class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
         this.signatureMaxLength = DEFAULT_SIGNATURE_MAX_LENGTH;
@@ -108,12 +107,12 @@ export class signpdf {
         p7.sign();
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
-    
+
         let signature = strHex(raw);
         signature += Buffer
             .from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length))
             .toString('hex');
-    
+
         pdf = Buffer.concat([
             pdf.slice(0, byteRange[1]),
             Buffer.from(`<${signature}>`),
@@ -124,4 +123,4 @@ export class signpdf {
     }
 }
 
-export default new signpdf();
+export default new SignPdf();
