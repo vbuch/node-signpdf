@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.signpdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = undefined;
+exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = undefined;
 
 var _nodeForge = require('node-forge');
 
@@ -29,8 +29,7 @@ function strHex(s) {
     return a;
 }
 
-class signpdf {
-
+class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
         this.signatureMaxLength = DEFAULT_SIGNATURE_MAX_LENGTH;
@@ -115,5 +114,5 @@ class signpdf {
     }
 }
 
-exports.signpdf = signpdf;
-exports.default = new signpdf();
+exports.SignPdf = SignPdf;
+exports.default = new SignPdf();
