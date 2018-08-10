@@ -1,5 +1,7 @@
 # node-signpdf
 
+[![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
+
 Simple signing of PDFs in node.
 
 ## Usage
