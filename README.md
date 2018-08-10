@@ -1,5 +1,7 @@
 # node-signpdf
 
+[![npm package](https://nodei.co/npm/node-signpdf.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/node-signpdf/)
+
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
 
 Simple signing of PDFs in node.
