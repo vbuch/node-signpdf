@@ -6,7 +6,7 @@
         "type": "git",
         "url": "https://github.com/vbuch/node-signpdf"
     },
-    "license": "",
+    "license": "MIT",
     "main": "dist/signpdf.js",
     "engines": {
         "node": ">=8.9"
