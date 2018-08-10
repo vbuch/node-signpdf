@@ -2,13 +2,17 @@
 
 Simple signing of PDFs in node.
 
+## Usage
+
+See [Signing PDF in simple steps](#signing-pdf-in-simple-steps)
+
 ## Notes
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
 
 * This lib:
-    * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document. Takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature)
-    * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF.
+  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document. Takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature)
+  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF.
 
 ## Signing PDF in simple steps
 
