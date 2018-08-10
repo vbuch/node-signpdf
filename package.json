@@ -2,7 +2,11 @@
     "name": "node-signpdf",
     "version": "0.0.1",
     "description": "",
-    "license": "",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vbuch/node-signpdf"
+    },
+    "license": "MIT",
     "main": "dist/signpdf.js",
     "engines": {
         "node": ">=8.9"
