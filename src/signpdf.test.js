@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
+import forge from 'node-forge';
 import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
 
 /**
@@ -101,6 +102,49 @@ const createPdf = () => {
     });
 };
 
+const hexStr = (input) => {
+    let output = '';
+    for (let i = 0; i < input.length; i += 2) {
+        output += String.fromCharCode(parseInt(input.substr(i, 2), 16));
+    }
+    return output;
+};
+
+const extractSignature = (pdf) => {
+    const byteRangePos = pdf.indexOf('/ByteRange [');
+    if (byteRangePos === -1) {
+        throw new Error('Failed to locate ByteRange.');
+    }
+
+    const byteRangeEnd = pdf.indexOf(']', byteRangePos);
+    if (byteRangeEnd === -1) {
+        throw new Error('Failed to locate the end of the ByteRange.');
+    }
+
+    const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
+    const matches = (/\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/).exec(byteRange);
+
+    let signedData = pdf.slice(
+        parseInt(matches[1]),
+        parseInt(matches[1]) + parseInt(matches[2]),
+    ).toString('binary');
+    signedData += pdf.slice(
+        parseInt(matches[3]),
+        parseInt(matches[3]) + parseInt(matches[4]),
+    ).toString('binary');
+    signedData = Buffer.from(signedData);
+
+    let signatureHex = pdf.slice(
+        parseInt(matches[1]) + parseInt(matches[2]) + 1,
+        parseInt(matches[3]) - 1,
+    ).toString('binary');
+    signatureHex = signatureHex.replace(/(?:00)*$/, '');
+
+    const signature = hexStr(signatureHex);
+
+    return {signature, signedData};
+};
+
 describe('Test signpdf', () => {
     it('expects PDF to be Buffer', () => {
         expect(() => {
@@ -124,8 +168,14 @@ describe('Test signpdf', () => {
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         expect(pdfBuffer instanceof Buffer).toBe(true);
 
-        // TODO: Not verifying the signature in any way currently.
-        // Not even verifying if it exists in the output.
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+
+        // const p12Asn1 = forge.asn1.fromDer(signature, {strict: false});
+        // console.log(JSON.stringify(p12Asn1, null, 4));
+        // const d = forge.pki.certificateFromAsn1(p12Asn1);
+        // console.log(d);
 
         done();
     });
