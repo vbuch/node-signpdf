@@ -1,5 +1,5 @@
 module.exports = {
-    verbose: true,
+    verbose: false,
     testEnvironment: 'node',
     moduleFileExtensions: [
         'js',

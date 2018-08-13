@@ -1,12 +1,25 @@
 {
     "name": "node-signpdf",
-    "version": "0.0.2",
-    "description": "",
+    "version": "0.0.4",
+    "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
         "url": "https://github.com/vbuch/node-signpdf"
     },
     "license": "MIT",
+    "keywords": [
+        "sign",
+        "pdf",
+        "node",
+        "nodejs",
+        "esign",
+        "adobe",
+        "ppklite",
+        "sign detached",
+        "pkcs7",
+        "pkcs#7",
+        "digital signature"
+    ],
     "main": "dist/signpdf.js",
     "engines": {
         "node": ">=8.9"
@@ -21,7 +34,6 @@
         "prepush": "npm run test"
     },
     "jest": {
-        "verbose": true,
         "testPathIgnorePatterns": [
             "node_modules",
             "dist"
@@ -42,11 +54,10 @@
         "eslint-config-airbnb-base": "^12.1.0",
         "eslint-import-resolver-babel-module": "^4.0.0",
         "eslint-plugin-import": "^2.12.0",
-        "eslint-plugin-jest": "^21.17.0",
+        "eslint-plugin-jest": "^21.20.2",
         "jest": "^23.1.0",
         "nodemon": "^1.17.5",
         "npm-run-all": "^4.1.3",
-        "pdfkit": "^0.8.3",
-        "supertest": "^3.1.0"
+        "pdfkit": "^0.8.3"
     }
 }
