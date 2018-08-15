@@ -40,7 +40,7 @@
         ]
     },
     "dependencies": {
-        "node-forge": "git+https://github.com/vbuch/forge.git"
+        "node-forge": "^0.7.6"
     },
     "devDependencies": {
         "assertion-error": "^1.1.0",
