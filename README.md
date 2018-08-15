@@ -34,7 +34,7 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 
 ## Dependencies
 
-[node-forge](https://github.com/digitalbazaar/forge) is used for working with signatures. Curerntly a fork is used until a [needed PR](https://github.com/digitalbazaar/forge/pull/605) is accepted.
+[node-forge](https://github.com/digitalbazaar/forge) is used for working with signatures.
 
 [PDFKit](https://github.com/foliojs/pdfkit) is used in the tests for generating a PDF with a signature placeholder.
 
