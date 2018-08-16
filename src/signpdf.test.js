@@ -174,7 +174,7 @@ describe('Test signpdf', () => {
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
         }
     });
-    it('signs input PDF', async (done) => {
+    it('signs input PDF', async () => {
         let pdfBuffer = await createPdf();
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
 
@@ -189,7 +189,5 @@ describe('Test signpdf', () => {
         // console.log(JSON.stringify(p12Asn1, null, 4));
         // const d = forge.pki.certificateFromAsn1(p12Asn1);
         // console.log(d);
-
-        done();
     });
 });
