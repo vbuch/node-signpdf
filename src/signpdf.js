@@ -1,4 +1,7 @@
 import forge from 'node-forge';
+import SignPdfError from './SignPdfError';
+
+export {default as SignPdfError} from './SignPdfError';
 
 const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
 const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
@@ -10,7 +13,7 @@ function pad2(num) {
     return s.substr(s.length - 2);
 }
 
-function strHex(s) {
+function stringToHex(s) {
     let a = '';
     for (let i = 0; i < s.length; i += 1) {
         a += pad2(s.charCodeAt(i).toString(16));
@@ -26,10 +29,16 @@ export class SignPdf {
 
     sign(pdfBuffer, p12Buffer) {
         if (!(pdfBuffer instanceof Buffer)) {
-            throw new Error('PDF expected as Buffer.');
+            throw new SignPdfError(
+                'PDF expected as Buffer.',
+                SignPdfError.TYPE_INPUT,
+            );
         }
         if (!(p12Buffer instanceof Buffer)) {
-            throw new Error('p12 certificate expected as Buffer.');
+            throw new SignPdfError(
+                'p12 certificate expected as Buffer.',
+                SignPdfError.TYPE_INPUT,
+            );
         }
 
         let pdf = pdfBuffer;
@@ -48,7 +57,10 @@ export class SignPdf {
         const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
         const byteRangePos = pdf.indexOf(byteRangeString);
         if (byteRangePos === -1) {
-            throw new Error(`Could not find ByteRange placeholder: ${byteRangeString}`);
+            throw new SignPdfError(
+                `Could not find ByteRange placeholder: ${byteRangeString}`,
+                SignPdfError.TYPE_PARSE,
+            );
         }
         const byteRangeEnd = byteRangePos + byteRangeString.length;
         const byteRange = [0, 0, 0, 0];
@@ -108,7 +120,7 @@ export class SignPdf {
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
 
-        let signature = strHex(raw);
+        let signature = stringToHex(raw);
         signature += Buffer
             .from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length))
             .toString('hex');

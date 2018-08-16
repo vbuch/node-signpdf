@@ -3,11 +3,22 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = undefined;
+exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.SignPdfError = undefined;
+
+var _SignPdfError = require('./SignPdfError');
+
+Object.defineProperty(exports, 'SignPdfError', {
+    enumerable: true,
+    get: function () {
+        return _interopRequireDefault(_SignPdfError).default;
+    }
+});
 
 var _nodeForge = require('node-forge');
 
 var _nodeForge2 = _interopRequireDefault(_nodeForge);
+
+var _SignPdfError2 = _interopRequireDefault(_SignPdfError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21,7 +32,7 @@ function pad2(num) {
     return s.substr(s.length - 2);
 }
 
-function strHex(s) {
+function stringToHex(s) {
     let a = '';
     for (let i = 0; i < s.length; i += 1) {
         a += pad2(s.charCodeAt(i).toString(16));
@@ -37,10 +48,10 @@ class SignPdf {
 
     sign(pdfBuffer, p12Buffer) {
         if (!(pdfBuffer instanceof Buffer)) {
-            throw new Error('PDF expected as Buffer.');
+            throw new _SignPdfError2.default('PDF expected as Buffer.', _SignPdfError2.default.TYPE_INPUT);
         }
         if (!(p12Buffer instanceof Buffer)) {
-            throw new Error('p12 certificate expected as Buffer.');
+            throw new _SignPdfError2.default('p12 certificate expected as Buffer.', _SignPdfError2.default.TYPE_INPUT);
         }
 
         let pdf = pdfBuffer;
@@ -54,7 +65,7 @@ class SignPdf {
         const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
         const byteRangePos = pdf.indexOf(byteRangeString);
         if (byteRangePos === -1) {
-            throw new Error(`Could not find ByteRange placeholder: ${byteRangeString}`);
+            throw new _SignPdfError2.default(`Could not find ByteRange placeholder: ${byteRangeString}`, _SignPdfError2.default.TYPE_PARSE);
         }
         const byteRangeEnd = byteRangePos + byteRangeString.length;
         const byteRange = [0, 0, 0, 0];
@@ -105,7 +116,7 @@ class SignPdf {
 
         const raw = _nodeForge2.default.asn1.toDer(p7.toAsn1()).getBytes();
 
-        let signature = strHex(raw);
+        let signature = stringToHex(raw);
         signature += Buffer.from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length)).toString('hex');
 
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]);
