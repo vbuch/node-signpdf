@@ -3,13 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = undefined;
+exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.SignPdfError = undefined;
+
+var _SignPdfError = require('./SignPdfError');
+
+Object.defineProperty(exports, 'SignPdfError', {
+    enumerable: true,
+    get: function () {
+        return _interopRequireDefault(_SignPdfError).default;
+    }
+});
 
 var _nodeForge = require('node-forge');
 
 var _nodeForge2 = _interopRequireDefault(_nodeForge);
-
-var _SignPdfError = require('./SignPdfError');
 
 var _SignPdfError2 = _interopRequireDefault(_SignPdfError);
 

@@ -1,6 +1,8 @@
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
 
+export {default as SignPdfError} from './SignPdfError';
+
 const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
 const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
