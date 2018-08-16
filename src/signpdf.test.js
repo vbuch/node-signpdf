@@ -1,7 +1,8 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
-import forge from 'node-forge';
+// import forge from 'node-forge';
 import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
+import SignPdfError from './SignPdfError';
 
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
@@ -147,19 +148,31 @@ const extractSignature = (pdf) => {
 
 describe('Test signpdf', () => {
     it('expects PDF to be Buffer', () => {
-        expect(() => {
+        try {
             signer.sign('non-buffer', Buffer.from(''));
-        }).toThrow();
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+        }
     });
     it('expects P12 certificate to be Buffer', () => {
-        expect(() => {
+        try {
             signer.sign(Buffer.from(''), 'non-buffer');
-        }).toThrow();
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+        }
     });
     it('expects PDF to contain a ByteRange placeholder', () => {
-        expect(() => {
+        try {
             signer.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
-        }).toThrow();
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
     });
     it('signs input PDF', async (done) => {
         let pdfBuffer = await createPdf();
