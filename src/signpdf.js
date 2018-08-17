@@ -116,7 +116,7 @@ export class SignPdf {
                 },
             ],
         });
-        p7.sign();
+        p7.sign({detached: true});
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
 

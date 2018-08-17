@@ -112,7 +112,7 @@ class SignPdf {
                 value: new Date()
             }]
         });
-        p7.sign();
+        p7.sign({ detached: true });
 
         const raw = _nodeForge2.default.asn1.toDer(p7.toAsn1()).getBytes();
 
