@@ -115,6 +115,9 @@ class SignPdf {
         p7.sign({ detached: true });
 
         const raw = _nodeForge2.default.asn1.toDer(p7.toAsn1()).getBytes();
+        if (raw.length > this.signatureMaxLength) {
+            throw new _SignPdfError2.default(`Signature exceeds maximum length: ${raw.length} > ${this.signatureMaxLength}`, _SignPdfError2.default.TYPE_INPUT);
+        }
 
         let signature = stringToHex(raw);
         signature += Buffer.from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length)).toString('hex');

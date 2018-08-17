@@ -119,6 +119,12 @@ export class SignPdf {
         p7.sign({detached: true});
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
+        if (raw.length > this.signatureMaxLength) {
+            throw new SignPdfError(
+                `Signature exceeds maximum length: ${raw.length} > ${this.signatureMaxLength}`,
+                SignPdfError.TYPE_INPUT,
+            );
+        }
 
         let signature = stringToHex(raw);
         signature += Buffer
