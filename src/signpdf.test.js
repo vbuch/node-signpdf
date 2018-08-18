@@ -14,6 +14,7 @@ import SignPdfError from './SignPdfError';
  */
 const addSignaturePlaceholder = (pdf, reason) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
+    const SIGNATURE_MAX_LENGTH = 8192;
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
@@ -25,7 +26,7 @@ const addSignaturePlaceholder = (pdf, reason) => {
             DEFAULT_BYTE_RANGE_PLACEHOLDER,
             DEFAULT_BYTE_RANGE_PLACEHOLDER,
         ],
-        Contents: Buffer.from(String.fromCharCode(0).repeat(DEFAULT_SIGNATURE_MAX_LENGTH)),
+        Contents: Buffer.from(String.fromCharCode(0).repeat(SIGNATURE_MAX_LENGTH)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
     });
@@ -64,44 +65,42 @@ const addSignaturePlaceholder = (pdf, reason) => {
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = () => {
-    return new Promise((resolve) => {
-        const pdf = new PDFDocument({
-            autoFirstPage: true,
-            size: 'A4',
-            layout: 'portrait',
-            bufferPages: true,
-        });
-        pdf.info.CreationDate = '';
-
-        // Add some content to the page
-        pdf
-            .fillColor('#333')
-            .fontSize(25)
-            .moveDown()
-            .text('node-signpdf');
-
-        // Collect the ouput PDF
-        // and, when done, resolve with it stored in a Buffer
-        const pdfChunks = [];
-        pdf.on('data', (data) => {
-            pdfChunks.push(data);
-        });
-        pdf.on('end', () => {
-            resolve(Buffer.concat(pdfChunks));
-        });
-
-        // Externally (to PDFKit) add the signature placeholder.
-        const refs = addSignaturePlaceholder(pdf, 'I am the author');
-        // Externally end the streams of the created objects.
-        // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach(key => refs[key].end());
-
-        // Also end the PDFDocument stream.
-        // See pdf.on('end'... on how it is then converted to Buffer.
-        pdf.end();
+const createPdf = () => new Promise((resolve) => {
+    const pdf = new PDFDocument({
+        autoFirstPage: true,
+        size: 'A4',
+        layout: 'portrait',
+        bufferPages: true,
     });
-};
+    pdf.info.CreationDate = '';
+
+    // Add some content to the page
+    pdf
+        .fillColor('#333')
+        .fontSize(25)
+        .moveDown()
+        .text('node-signpdf');
+
+    // Collect the ouput PDF
+    // and, when done, resolve with it stored in a Buffer
+    const pdfChunks = [];
+    pdf.on('data', (data) => {
+        pdfChunks.push(data);
+    });
+    pdf.on('end', () => {
+        resolve(Buffer.concat(pdfChunks));
+    });
+
+    // Externally (to PDFKit) add the signature placeholder.
+    const refs = addSignaturePlaceholder(pdf, 'I am the author');
+    // Externally end the streams of the created objects.
+    // PDFKit doesn't know much about them, so it won't .end() them.
+    Object.keys(refs).forEach(key => refs[key].end());
+
+    // Also end the PDFDocument stream.
+    // See pdf.on('end'... on how it is then converted to Buffer.
+    pdf.end();
+});
 
 const hexStr = (input) => {
     let output = '';

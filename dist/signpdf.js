@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.SignPdf = exports.DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.SignPdfError = undefined;
+exports.SignPdf = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.SignPdfError = undefined;
 
 var _SignPdfError = require('./SignPdfError');
 
@@ -25,7 +25,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
 const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 const DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-const DEFAULT_SIGNATURE_MAX_LENGTH = exports.DEFAULT_SIGNATURE_MAX_LENGTH = 8192;
 
 function pad2(num) {
     const s = `0${num}`;
@@ -43,7 +42,6 @@ function stringToHex(s) {
 class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
-        this.signatureMaxLength = DEFAULT_SIGNATURE_MAX_LENGTH;
     }
 
     sign(pdfBuffer, p12Buffer) {
@@ -68,9 +66,13 @@ class SignPdf {
             throw new _SignPdfError2.default(`Could not find ByteRange placeholder: ${byteRangeString}`, _SignPdfError2.default.TYPE_PARSE);
         }
         const byteRangeEnd = byteRangePos + byteRangeString.length;
+        const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
+        const placeholderPos = pdf.indexOf('<', contentsTagPos);
+        const placeholderEnd = pdf.indexOf('>', placeholderPos);
+        const placeholderLength = placeholderEnd + 1 - placeholderPos;
         const byteRange = [0, 0, 0, 0];
-        byteRange[1] = byteRangeEnd + '\n/Contents '.length;
-        byteRange[2] = byteRange[1] + this.signatureMaxLength * 2 + '<>'.length;
+        byteRange[1] = placeholderPos;
+        byteRange[2] = byteRange[1] + placeholderLength;
         byteRange[3] = pdf.length - byteRange[2];
         let actualByteRange = `/ByteRange [${byteRange.join(' ')}]`;
         actualByteRange += ' '.repeat(byteRangeString.length - actualByteRange.length);
@@ -115,12 +117,12 @@ class SignPdf {
         p7.sign({ detached: true });
 
         const raw = _nodeForge2.default.asn1.toDer(p7.toAsn1()).getBytes();
-        if (raw.length > this.signatureMaxLength) {
-            throw new _SignPdfError2.default(`Signature exceeds maximum length: ${raw.length} > ${this.signatureMaxLength}`, _SignPdfError2.default.TYPE_INPUT);
+        if (raw.length > placeholderLength) {
+            throw new _SignPdfError2.default(`Signature exceeds placeholder length: ${raw.length} > ${placeholderLength}`, _SignPdfError2.default.TYPE_INPUT);
         }
 
         let signature = stringToHex(raw);
-        signature += Buffer.from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length)).toString('hex');
+        signature += Buffer.from(String.fromCharCode(0).repeat(placeholderLength - raw.length)).toString('hex');
 
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]);
 
