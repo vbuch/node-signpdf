@@ -42,6 +42,7 @@ function stringToHex(s) {
 class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
+        this.lastSignature = null;
     }
 
     sign(pdfBuffer, p12Buffer) {
@@ -122,6 +123,7 @@ class SignPdf {
         }
 
         let signature = stringToHex(raw);
+        this.lastSignature = signature;
         signature += Buffer.from(String.fromCharCode(0).repeat(placeholderLength - raw.length)).toString('hex');
 
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]);
