@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 // import forge from 'node-forge';
-import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_MAX_LENGTH} from './signpdf';
+import signer, {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './signpdf';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -12,9 +12,8 @@ import SignPdfError from './SignPdfError';
  * @param {string} reason
  * @returns {object}
  */
-const addSignaturePlaceholder = (pdf, reason) => {
+const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
-    const SIGNATURE_MAX_LENGTH = 8192;
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
@@ -26,7 +25,7 @@ const addSignaturePlaceholder = (pdf, reason) => {
             DEFAULT_BYTE_RANGE_PLACEHOLDER,
             DEFAULT_BYTE_RANGE_PLACEHOLDER,
         ],
-        Contents: Buffer.from(String.fromCharCode(0).repeat(SIGNATURE_MAX_LENGTH)),
+        Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
     });
@@ -65,7 +64,7 @@ const addSignaturePlaceholder = (pdf, reason) => {
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = () => new Promise((resolve) => {
+const createPdf = (overrides = {placeholder: {}}) => new Promise((resolve) => {
     const pdf = new PDFDocument({
         autoFirstPage: true,
         size: 'A4',
@@ -92,7 +91,11 @@ const createPdf = () => new Promise((resolve) => {
     });
 
     // Externally (to PDFKit) add the signature placeholder.
-    const refs = addSignaturePlaceholder(pdf, 'I am the author');
+    const refs = addSignaturePlaceholder({
+        pdf,
+        reason: 'I am the author',
+        ...overrides.placeholder,
+    });
     // Externally end the streams of the created objects.
     // PDFKit doesn't know much about them, so it won't .end() them.
     Object.keys(refs).forEach(key => refs[key].end());
@@ -171,6 +174,22 @@ describe('Test signpdf', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
+    });
+    it('expects a reasonably sized placeholder', async () => {
+        try {
+            const pdfBuffer = await createPdf({
+                placeholder: {
+                    signatureLength: 2,
+                },
+            });
+            const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+
+            signer.sign(pdfBuffer, p12Buffer);
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
         }
     });
     it('signs input PDF', async () => {
