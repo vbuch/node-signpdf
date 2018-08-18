@@ -6,7 +6,6 @@ export {default as SignPdfError} from './SignPdfError';
 const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
 const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-export const DEFAULT_SIGNATURE_MAX_LENGTH = 8192;
 
 function pad2(num) {
     const s = `0${num}`;
@@ -24,7 +23,7 @@ function stringToHex(s) {
 export class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
-        this.signatureMaxLength = DEFAULT_SIGNATURE_MAX_LENGTH;
+        this.lastSignature = null;
     }
 
     sign(pdfBuffer, p12Buffer) {
@@ -63,9 +62,13 @@ export class SignPdf {
             );
         }
         const byteRangeEnd = byteRangePos + byteRangeString.length;
+        const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
+        const placeholderPos = pdf.indexOf('<', contentsTagPos);
+        const placeholderEnd = pdf.indexOf('>', placeholderPos);
+        const placeholderLength = (placeholderEnd + 1) - placeholderPos;
         const byteRange = [0, 0, 0, 0];
-        byteRange[1] = byteRangeEnd + '\n/Contents '.length;
-        byteRange[2] = byteRange[1] + (this.signatureMaxLength * 2) + '<>'.length;
+        byteRange[1] = placeholderPos;
+        byteRange[2] = byteRange[1] + placeholderLength;
         byteRange[3] = pdf.length - byteRange[2];
         let actualByteRange = `/ByteRange [${byteRange.join(' ')}]`;
         actualByteRange += ' '.repeat(byteRangeString.length - actualByteRange.length);
@@ -116,13 +119,20 @@ export class SignPdf {
                 },
             ],
         });
-        p7.sign();
+        p7.sign({detached: true});
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
+        if (raw.length > placeholderLength) {
+            throw new SignPdfError(
+                `Signature exceeds placeholder length: ${raw.length} > ${placeholderLength}`,
+                SignPdfError.TYPE_INPUT,
+            );
+        }
 
         let signature = stringToHex(raw);
+        this.lastSignature = signature;
         signature += Buffer
-            .from(String.fromCharCode(0).repeat(this.signatureMaxLength - raw.length))
+            .from(String.fromCharCode(0).repeat(placeholderLength - raw.length))
             .toString('hex');
 
         pdf = Buffer.concat([
