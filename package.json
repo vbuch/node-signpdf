@@ -1,6 +1,6 @@
 {
     "name": "node-signpdf",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
