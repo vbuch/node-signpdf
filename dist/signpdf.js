@@ -70,10 +70,11 @@ class SignPdf {
         const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
         const placeholderPos = pdf.indexOf('<', contentsTagPos);
         const placeholderEnd = pdf.indexOf('>', placeholderPos);
-        const placeholderLength = placeholderEnd + 1 - placeholderPos;
+        const placeholderLengthWithBrackets = placeholderEnd + 1 - placeholderPos;
+        const placeholderLength = placeholderLengthWithBrackets - 2;
         const byteRange = [0, 0, 0, 0];
         byteRange[1] = placeholderPos;
-        byteRange[2] = byteRange[1] + placeholderLength;
+        byteRange[2] = byteRange[1] + placeholderLengthWithBrackets;
         byteRange[3] = pdf.length - byteRange[2];
         let actualByteRange = `/ByteRange [${byteRange.join(' ')}]`;
         actualByteRange += ' '.repeat(byteRangeString.length - actualByteRange.length);
@@ -124,7 +125,12 @@ class SignPdf {
 
         let signature = stringToHex(raw);
         this.lastSignature = signature;
-        signature += Buffer.from(String.fromCharCode(0).repeat(placeholderLength - raw.length)).toString('hex');
+
+        // placeholderLength counts the HEX symbols and we need the raw char length
+        const placeholderCharCount = placeholderLength / 2;
+
+        // Pad with zeroes so the output signature is the same length as the placeholder
+        signature += Buffer.from(String.fromCharCode(0).repeat(placeholderCharCount - raw.length)).toString('hex');
 
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]);
 
