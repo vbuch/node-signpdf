@@ -6,31 +6,61 @@
 
 Simple signing of PDFs in node.
 
+* [node-signpdf](#node-signpdf)
+  * [Purpose](#purpose)
+  * [Usage](#usage)
+  * [Notes](#notes)
+  * [Signing PDF in simple steps](#signing-pdf-in-simple-steps)
+    * [Generate a PDF](#generate-a-pdf)
+    * [Append a signature placeholder](#append-a-signature-placeholder)
+    * [Generate and apply signature](#generate-and-apply-signature)
+  * [Dependencies](#dependencies)
+  * [Credits](#credits)
+
+## Purpose
+
+The purpose of this package is not as much to be used as a dependendency, although it could. The main purpose is **to demonstrate** the way signing can be achieved **in a piece of readable code** as it can take a lot of hours to figure out.
+
 ## Usage
 
-See [Signing PDF in simple steps](#signing-pdf-in-simple-steps)
+Simply said this could be used in two steps. `install` and `sign`.
+
+Install with  `npm i -S node-signpdf node-forge`.
+
+And call `.sign()`
+
+```javascript
+import signer from 'node-signpdf';
+
+const signedPdf = signer.sign(
+  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
+  fs.readFileSync(PATH_TO_PDF_FILE)
+);
+```
+
+In practice we expect that most people will just read through the code we've written in the testing part of this package and figure it out themselves. If that's your case, you should read the [[Signing PDF in simple steps]](#signing-pdf-in-simple-steps) section.
 
 ## Notes
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
-
 * This lib:
   * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document. Takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature)
-  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF.
+  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit.
+* Feel free to copy and paste any part of this code. See its defined [Purpose](#purpose).
 
 ## Signing PDF in simple steps
 
 ### Generate a PDF
 
-In the test PDFKit is used for generating the PDF. This also allows easy addition of the signature placeholder.
+See the [unit-testing code](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js). PDFKit is used there for generating the document. This also allows easy addition of the signature placeholder.
 
 ### Append a signature placeholder
 
-What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the root descriptor of the PDF as well. A [readable sample](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L13) is available in the test.
+What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the root descriptor of the PDF as well. A (hopefully) [readable sample](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L15) is available in the test.
 
 ### Generate and apply signature
 
-That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L124).
+That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L198).
 
 ## Dependencies
 
@@ -40,4 +70,6 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 
 ## Credits
 
-The whole [signing flow](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.js#L27) is a rework of what's already [in  pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek)
+* The whole signing flow is a rework of what's already [in pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek)
+* [node-forge](https://github.com/digitalbazaar/forge) is an awesome package written in pure JavaScript and [supports signing in detached mode](https://github.com/digitalbazaar/forge/pull/605). Many thanks to all the guys who wrote and maintain it.
+* Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
