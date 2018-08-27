@@ -126,7 +126,7 @@ class SignPdf {
         let signature = stringToHex(raw);
         this.lastSignature = signature;
 
-        // placeholderLength counts the HEX symbols and we need the raw char length
+        // placeholderLength is for the HEX symbols and we need the raw char length
         const placeholderCharCount = placeholderLength / 2;
 
         // Pad with zeroes so the output signature is the same length as the placeholder
