@@ -16,6 +16,7 @@ Simple signing of PDFs in node.
     * [Generate and apply signature](#generate-and-apply-signature)
   * [Dependencies](#dependencies)
   * [Credits](#credits)
+  * [Contributing](#contributing)
 
 ## Purpose
 
@@ -75,3 +76,9 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 * The whole signing flow is a rework of what's already [in pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek)
 * [node-forge](https://github.com/digitalbazaar/forge) is an awesome package written in pure JavaScript and [supports signing in detached mode](https://github.com/digitalbazaar/forge/pull/605). Many thanks to all the guys who wrote and maintain it.
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
+
+## Contributing
+
+* All PRs are welcome.
+* This is a git-flow repo. We use the default git flow with a `v` version prefix.
+* Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
