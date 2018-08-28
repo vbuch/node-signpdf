@@ -16,6 +16,7 @@ Simple signing of PDFs in node.
     * [Generate and apply signature](#generate-and-apply-signature)
   * [Dependencies](#dependencies)
   * [Credits](#credits)
+  * [Contributing](#contributing)
 
 ## Purpose
 
@@ -56,7 +57,9 @@ See the [unit-testing code](https://github.com/vbuch/node-signpdf/blob/master/sr
 
 ### Append a signature placeholder
 
-What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the root descriptor of the PDF as well. A (hopefully) [readable sample](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L15) is available in the test.
+What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the root descriptor of the PDF as well. A (hopefully) [readable sample](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L15) is available in the test. Note the `Contents` descriptor of the `Sig` where zeros are placed that will later be replaced with the actual signature.
+
+**Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still vary between different signing certificates. So every time you sign using the same P12 you will get the same length of the output signature, no matter the length of the signed content. It is safe to find out the actual signature length your certificate produces and use it to properly configure the placeholder length.
 
 ### Generate and apply signature
 
@@ -73,3 +76,9 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 * The whole signing flow is a rework of what's already [in pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek)
 * [node-forge](https://github.com/digitalbazaar/forge) is an awesome package written in pure JavaScript and [supports signing in detached mode](https://github.com/digitalbazaar/forge/pull/605). Many thanks to all the guys who wrote and maintain it.
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
+
+## Contributing
+
+* All PRs are welcome.
+* This is a git-flow repo. We use the default git flow with a `v` version prefix.
+* Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
