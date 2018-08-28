@@ -57,6 +57,7 @@ See the [unit-testing code](https://github.com/vbuch/node-signpdf/blob/master/sr
 ### Append a signature placeholder
 
 What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the root descriptor of the PDF as well. A (hopefully) [readable sample](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L15) is available in the test. Note the `Contents` descriptor of the `Sig` where zeros are placed that will later be replaced with the actual signature.
+
 **Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still vary between different signing certificates. So every time you sign using the same P12 you will get the same length of the output signature, no matter the length of the signed content. It is safe to actual signature length your certificate produces to properly configure the placeholder length.
 
 ### Generate and apply signature
