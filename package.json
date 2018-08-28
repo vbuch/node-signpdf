@@ -39,6 +39,18 @@
             "dist"
         ]
     },
+    "contributors": [
+        {
+            "name": "vbuch",
+            "email": "djmute@abv.bg",
+            "url": "https://github.com/vbuch"
+        },
+        {
+            "name": "maldimirov",
+            "email": "m.aldimirov@gmail.com",
+            "url": "https://github.com/maldimirov"
+        }
+    ],
     "dependencies": {
         "node-forge": "^0.7.6"
     },
