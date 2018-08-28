@@ -62,7 +62,7 @@ What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`.
 
 That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L198).
 
-**Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still depend on the certificate used. So it's a good practice to leave some extra room in the placeholder.
+**Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still vary between different signing certificates. Note the actual signature length your certificate produces to properly configure the placeholder length.
 
 ## Dependencies
 
