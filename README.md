@@ -45,8 +45,10 @@ In practice we expect that most people will just read through the code we've wri
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
 * This lib:
-  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document. Takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature)
-  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit.
+  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document;
+  * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
+  * takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature);
+  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit;
 * Feel free to copy and paste any part of this code. See its defined [Purpose](#purpose).
 
 ## Signing PDF in simple steps
