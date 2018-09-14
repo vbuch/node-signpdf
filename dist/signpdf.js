@@ -45,7 +45,7 @@ class SignPdf {
         this.lastSignature = null;
     }
 
-    sign(pdfBuffer, p12Buffer) {
+    sign(p12Buffer, pdfBuffer) {
         if (!(pdfBuffer instanceof Buffer)) {
             throw new _SignPdfError2.default('PDF expected as Buffer.', _SignPdfError2.default.TYPE_INPUT);
         }
