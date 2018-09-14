@@ -34,8 +34,8 @@ And call `.sign()`
 import signer from 'node-signpdf';
 
 const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
   fs.readFileSync(PATH_TO_PDF_FILE)
+  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
 );
 ```
 
