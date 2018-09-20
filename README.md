@@ -81,6 +81,6 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 
 ## Contributing
 
-* All PRs are welcome.
+* All PRs are welcome in the `develop` branch.
 * This is a git-flow repo. We use the default git flow with a `v` version prefix.
 * Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
