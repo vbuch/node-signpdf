@@ -1,8 +1,8 @@
 # node-signpdf
 
-[![npm package](https://nodei.co/npm/node-signpdf.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/node-signpdf/)
-
+[![npm version](https://badge.fury.io/js/node-signpdf.svg)](https://badge.fury.io/js/node-signpdf)
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
+[![Coverage Status](https://coveralls.io/repos/github/vbuch/node-signpdf/badge.svg?branch=master)](https://coveralls.io/github/vbuch/node-signpdf?branch=master)
 
 Simple signing of PDFs in node.
 
@@ -34,8 +34,8 @@ And call `.sign()`
 import signer from 'node-signpdf';
 
 const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
   fs.readFileSync(PATH_TO_PDF_FILE)
+  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
 );
 ```
 
@@ -45,8 +45,10 @@ In practice we expect that most people will just read through the code we've wri
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
 * This lib:
-  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document. Takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature)
-  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit.
+  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document;
+  * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
+  * takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature);
+  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit;
 * Feel free to copy and paste any part of this code. See its defined [Purpose](#purpose).
 
 ## Signing PDF in simple steps
@@ -79,6 +81,6 @@ That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signat
 
 ## Contributing
 
-* All PRs are welcome.
+* All PRs are welcome in the `develop` branch.
 * This is a git-flow repo. We use the default git flow with a `v` version prefix.
 * Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
