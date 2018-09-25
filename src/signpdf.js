@@ -26,7 +26,17 @@ export class SignPdf {
         this.lastSignature = null;
     }
 
-    sign(pdfBuffer, p12Buffer) {
+    sign(
+        pdfBuffer,
+        p12Buffer,
+        additionalOptions = {},
+    ) {
+        const options = {
+            asn1StrictParsing: false,
+            passphrase: '',
+            ...additionalOptions,
+        };
+
         if (!(pdfBuffer instanceof Buffer)) {
             throw new SignPdfError(
                 'PDF expected as Buffer.',
@@ -89,7 +99,11 @@ export class SignPdf {
 
         const forgeCert = forge.util.createBuffer(p12Buffer.toString('binary'));
         const p12Asn1 = forge.asn1.fromDer(forgeCert);
-        const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, '');
+        const p12 = forge.pkcs12.pkcs12FromAsn1(
+            p12Asn1,
+            options.asn1StrictParsing,
+            options.passphrase,
+        );
         // get bags by type
         const certBags = p12.getBags({bagType: PKCS12_CERT_BAG})[PKCS12_CERT_BAG];
         const keyBags = p12.getBags({bagType: PKCS12_KEY_BAG})[PKCS12_KEY_BAG];

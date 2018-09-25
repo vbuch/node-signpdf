@@ -225,4 +225,37 @@ describe('Test signpdf', () => {
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
     });
+    it('signs with passphrased certificate', async () => {
+        let pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+
+        pdfBuffer = signer.sign(
+            pdfBuffer,
+            p12Buffer,
+            {passphrase: 'node-signpdf'},
+        );
+        expect(pdfBuffer instanceof Buffer).toBe(true);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+    });
+    it('errors on wrong certificate passphrase', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+
+        try {
+            signer.sign(
+                pdfBuffer,
+                p12Buffer,
+                {passphrase: 'Wrong passphrase'},
+            );
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof Error).toBe(true);
+            const error = e.message.toLowerCase();
+            expect(error.indexOf('invalid')).not.toBe(-1);
+            expect(error.indexOf('password')).not.toBe(-1);
+        }
+    });
 });
