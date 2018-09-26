@@ -138,7 +138,7 @@ const extractSignature = (pdf) => {
         parseInt(matches[3]),
         parseInt(matches[3]) + parseInt(matches[4]),
     ).toString('binary');
-    signedData = Buffer.from(signedData);
+    signedData = Buffer.from(signedData, 'binary');
 
     let signatureHex = pdf.slice(
         parseInt(matches[1]) + parseInt(matches[2]) + 1,
