@@ -45,7 +45,13 @@ class SignPdf {
         this.lastSignature = null;
     }
 
-    sign(pdfBuffer, p12Buffer) {
+    sign(pdfBuffer, p12Buffer, additionalOptions = {}) {
+        const options = {
+            asn1StrictParsing: false,
+            passphrase: '',
+            ...additionalOptions
+        };
+
         if (!(pdfBuffer instanceof Buffer)) {
             throw new _SignPdfError2.default('PDF expected as Buffer.', _SignPdfError2.default.TYPE_INPUT);
         }
@@ -87,7 +93,7 @@ class SignPdf {
 
         const forgeCert = _nodeForge2.default.util.createBuffer(p12Buffer.toString('binary'));
         const p12Asn1 = _nodeForge2.default.asn1.fromDer(forgeCert);
-        const p12 = _nodeForge2.default.pkcs12.pkcs12FromAsn1(p12Asn1, false, '');
+        const p12 = _nodeForge2.default.pkcs12.pkcs12FromAsn1(p12Asn1, options.asn1StrictParsing, options.passphrase);
         // get bags by type
         const certBags = p12.getBags({ bagType: PKCS12_CERT_BAG })[PKCS12_CERT_BAG];
         const keyBags = p12.getBags({ bagType: PKCS12_KEY_BAG })[PKCS12_KEY_BAG];
