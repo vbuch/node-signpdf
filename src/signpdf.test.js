@@ -130,15 +130,16 @@ const extractSignature = (pdf) => {
     const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
     const matches = (/\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/).exec(byteRange);
 
-    let signedData = pdf.slice(
-        parseInt(matches[1]),
-        parseInt(matches[1]) + parseInt(matches[2]),
-    ).toString('binary');
-    signedData += pdf.slice(
-        parseInt(matches[3]),
-        parseInt(matches[3]) + parseInt(matches[4]),
-    ).toString('binary');
-    signedData = Buffer.from(signedData, 'binary');
+    const signedData = Buffer.concat([
+        pdf.slice(
+            parseInt(matches[1]),
+            parseInt(matches[1]) + parseInt(matches[2]),
+        ),
+        pdf.slice(
+            parseInt(matches[3]),
+            parseInt(matches[3]) + parseInt(matches[4]),
+        ),
+    ]);
 
     let signatureHex = pdf.slice(
         parseInt(matches[1]) + parseInt(matches[2]) + 1,
