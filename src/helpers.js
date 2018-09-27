@@ -1,6 +1,7 @@
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './signpdf';
+import SignPdfError from './SignPdfError';
 
-const hexStr = (input) => {
+export const hexStr = (input) => {
     let output = '';
     for (let i = 0; i < input.length; i += 2) {
         output += String.fromCharCode(parseInt(input.substr(i, 2), 16));
@@ -8,6 +9,18 @@ const hexStr = (input) => {
     return output;
 };
 
+export const pad2 = (num) => {
+    const s = `0${num}`;
+    return s.substr(s.length - 2);
+};
+
+export const stringToHex = (s) => {
+    let a = '';
+    for (let i = 0; i < s.length; i += 1) {
+        a += pad2(s.charCodeAt(i).toString(16));
+    }
+    return a;
+};
 
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
@@ -68,12 +81,18 @@ export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) =
 export const extractSignature = (pdf) => {
     const byteRangePos = pdf.indexOf('/ByteRange [');
     if (byteRangePos === -1) {
-        throw new Error('Failed to locate ByteRange.');
+        throw new SignPdfError(
+            'Failed to locate ByteRange.',
+            SignPdfError.TYPE_PARSE,
+        );
     }
 
     const byteRangeEnd = pdf.indexOf(']', byteRangePos);
     if (byteRangeEnd === -1) {
-        throw new Error('Failed to locate the end of the ByteRange.');
+        throw new SignPdfError(
+            'Failed to locate the end of the ByteRange.',
+            SignPdfError.TYPE_PARSE,
+        );
     }
 
     const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();

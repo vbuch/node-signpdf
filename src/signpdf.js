@@ -1,24 +1,13 @@
+import crypto from 'crypto';
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
+import {extractSignature, stringToHex} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
 const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
 const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-
-function pad2(num) {
-    const s = `0${num}`;
-    return s.substr(s.length - 2);
-}
-
-function stringToHex(s) {
-    let a = '';
-    for (let i = 0; i < s.length; i += 1) {
-        a += pad2(s.charCodeAt(i).toString(16));
-    }
-    return a;
-}
 
 export class SignPdf {
     constructor() {
@@ -162,6 +151,46 @@ export class SignPdf {
         ]);
 
         return pdf;
+    }
+    // eslint-disable-next-line class-methods-use-this
+    verify(pdfBuffer) {
+        if (!(pdfBuffer instanceof Buffer)) {
+            throw new SignPdfError(
+                'PDF expected as Buffer.',
+                SignPdfError.TYPE_INPUT,
+            );
+        }
+        // credits: https://stackoverflow.com/questions/15969733/verify-pkcs7-pem-signature-unpack-data-in-node-js/16148331#16148331
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        const p7Asn1 = forge.asn1.fromDer(signature);
+        const message = forge.pkcs7.messageFromAsn1(p7Asn1);
+        const sig = message.rawCapture.signature;
+        const attrs = message.rawCapture.authenticatedAttributes;
+        const set = forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.SET, true, attrs);
+        const buf = Buffer.from(forge.asn1.toDer(set).data, 'binary');
+        const cert = forge.pki.certificateToPem(message.certificates[0]);
+        const verifier = crypto.createVerify('RSA-SHA256');
+        verifier.update(buf);
+        const validAuthenticatedAttributes = verifier.verify(cert, sig, 'binary');
+        if (!validAuthenticatedAttributes) {
+            return ({
+                verified: false,
+                message: 'Wrong authenticated attributes',
+            });
+        }
+        const {oids} = forge.pki;
+        const fullAttrDigest = attrs
+            .find(attr => forge.asn1.derToOid(attr.value[0].value) === oids.messageDigest);
+        const attrDigest = fullAttrDigest.value[1].value[0].value;
+        const dataDigest = crypto.createHash('SHA256').update(signedData).digest();
+        const validContentDigest = dataDigest.toString('binary') === attrDigest;
+        if (!validContentDigest) {
+            return ({
+                verified: false,
+                message: 'Wrong content digest',
+            });
+        }
+        return ({verified: true});
     }
 }
 

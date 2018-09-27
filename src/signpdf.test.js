@@ -1,6 +1,5 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
-// import forge from 'node-forge';
 import signer from './signpdf';
 import {addSignaturePlaceholder, extractSignature} from './helpers';
 import SignPdfError from './SignPdfError';
@@ -160,5 +159,50 @@ describe('Test signpdf', () => {
             expect(error.indexOf('invalid')).not.toBe(-1);
             expect(error.indexOf('password')).not.toBe(-1);
         }
+    });
+});
+
+
+describe('Test verify pdf', () => {
+    it('expects PDF to be Buffer', () => {
+        try {
+            signer.verify('non-buffer');
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+        }
+    });
+
+    it('expects PDF to contain a ByteRange placeholder', () => {
+        try {
+            signer.verify(Buffer.from('No BR placeholder'), Buffer.from(''));
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
+    });
+
+    it('return {verified: true} if input is valid', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+
+        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        const verifyResult = signer.verify(signedPdfBuffer);
+        expect(verifyResult.verified).toBe(true);
+    });
+
+    it('return {verified: false} if pdf is not valid', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+
+        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        // manipulate any byte
+        const bytePosition = signedPdfBuffer.length - 1000;
+        const originalByte = signedPdfBuffer[bytePosition];
+        signedPdfBuffer[bytePosition] = originalByte + 1;
+        const verifyResult = signer.verify(signedPdfBuffer);
+        expect(verifyResult.verified).toBe(false);
     });
 });
