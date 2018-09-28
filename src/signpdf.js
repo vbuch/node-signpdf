@@ -55,6 +55,7 @@ export class SignPdf {
             pdf = pdf.slice(0, pdf.length - 1);
         }
 
+        // Find the ByteRange placeholder.
         const byteRangePlaceholder = [
             0,
             `/${this.byteRangePlaceholder}`,
@@ -69,6 +70,8 @@ export class SignPdf {
                 SignPdfError.TYPE_PARSE,
             );
         }
+
+        // Calculate the actual ByteRange that needs to replace the placeholder.
         const byteRangeEnd = byteRangePos + byteRangeString.length;
         const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
         const placeholderPos = pdf.indexOf('<', contentsTagPos);
@@ -95,6 +98,7 @@ export class SignPdf {
             pdf.slice(byteRange[2], byteRange[2] + byteRange[3]),
         ]);
 
+        // Convert Buffer P12 to a forge implementation.
         const forgeCert = forge.util.createBuffer(p12Buffer.toString('binary'));
         const p12Asn1 = forge.asn1.fromDer(forgeCert);
         const p12 = forge.pkcs12.pkcs12FromAsn1(
@@ -102,7 +106,9 @@ export class SignPdf {
             options.asn1StrictParsing,
             options.passphrase,
         );
-        // get bags by type
+
+        // Extract safe bags by type.
+        // We will need all the certificates and the private key.
         const certBags = p12.getBags({
             bagType: forge.pki.oids.certBag,
         })[forge.pki.oids.certBag];
@@ -110,8 +116,17 @@ export class SignPdf {
             bagType: forge.pki.oids.pkcs8ShroudedKeyBag,
         })[forge.pki.oids.pkcs8ShroudedKeyBag];
 
+        // Here comes the actual PKCS#7 signing.
         const p7 = forge.pkcs7.createSignedData();
+        // Start off by setting the content.
         p7.content = forge.util.createBuffer(pdf.toString('binary'));
+
+        // Then add all the certificates (-cacerts & -clcerts)
+        // Keep track of the last found client certificate.
+        // This will be the public key that will be bundled in the signature.
+        // Note: This first line may still result in setting a CA cert in
+        // the lastClientCertificate. Keeping it this way for backwards comp.
+        // Will get rid of it once this lib gets to version 0.3.
         let lastClientCertificate = certBags[0];
         Object.keys(certBags).forEach((i) => {
             p7.addCertificate(certBags[i].cert);
@@ -120,6 +135,7 @@ export class SignPdf {
             }
         });
 
+        // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
         p7.addSigner({
             key: keyBags[0].key,
             certificate: lastClientCertificate,
@@ -134,14 +150,20 @@ export class SignPdf {
                 }, {
                     type: forge.pki.oids.signingTime,
                     // value can also be auto-populated at signing time
+                    // We may also support passing this as an option to sign().
+                    // Would be useful to match the creation time of the document for example.
                     value: new Date(),
                 },
             ],
         });
+
+        // Sign in detached mode.
         p7.sign({detached: true});
 
+        // Check if the PDF has a good enough placeholder to fit the signature.
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
-        // placeholderLength is for the HEX symbols and we need the raw char length
+        // placeholderLength represents the length of the HEXified symbols but we're
+        // checking the actual lengths.
         if ((raw.length * 2) > placeholderLength) {
             throw new SignPdfError(
                 `Signature exceeds placeholder length: ${raw.length * 2} > ${placeholderLength}`,
@@ -150,19 +172,22 @@ export class SignPdf {
         }
 
         let signature = stringToHex(raw);
+        // Store the HEXified signature. At least useful in tests.
         this.lastSignature = signature;
 
-        // Pad with zeroes so the output signature is the same length as the placeholder
+        // Pad the signature with zeroes so the it is the same length as the placeholder
         signature += Buffer
             .from(String.fromCharCode(0).repeat((placeholderLength / 2) - raw.length))
             .toString('hex');
 
+        // Place it in the document.
         pdf = Buffer.concat([
             pdf.slice(0, byteRange[1]),
             Buffer.from(`<${signature}>`),
             pdf.slice(byteRange[1]),
         ]);
 
+        // Magic. Done.
         return pdf;
     }
 }
