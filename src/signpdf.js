@@ -141,9 +141,10 @@ export class SignPdf {
         p7.sign({detached: true});
 
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
-        if (raw.length > placeholderLength) {
+        // placeholderLength is for the HEX symbols and we need the raw char length
+        if ((raw.length * 2) > placeholderLength) {
             throw new SignPdfError(
-                `Signature exceeds placeholder length: ${raw.length} > ${placeholderLength}`,
+                `Signature exceeds placeholder length: ${raw.length * 2} > ${placeholderLength}`,
                 SignPdfError.TYPE_INPUT,
             );
         }
@@ -151,12 +152,9 @@ export class SignPdf {
         let signature = stringToHex(raw);
         this.lastSignature = signature;
 
-        // placeholderLength is for the HEX symbols and we need the raw char length
-        const placeholderCharCount = placeholderLength / 2;
-
         // Pad with zeroes so the output signature is the same length as the placeholder
         signature += Buffer
-            .from(String.fromCharCode(0).repeat(placeholderCharCount - raw.length))
+            .from(String.fromCharCode(0).repeat((placeholderLength / 2) - raw.length))
             .toString('hex');
 
         pdf = Buffer.concat([
