@@ -1,7 +1,8 @@
 import fs from 'fs';
 import PDFDocument from 'pdfkit';
 import signer from './signpdf';
-import {addSignaturePlaceholder, extractSignature, stringToHex} from './helpers';
+import {addSignaturePlaceholder, extractSignature} from './helpers';
+import SignPdfError from './SignPdfError';
 
 /**
  * Creates a Buffer containing a PDF.
@@ -60,6 +61,26 @@ describe('Helpers', () => {
         const originalSignature = signer.lastSignature;
 
         const {signature} = extractSignature(signedPdfBuffer);
-        expect(stringToHex(signature)).toBe(originalSignature);
+        expect(Buffer.from(signature, 'binary').toString('hex')).toBe(originalSignature);
+    });
+
+    it('expects PDF to contain a ByteRange placeholder', () => {
+        try {
+            extractSignature(Buffer.from('No BR placeholder'));
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
+    });
+
+    it('expects PDF to contain a byteRangeEnd', () => {
+        try {
+            extractSignature(Buffer.from('/ByteRange [   No End'));
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
     });
 });

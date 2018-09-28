@@ -53,7 +53,7 @@ const createPdf = (params = {
     pdf.end();
 });
 
-describe('Test signpdf', () => {
+describe('Test signing', () => {
     it('expects PDF to be Buffer', () => {
         try {
             signer.sign('non-buffer', Buffer.from(''));
@@ -107,11 +107,6 @@ describe('Test signpdf', () => {
         const {signature, signedData} = extractSignature(pdfBuffer);
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
-
-        // const p12Asn1 = forge.asn1.fromDer(signature, {strict: false});
-        // console.log(JSON.stringify(p12Asn1, null, 4));
-        // const d = forge.pki.certificateFromAsn1(p12Asn1);
-        // console.log(d);
     });
     it('signs detached', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
@@ -163,7 +158,7 @@ describe('Test signpdf', () => {
 });
 
 
-describe('Test verify pdf', () => {
+describe('Test verification', () => {
     it('expects PDF to be Buffer', () => {
         try {
             signer.verify('non-buffer');
@@ -171,16 +166,6 @@ describe('Test verify pdf', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-        }
-    });
-
-    it('expects PDF to contain a ByteRange placeholder', () => {
-        try {
-            signer.verify(Buffer.from('No BR placeholder'), Buffer.from(''));
-            expect('here').not.toBe('here');
-        } catch (e) {
-            expect(e instanceof SignPdfError).toBe(true);
-            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
         }
     });
 
@@ -193,13 +178,42 @@ describe('Test verify pdf', () => {
         expect(verifyResult.verified).toBe(true);
     });
 
-    it('return {verified: false} if pdf is not valid', async () => {
+    it('return {verified: false} if pdf data is changed', async () => {
         const pdfBuffer = await createPdf();
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
 
         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        // manipulate any byte
-        const bytePosition = signedPdfBuffer.length - 1000;
+        const {ByteRange} = extractSignature(signedPdfBuffer);
+        // manipulate data byte
+        const bytePosition = ByteRange[1] + ByteRange[2] + 100;
+        const originalByte = signedPdfBuffer[bytePosition];
+        signedPdfBuffer[bytePosition] = originalByte + 1;
+        const verifyResult = signer.verify(signedPdfBuffer);
+        expect(verifyResult.verified).toBe(false);
+    });
+
+    it('return {verified: false} if signature is changed', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+
+        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        const {ByteRange} = extractSignature(signedPdfBuffer);
+        // manipulate signture byte
+        const bytePosition = ByteRange[1] + 2500;
+        const originalByte = signedPdfBuffer[bytePosition];
+        signedPdfBuffer[bytePosition] = originalByte + 1;
+        const verifyResult = signer.verify(signedPdfBuffer);
+        expect(verifyResult.verified).toBe(false);
+    });
+
+    it('return {verified: false} if the verify throws', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+
+        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        const {ByteRange} = extractSignature(signedPdfBuffer);
+        // manipulate signture byte
+        const bytePosition = ByteRange[1] + 1000;
         const originalByte = signedPdfBuffer[bytePosition];
         signedPdfBuffer[bytePosition] = originalByte + 1;
         const verifyResult = signer.verify(signedPdfBuffer);
