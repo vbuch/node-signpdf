@@ -3,8 +3,6 @@ import SignPdfError from './SignPdfError';
 
 export {default as SignPdfError} from './SignPdfError';
 
-const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
-const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
 
 function pad2(num) {
@@ -105,20 +103,26 @@ export class SignPdf {
             options.passphrase,
         );
         // get bags by type
-        const certBags = p12.getBags({bagType: PKCS12_CERT_BAG})[PKCS12_CERT_BAG];
-        const keyBags = p12.getBags({bagType: PKCS12_KEY_BAG})[PKCS12_KEY_BAG];
+        const certBags = p12.getBags({
+            bagType: forge.pki.oids.certBag,
+        })[forge.pki.oids.certBag];
+        const keyBags = p12.getBags({
+            bagType: forge.pki.oids.pkcs8ShroudedKeyBag,
+        })[forge.pki.oids.pkcs8ShroudedKeyBag];
 
         const p7 = forge.pkcs7.createSignedData();
         p7.content = forge.util.createBuffer(pdf.toString('binary'));
-        let last = certBags[0];
+        let lastClientCertificate = certBags[0];
         Object.keys(certBags).forEach((i) => {
             p7.addCertificate(certBags[i].cert);
-            last = certBags[i];
+            if (typeof certBags[i].attributes.localKeyId !== 'undefined') {
+                lastClientCertificate = certBags[i].cert;
+            }
         });
 
         p7.addSigner({
             key: keyBags[0].key,
-            certificate: last.cert,
+            certificate: lastClientCertificate,
             digestAlgorithm: forge.pki.oids.sha256,
             authenticatedAttributes: [
                 {
