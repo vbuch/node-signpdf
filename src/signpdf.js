@@ -116,6 +116,7 @@ export class SignPdf {
             bagType: forge.pki.oids.pkcs8ShroudedKeyBag,
         })[forge.pki.oids.pkcs8ShroudedKeyBag];
 
+        const privateKey = keyBags[0].key;
         // Here comes the actual PKCS#7 signing.
         const p7 = forge.pkcs7.createSignedData();
         // Start off by setting the content.
@@ -127,18 +128,26 @@ export class SignPdf {
         // Note: This first line may still result in setting a CA cert in
         // the lastClientCertificate. Keeping it this way for backwards comp.
         // Will get rid of it once this lib gets to version 0.3.
-        let lastClientCertificate = certBags[0];
+        let certificate = certBags[0];
+
+        const bigInteger = new forge.jsbn.BigInteger();
         Object.keys(certBags).forEach((i) => {
+            const publicKey = certBags[i].cert.publicKey;
+
             p7.addCertificate(certBags[i].cert);
-            if (typeof certBags[i].attributes.localKeyId !== 'undefined') {
-                lastClientCertificate = certBags[i].cert;
+
+            if (
+              privateKey.n.compareTo(publicKey.n) === 0 &&
+              privateKey.e.compareTo(publicKey.e) === 0
+            ) {
+                certificate = certBags[i].cert;
             }
         });
 
         // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
         p7.addSigner({
-            key: keyBags[0].key,
-            certificate: lastClientCertificate,
+            key: privateKey,
+            certificate,
             digestAlgorithm: forge.pki.oids.sha256,
             authenticatedAttributes: [
                 {
