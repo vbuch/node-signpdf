@@ -130,7 +130,6 @@ export class SignPdf {
         // Will get rid of it once this lib gets to version 0.3.
         let certificate = certBags[0];
 
-        const bigInteger = new forge.jsbn.BigInteger();
         Object.keys(certBags).forEach((i) => {
             const publicKey = certBags[i].cert.publicKey;
 
