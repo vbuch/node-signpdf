@@ -131,13 +131,13 @@ export class SignPdf {
         let certificate = certBags[0];
 
         Object.keys(certBags).forEach((i) => {
-            const publicKey = certBags[i].cert.publicKey;
+            const {publicKey} = certBags[i].cert;
 
             p7.addCertificate(certBags[i].cert);
 
-            if (
-              privateKey.n.compareTo(publicKey.n) === 0 &&
-              privateKey.e.compareTo(publicKey.e) === 0
+            // Try to find the certificate that matches the private key.
+            if (privateKey.n.compareTo(publicKey.n) === 0 &&
+                privateKey.e.compareTo(publicKey.e) === 0
             ) {
                 certificate = certBags[i].cert;
             }
