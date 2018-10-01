@@ -225,6 +225,17 @@ describe('Test signpdf', () => {
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
     });
+    it('signs with ca, intermediate and multiple certificates bundle', async () => {
+        let pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        expect(pdfBuffer instanceof Buffer).toBe(true);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+    });
     it('signs with passphrased certificate', async () => {
         let pdfBuffer = await createPdf();
         const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);

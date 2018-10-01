@@ -51,6 +51,10 @@
         {
             "name": "alekssakovsky",
             "url": "https://github.com/alekssakovsky"
+        },
+        {
+            "name": "samaleksov",
+            "url": "https://github.com/samaleksov"
         }
     ],
     "dependencies": {
