@@ -22,8 +22,6 @@ var _SignPdfError2 = _interopRequireDefault(_SignPdfError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const PKCS12_CERT_BAG = '1.2.840.113549.1.12.10.1.3';
-const PKCS12_KEY_BAG = '1.2.840.113549.1.12.10.1.2';
 const DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
 
 function pad2(num) {
@@ -66,12 +64,15 @@ class SignPdf {
             pdf = pdf.slice(0, pdf.length - 1);
         }
 
+        // Find the ByteRange placeholder.
         const byteRangePlaceholder = [0, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`];
         const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
         const byteRangePos = pdf.indexOf(byteRangeString);
         if (byteRangePos === -1) {
             throw new _SignPdfError2.default(`Could not find ByteRange placeholder: ${byteRangeString}`, _SignPdfError2.default.TYPE_PARSE);
         }
+
+        // Calculate the actual ByteRange that needs to replace the placeholder.
         const byteRangeEnd = byteRangePos + byteRangeString.length;
         const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
         const placeholderPos = pdf.indexOf('<', contentsTagPos);
@@ -91,24 +92,49 @@ class SignPdf {
         // Remove the placeholder signature
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), pdf.slice(byteRange[2], byteRange[2] + byteRange[3])]);
 
+        // Convert Buffer P12 to a forge implementation.
         const forgeCert = _nodeForge2.default.util.createBuffer(p12Buffer.toString('binary'));
         const p12Asn1 = _nodeForge2.default.asn1.fromDer(forgeCert);
         const p12 = _nodeForge2.default.pkcs12.pkcs12FromAsn1(p12Asn1, options.asn1StrictParsing, options.passphrase);
-        // get bags by type
-        const certBags = p12.getBags({ bagType: PKCS12_CERT_BAG })[PKCS12_CERT_BAG];
-        const keyBags = p12.getBags({ bagType: PKCS12_KEY_BAG })[PKCS12_KEY_BAG];
 
+        // Extract safe bags by type.
+        // We will need all the certificates and the private key.
+        const certBags = p12.getBags({
+            bagType: _nodeForge2.default.pki.oids.certBag
+        })[_nodeForge2.default.pki.oids.certBag];
+        const keyBags = p12.getBags({
+            bagType: _nodeForge2.default.pki.oids.pkcs8ShroudedKeyBag
+        })[_nodeForge2.default.pki.oids.pkcs8ShroudedKeyBag];
+
+        const privateKey = keyBags[0].key;
+        // Here comes the actual PKCS#7 signing.
         const p7 = _nodeForge2.default.pkcs7.createSignedData();
+        // Start off by setting the content.
         p7.content = _nodeForge2.default.util.createBuffer(pdf.toString('binary'));
-        let last = certBags[0];
+
+        // Then add all the certificates (-cacerts & -clcerts)
+        // Keep track of the last found client certificate.
+        // This will be the public key that will be bundled in the signature.
+        // Note: This first line may still result in setting a CA cert in
+        // the lastClientCertificate. Keeping it this way for backwards comp.
+        // Will get rid of it once this lib gets to version 0.3.
+        let certificate = certBags[0];
+
         Object.keys(certBags).forEach(i => {
+            const { publicKey } = certBags[i].cert;
+
             p7.addCertificate(certBags[i].cert);
-            last = certBags[i];
+
+            // Try to find the certificate that matches the private key.
+            if (privateKey.n.compareTo(publicKey.n) === 0 && privateKey.e.compareTo(publicKey.e) === 0) {
+                certificate = certBags[i].cert;
+            }
         });
 
+        // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
         p7.addSigner({
-            key: keyBags[0].key,
-            certificate: last.cert,
+            key: privateKey,
+            certificate,
             digestAlgorithm: _nodeForge2.default.pki.oids.sha256,
             authenticatedAttributes: [{
                 type: _nodeForge2.default.pki.oids.contentType,
@@ -119,27 +145,34 @@ class SignPdf {
             }, {
                 type: _nodeForge2.default.pki.oids.signingTime,
                 // value can also be auto-populated at signing time
+                // We may also support passing this as an option to sign().
+                // Would be useful to match the creation time of the document for example.
                 value: new Date()
             }]
         });
+
+        // Sign in detached mode.
         p7.sign({ detached: true });
 
+        // Check if the PDF has a good enough placeholder to fit the signature.
         const raw = _nodeForge2.default.asn1.toDer(p7.toAsn1()).getBytes();
-        if (raw.length > placeholderLength) {
-            throw new _SignPdfError2.default(`Signature exceeds placeholder length: ${raw.length} > ${placeholderLength}`, _SignPdfError2.default.TYPE_INPUT);
+        // placeholderLength represents the length of the HEXified symbols but we're
+        // checking the actual lengths.
+        if (raw.length * 2 > placeholderLength) {
+            throw new _SignPdfError2.default(`Signature exceeds placeholder length: ${raw.length * 2} > ${placeholderLength}`, _SignPdfError2.default.TYPE_INPUT);
         }
 
         let signature = stringToHex(raw);
+        // Store the HEXified signature. At least useful in tests.
         this.lastSignature = signature;
 
-        // placeholderLength is for the HEX symbols and we need the raw char length
-        const placeholderCharCount = placeholderLength / 2;
+        // Pad the signature with zeroes so the it is the same length as the placeholder
+        signature += Buffer.from(String.fromCharCode(0).repeat(placeholderLength / 2 - raw.length)).toString('hex');
 
-        // Pad with zeroes so the output signature is the same length as the placeholder
-        signature += Buffer.from(String.fromCharCode(0).repeat(placeholderCharCount - raw.length)).toString('hex');
-
+        // Place it in the document.
         pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]);
 
+        // Magic. Done.
         return pdf;
     }
 }
