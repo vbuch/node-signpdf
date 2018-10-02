@@ -45,9 +45,10 @@ To verify a signed pdf call `.verify()`.
 
 ```javascript
 import signer from 'node-signpdf';
+...
 
-const mySignedPDF = getSignedPDFBuffer();
-const signedPdf = signer.verify(mySignedPDF);
+const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+const {verified} = signer.verify(signedPdfBuffer);
 ```
 
 ## Notes
