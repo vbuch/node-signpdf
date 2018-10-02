@@ -20,7 +20,8 @@
         "no-throw-literal": "off",
         "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
         "space-before-function-paren": ["error", {"anonymous": "never", "named": "never", "asyncArrow": "always"}],
-        "radix": ["error", "as-needed"]
+        "radix": ["error", "as-needed"],
+        "class-methods-use-this": "off"
     },
     "settings": {
         "import/resolver": {
