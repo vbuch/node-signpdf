@@ -9,11 +9,14 @@ Simple signing of PDFs in node.
 * [node-signpdf](#node-signpdf)
   * [Purpose](#purpose)
   * [Usage](#usage)
+    * [Signing](#signing)
+    * [Verifying](#verifying)
   * [Notes](#notes)
   * [Signing PDF in simple steps](#signing-pdf-in-simple-steps)
     * [Generate a PDF](#generate-a-pdf)
     * [Append a signature placeholder](#append-a-signature-placeholder)
     * [Generate and apply signature](#generate-and-apply-signature)
+  * [Verifying PDF signature](#verifying-pdf-signature)
   * [Dependencies](#dependencies)
   * [Credits](#credits)
   * [Contributing](#contributing)
@@ -28,7 +31,9 @@ Simply said this could be used in two steps. `install` and `sign`.
 
 Install with  `npm i -S node-signpdf node-forge`.
 
-And call `.sign()`
+### Signing
+
+Call `.sign()`
 
 ```javascript
 import signer from 'node-signpdf';
@@ -40,6 +45,8 @@ const signedPdf = signer.sign(
 ```
 
 In practice we expect that most people will just read through the code we've written in the testing part of this package and figure it out themselves. If that's your case, you should read the [[Signing PDF in simple steps]](#signing-pdf-in-simple-steps) section.
+
+### Verifying
 
 To verify a signed pdf call `.verify()`.
 
@@ -77,7 +84,7 @@ What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`.
 
 That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
 
-## Verifying PDF
+## Verifying PDF signature
 
 The signed PDF file has the public certificate embeded in it, so all we need to verify a PDF file is the file itself.
 
