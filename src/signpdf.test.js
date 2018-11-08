@@ -168,7 +168,6 @@ describe('Test signing', () => {
     });
 });
 
-
 describe('Test verification', () => {
     it('expects PDF to be Buffer', () => {
         try {

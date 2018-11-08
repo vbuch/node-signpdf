@@ -206,7 +206,12 @@ export class SignPdf {
             const attrs = message.rawCapture.authenticatedAttributes;
             const hashAlgorithmOid = forge.asn1.derToOid(message.rawCapture.digestAlgorithm);
             const hashAlgorithm = forge.pki.oids[hashAlgorithmOid].toUpperCase();
-            const set = forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.SET, true, attrs);
+            const set = forge.asn1.create(
+                forge.asn1.Class.UNIVERSAL,
+                forge.asn1.Type.SET,
+                true,
+                attrs,
+            );
             const buf = Buffer.from(forge.asn1.toDer(set).data, 'binary');
             const cert = forge.pki.certificateToPem(message.certificates[0]);
             const validAuthenticatedAttributes = crypto.createVerify(hashAlgorithm)
