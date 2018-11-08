@@ -114,11 +114,7 @@ export class SignPdf {
         // Then add all the certificates (-cacerts & -clcerts)
         // Keep track of the last found client certificate.
         // This will be the public key that will be bundled in the signature.
-        // Note: This first line may still result in setting a CA cert in
-        // the lastClientCertificate. Keeping it this way for backwards comp.
-        // Will get rid of it once this lib gets to version 0.3.
-        let certificate = certBags[0];
-
+        let certificate;
         Object.keys(certBags).forEach((i) => {
             const {publicKey} = certBags[i].cert;
 
@@ -131,6 +127,13 @@ export class SignPdf {
                 certificate = certBags[i].cert;
             }
         });
+
+        if (typeof certificate === 'undefined') {
+            throw new SignPdfError(
+                'Failed to find a certificate that matches the private key.',
+                SignPdfError.TYPE_INPUT,
+            );
+        }
 
         // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
         p7.addSigner({
