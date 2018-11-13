@@ -14,28 +14,21 @@ Object.defineProperty(exports, 'SignPdfError', {
     }
 });
 
+var _crypto = require('crypto');
+
+var _crypto2 = _interopRequireDefault(_crypto);
+
 var _nodeForge = require('node-forge');
 
 var _nodeForge2 = _interopRequireDefault(_nodeForge);
 
 var _SignPdfError2 = _interopRequireDefault(_SignPdfError);
 
+var _helpers = require('./helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const DEFAULT_BYTE_RANGE_PLACEHOLDER = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-
-function pad2(num) {
-    const s = `0${num}`;
-    return s.substr(s.length - 2);
-}
-
-function stringToHex(s) {
-    let a = '';
-    for (let i = 0; i < s.length; i += 1) {
-        a += pad2(s.charCodeAt(i).toString(16));
-    }
-    return a;
-}
 
 class SignPdf {
     constructor() {
@@ -115,11 +108,7 @@ class SignPdf {
         // Then add all the certificates (-cacerts & -clcerts)
         // Keep track of the last found client certificate.
         // This will be the public key that will be bundled in the signature.
-        // Note: This first line may still result in setting a CA cert in
-        // the lastClientCertificate. Keeping it this way for backwards comp.
-        // Will get rid of it once this lib gets to version 0.3.
-        let certificate = certBags[0];
-
+        let certificate;
         Object.keys(certBags).forEach(i => {
             const { publicKey } = certBags[i].cert;
 
@@ -130,6 +119,10 @@ class SignPdf {
                 certificate = certBags[i].cert;
             }
         });
+
+        if (typeof certificate === 'undefined') {
+            throw new _SignPdfError2.default('Failed to find a certificate that matches the private key.', _SignPdfError2.default.TYPE_INPUT);
+        }
 
         // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
         p7.addSigner({
@@ -162,7 +155,7 @@ class SignPdf {
             throw new _SignPdfError2.default(`Signature exceeds placeholder length: ${raw.length * 2} > ${placeholderLength}`, _SignPdfError2.default.TYPE_INPUT);
         }
 
-        let signature = stringToHex(raw);
+        let signature = Buffer.from(raw, 'binary').toString('hex');
         // Store the HEXified signature. At least useful in tests.
         this.lastSignature = signature;
 
@@ -174,6 +167,42 @@ class SignPdf {
 
         // Magic. Done.
         return pdf;
+    }
+
+    verify(pdfBuffer) {
+        if (!(pdfBuffer instanceof Buffer)) {
+            throw new _SignPdfError2.default('PDF expected as Buffer.', _SignPdfError2.default.TYPE_INPUT);
+        }
+        try {
+            const { signature, signedData } = (0, _helpers.extractSignature)(pdfBuffer);
+            const p7Asn1 = _nodeForge2.default.asn1.fromDer(signature);
+            const message = _nodeForge2.default.pkcs7.messageFromAsn1(p7Asn1);
+            const sig = message.rawCapture.signature;
+            // TODO: when node-forge implemets pkcs7.verify method,
+            // we should use message.verify to verify the whole signature
+            // instead of validating authenticatedAttributes only
+            const attrs = message.rawCapture.authenticatedAttributes;
+            const hashAlgorithmOid = _nodeForge2.default.asn1.derToOid(message.rawCapture.digestAlgorithm);
+            const hashAlgorithm = _nodeForge2.default.pki.oids[hashAlgorithmOid].toUpperCase();
+            const set = _nodeForge2.default.asn1.create(_nodeForge2.default.asn1.Class.UNIVERSAL, _nodeForge2.default.asn1.Type.SET, true, attrs);
+            const buf = Buffer.from(_nodeForge2.default.asn1.toDer(set).data, 'binary');
+            const cert = _nodeForge2.default.pki.certificateToPem(message.certificates[0]);
+            const validAuthenticatedAttributes = _crypto2.default.createVerify(hashAlgorithm).update(buf).verify(cert, sig, 'binary');
+            if (!validAuthenticatedAttributes) {
+                throw new _SignPdfError2.default('Wrong authenticated attributes', _SignPdfError2.default.VERIFY_SIGNATURE);
+            }
+            const messageDigestAttr = _nodeForge2.default.pki.oids.messageDigest;
+            const fullAttrDigest = attrs.find(attr => _nodeForge2.default.asn1.derToOid(attr.value[0].value) === messageDigestAttr);
+            const attrDigest = fullAttrDigest.value[1].value[0].value;
+            const dataDigest = _crypto2.default.createHash(hashAlgorithm).update(signedData).digest();
+            const validContentDigest = dataDigest.toString('binary') === attrDigest;
+            if (!validContentDigest) {
+                throw new _SignPdfError2.default('Wrong content digest', _SignPdfError2.default.VERIFY_SIGNATURE);
+            }
+            return { verified: true };
+        } catch (err) {
+            return { verified: false, message: err instanceof _SignPdfError2.default ? err.message : 'couldn\'t verify file signature' };
+        }
     }
 }
 

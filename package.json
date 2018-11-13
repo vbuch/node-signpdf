@@ -1,6 +1,6 @@
 {
     "name": "node-signpdf",
-    "version": "0.2.3",
+    "version": "0.3.0",
     "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
@@ -9,6 +9,7 @@
     "license": "MIT",
     "keywords": [
         "sign",
+        "verify",
         "pdf",
         "node",
         "nodejs",
@@ -53,6 +54,10 @@
             "url": "https://github.com/alekssakovsky"
         },
         {
+            "name": "MohammedEssehemy",
+            "url": "https://github.com/mohammedessehemy"
+        },
+        {
             "name": "samaleksov",
             "url": "https://github.com/samaleksov"
         }
@@ -74,7 +79,7 @@
         "eslint-import-resolver-babel-module": "^4.0.0",
         "eslint-plugin-import": "^2.12.0",
         "eslint-plugin-jest": "^21.20.2",
-        "jest": "^23.1.0",
+        "jest": "^23.6.0",
         "nodemon": "^1.17.5",
         "npm-run-all": "^4.1.3",
         "pdfkit": "^0.8.3"
