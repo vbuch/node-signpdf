@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit';
+import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
 import {addSignaturePlaceholder, extractSignature} from './helpers';
@@ -164,6 +165,47 @@ describe('Test signing', () => {
             const error = e.message.toLowerCase();
             expect(error.indexOf('invalid')).not.toBe(-1);
             expect(error.indexOf('password')).not.toBe(-1);
+        }
+    });
+    it('errors when no matching certificate is found in bags', async () => {
+        const pdfBuffer = await createPdf();
+        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+
+        // Monkey-patch pkcs12 to return no matching certificates although bundle.p12 is correct.
+        const originalPkcs12FromAsn1 = forge.pkcs12.pkcs12FromAsn1;
+        let p12Instance;
+        forge.pkcs12.pkcs12FromAsn1 = (...params) => {
+            // This instance will be used for all non-mocked code.
+            p12Instance = originalPkcs12FromAsn1(...params);
+
+            return {
+                ...p12Instance,
+                getBags: ({bagType}) => {
+                    if (bagType === forge.pki.oids.certBag) {
+                        // Only mock this case.
+                        // Make sure there will be no matching certificate.
+                        return {
+                            [forge.pki.oids.certBag]: [],
+                        };
+                    }
+                    return p12Instance.getBags({bagType});
+                },
+            };
+        };
+
+        try {
+            signer.sign(
+                pdfBuffer,
+                p12Buffer,
+            );
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            const error = e.message.toLowerCase();
+            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(error.indexOf('matches')).not.toBe(-1);
+        } finally {
+            forge.pkcs12.pkcs12FromAsn1 = originalPkcs12FromAsn1;
         }
     });
 });
