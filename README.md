@@ -3,6 +3,7 @@
 [![npm version](https://badge.fury.io/js/node-signpdf.svg)](https://badge.fury.io/js/node-signpdf)
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
 [![Coverage Status](https://coveralls.io/repos/github/vbuch/node-signpdf/badge.svg?branch=master)](https://coveralls.io/github/vbuch/node-signpdf?branch=master)
+[![dependencies](https://david-dm.org/vbuch/node-signpdf.svg)](https://david-dm.org/vbuch/node-signpdf)
 
 Simple signing of PDFs in node.
 
