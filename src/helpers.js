@@ -36,13 +36,14 @@ export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) =
         V: signature,
         T: new String('Signature1'), // eslint-disable-line no-new-wrappers
         F: 4,
-        P: pdf._root.data.Pages.data.Kids[0], // eslint-disable-line no-underscore-dangle
+        P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
     });
     // Include the widget in a page
-    pdf._root.data.Pages.data.Kids[0].data.Annots = [widget];
+    pdf.page.dictionary.data.Annots = [widget];
 
     // Create a form (with the widget) and link in the _root
     const form = pdf.ref({
+        Type: 'AcroForm',
         SigFlags: 3,
         Fields: [widget],
     });
