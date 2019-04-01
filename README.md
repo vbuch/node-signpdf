@@ -61,7 +61,7 @@ const {verified} = signer.verify(signedPdfBuffer);
 
 ## Notes
 
-* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
+* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
 * This lib:
   * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document;
   * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
