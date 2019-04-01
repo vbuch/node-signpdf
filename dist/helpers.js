@@ -1,15 +1,13 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-exports.extractSignature = exports.addSignaturePlaceholder = undefined;
+exports.extractSignature = exports.addSignaturePlaceholder = void 0;
 
-var _signpdf = require('./signpdf');
+var _signpdf = require("./signpdf");
 
-var _SignPdfError = require('./SignPdfError');
-
-var _SignPdfError2 = _interopRequireDefault(_SignPdfError);
+var _SignPdfError = _interopRequireDefault(require("./SignPdfError"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21,69 +19,79 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {string} reason
  * @returns {object}
  */
-const addSignaturePlaceholder = exports.addSignaturePlaceholder = ({ pdf, reason, signatureLength = 8192 }) => {
-    /* eslint-disable no-underscore-dangle,no-param-reassign */
-    // Generate the signature placeholder
-    const signature = pdf.ref({
-        Type: 'Sig',
-        Filter: 'Adobe.PPKLite',
-        SubFilter: 'adbe.pkcs7.detached',
-        ByteRange: [0, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER],
-        Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
-        Reason: new String(reason), // eslint-disable-line no-new-wrappers
-        M: new Date()
-    });
+const addSignaturePlaceholder = ({
+  pdf,
+  reason,
+  signatureLength = 8192
+}) => {
+  /* eslint-disable no-underscore-dangle,no-param-reassign */
+  // Generate the signature placeholder
+  const signature = pdf.ref({
+    Type: 'Sig',
+    Filter: 'Adobe.PPKLite',
+    SubFilter: 'adbe.pkcs7.detached',
+    ByteRange: [0, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER, _signpdf.DEFAULT_BYTE_RANGE_PLACEHOLDER],
+    Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
+    Reason: new String(reason),
+    // eslint-disable-line no-new-wrappers
+    M: new Date()
+  }); // Generate signature annotation widget
 
-    // Generate signature annotation widget
-    const widget = pdf.ref({
-        Type: 'Annot',
-        Subtype: 'Widget',
-        FT: 'Sig',
-        Rect: [0, 0, 0, 0],
-        V: signature,
-        T: new String('Signature1'), // eslint-disable-line no-new-wrappers
-        F: 4,
-        P: pdf.page.dictionary // eslint-disable-line no-underscore-dangle
-    });
-    // Include the widget in a page
-    pdf.page.dictionary.data.Annots = [widget];
+  const widget = pdf.ref({
+    Type: 'Annot',
+    Subtype: 'Widget',
+    FT: 'Sig',
+    Rect: [0, 0, 0, 0],
+    V: signature,
+    T: new String('Signature1'),
+    // eslint-disable-line no-new-wrappers
+    F: 4,
+    P: pdf.page.dictionary // eslint-disable-line no-underscore-dangle
 
-    // Create a form (with the widget) and link in the _root
-    const form = pdf.ref({
-        Type: 'AcroForm',
-        SigFlags: 3,
-        Fields: [widget]
-    });
-    pdf._root.data.AcroForm = form;
+  }); // Include the widget in a page
 
-    return {
-        signature,
-        form,
-        widget
-    };
-    /* eslint-enable no-underscore-dangle,no-param-reassign */
+  pdf.page.dictionary.data.Annots = [widget]; // Create a form (with the widget) and link in the _root
+
+  const form = pdf.ref({
+    Type: 'AcroForm',
+    SigFlags: 3,
+    Fields: [widget]
+  });
+  pdf._root.data.AcroForm = form;
+  return {
+    signature,
+    form,
+    widget
+  };
+  /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
 
-const extractSignature = exports.extractSignature = pdf => {
-    const byteRangePos = pdf.indexOf('/ByteRange [');
-    if (byteRangePos === -1) {
-        throw new _SignPdfError2.default('Failed to locate ByteRange.', _SignPdfError2.default.TYPE_PARSE);
-    }
+exports.addSignaturePlaceholder = addSignaturePlaceholder;
 
-    const byteRangeEnd = pdf.indexOf(']', byteRangePos);
-    if (byteRangeEnd === -1) {
-        throw new _SignPdfError2.default('Failed to locate the end of the ByteRange.', _SignPdfError2.default.TYPE_PARSE);
-    }
+const extractSignature = pdf => {
+  const byteRangePos = pdf.indexOf('/ByteRange [');
 
-    const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
-    const matches = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/.exec(byteRange);
+  if (byteRangePos === -1) {
+    throw new _SignPdfError.default('Failed to locate ByteRange.', _SignPdfError.default.TYPE_PARSE);
+  }
 
-    const signedData = Buffer.concat([pdf.slice(parseInt(matches[1]), parseInt(matches[1]) + parseInt(matches[2])), pdf.slice(parseInt(matches[3]), parseInt(matches[3]) + parseInt(matches[4]))]);
+  const byteRangeEnd = pdf.indexOf(']', byteRangePos);
 
-    let signatureHex = pdf.slice(parseInt(matches[1]) + parseInt(matches[2]) + 1, parseInt(matches[3]) - 1).toString('binary');
-    signatureHex = signatureHex.replace(/(?:00)*$/, '');
+  if (byteRangeEnd === -1) {
+    throw new _SignPdfError.default('Failed to locate the end of the ByteRange.', _SignPdfError.default.TYPE_PARSE);
+  }
 
-    const signature = Buffer.from(signatureHex, 'hex').toString('binary');
-
-    return { ByteRange: matches.slice(1, 5).map(Number), signature, signedData };
+  const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
+  const matches = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/.exec(byteRange);
+  const signedData = Buffer.concat([pdf.slice(parseInt(matches[1]), parseInt(matches[1]) + parseInt(matches[2])), pdf.slice(parseInt(matches[3]), parseInt(matches[3]) + parseInt(matches[4]))]);
+  let signatureHex = pdf.slice(parseInt(matches[1]) + parseInt(matches[2]) + 1, parseInt(matches[3]) - 1).toString('binary');
+  signatureHex = signatureHex.replace(/(?:00)*$/, '');
+  const signature = Buffer.from(signatureHex, 'hex').toString('binary');
+  return {
+    ByteRange: matches.slice(1, 5).map(Number),
+    signature,
+    signedData
+  };
 };
+
+exports.extractSignature = extractSignature;
