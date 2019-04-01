@@ -102,8 +102,4 @@ The signed PDF file has the public certificate embeded in it, so all we need to 
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
 * This incredible [Stack Overflow answer](https://stackoverflow.com/questions/15969733/verify-pkcs7-pem-signature-unpack-data-in-node-js/16148331#16148331) for describing the whole process of verifying PKCS7 signatures.
 
-## Contributing
-
-* All PRs are welcome in the `develop` branch.
-* This is a git-flow repo. We use the default git flow with a `v` version prefix.
-* Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
+## [Contributing](CONTRIBUTING.md)
