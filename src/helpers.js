@@ -28,10 +28,93 @@ export const removeTrailingNewLine = (pdf) => {
 
 /**
  * @param {Buffer} pdf
+ * @returns {Map}
+ */
+export const readRefTable = (pdf, position) => {
+    const output = new Map();
+    let refTable = pdf.slice(position);
+    if (refTable.indexOf('xref') !== 0) {
+        throw new SignPdfError(
+            'Unexpected cross-reference table format.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    refTable = refTable.slice(4);
+    refTable = refTable.slice(refTable.indexOf('\n') + 1);
+    let nextNewLine = refTable.indexOf('\n');
+    let line = refTable.slice(0, nextNewLine);
+    refTable = refTable.slice(nextNewLine + 1);
+    let [startingIndex, length] = line.toString().split(' ');
+    startingIndex = parseInt(startingIndex);
+    length = parseInt(length);
+    for (let i = startingIndex; i < startingIndex + length; i += 1) {
+        nextNewLine = refTable.indexOf('\n');
+        line = refTable.slice(0, nextNewLine);
+        refTable = refTable.slice(nextNewLine + 1);
+
+        const [offset, generation, inUseOrFree] = line.toString().split(' ');
+
+        output.set(i, offset);
+    }
+    return output;
+};
+/**
+ * @param {Buffer} pdf
+ * @param {Map} refTable
+ * @returns {object}
+ */
+export const findObject = (pdf, refTable, ref) => {
+    const [index] = ref.split(' ');
+    if (!refTable.has(parseInt(index))) {
+        throw new SignPdfError(
+            `Failed to locate object "${ref}".`,
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    const offset = refTable.get(parseInt(index));
+    let slice = pdf.slice(offset);
+    slice = slice.slice(0, slice.indexOf('endobj'));
+
+    // FIXME: What if it is a stream?
+    slice = slice.slice(slice.indexOf('<<') + 2);
+    slice = slice.slice(0, slice.indexOf('>>'));
+    return slice;
+};
+
+/**
+ * @param {Buffer} pdf
+ */
+export const readLastTrailer = (pdf) => {
+    const trailerStart = pdf.lastIndexOf('trailer');
+    const trailer = pdf.slice(trailerStart, pdf.length - 6);
+
+    if (trailer.lastIndexOf('/Prev') !== -1) {
+        throw new SignPdfError(
+            'Incrementally updated PDFs are not yet supported.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+
+    let rootSlice = trailer.slice(trailer.indexOf('/Root'));
+    rootSlice = rootSlice.slice(0, rootSlice.indexOf('/', 1));
+    const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
+
+    let xRefPosition = trailer.slice(trailer.lastIndexOf('startxref') + 10).toString();
+    xRefPosition = parseInt(xRefPosition);
+    const refTable = readRefTable(pdf, xRefPosition);
+
+    console.log(rootSlice.toString());
+    console.log(xRefPosition);
+    console.log(rootRef);
+    console.log(findObject(pdf, refTable, rootRef).toString());
+};
+
+/**
+ * @param {Buffer} pdf
  */
 export const plainAdd = (pdfBuffer) => {
     const pdf = removeTrailingNewLine(pdfBuffer);
-    console.log(pdf.toString());
+    console.log(readLastTrailer(pdf));
     return pdf;
 };
 
