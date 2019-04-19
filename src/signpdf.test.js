@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
-import {addSignaturePlaceholder, extractSignature} from './helpers';
+import {addSignaturePlaceholder, extractSignature, plainAdd} from './helpers';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -122,6 +122,14 @@ describe('Test signing', () => {
 
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
+    });
+    it.only('signs a ready pdf', () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../w3dummy.pdf`);
+        pdfBuffer = plainAdd(pdfBuffer);
+        fs.createWriteStream('./test.pdf').end(
+            signer.sign(pdfBuffer, p12Buffer),
+        );
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();

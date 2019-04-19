@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
-import {extractSignature} from './helpers';
+import {extractSignature, removeTrailingNewLine} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
@@ -37,12 +37,7 @@ export class SignPdf {
             );
         }
 
-        let pdf = pdfBuffer;
-        const lastChar = pdfBuffer.slice(pdfBuffer.length - 1).toString();
-        if (lastChar === '\n') {
-            // remove the trailing new line
-            pdf = pdf.slice(0, pdf.length - 1);
-        }
+        let pdf = removeTrailingNewLine(pdfBuffer);
 
         // Find the ByteRange placeholder.
         const byteRangePlaceholder = [
@@ -121,8 +116,8 @@ export class SignPdf {
             p7.addCertificate(certBags[i].cert);
 
             // Try to find the certificate that matches the private key.
-            if (privateKey.n.compareTo(publicKey.n) === 0 &&
-                privateKey.e.compareTo(publicKey.e) === 0
+            if (privateKey.n.compareTo(publicKey.n) === 0
+                && privateKey.e.compareTo(publicKey.e) === 0
             ) {
                 certificate = certBags[i].cert;
             }

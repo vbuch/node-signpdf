@@ -2,6 +2,40 @@ import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './signpdf';
 import SignPdfError from './SignPdfError';
 
 /**
+ * Removes a trailing new line if there is such.
+ *
+ * Also makes sure the file ends with an EOF line as per spec.
+ * @param {Buffer} pdf
+ * @returns {Buffer}
+ */
+export const removeTrailingNewLine = (pdf) => {
+    const lastChar = pdf.slice(pdf.length - 1).toString();
+    if (lastChar === '\n') {
+        // remove the trailing new line
+        return pdf.slice(0, pdf.length - 1);
+    }
+
+    const lastLine = pdf.slice(pdf.length - 6).toString();
+    if (lastLine !== '\n%%EOF') {
+        throw new SignPdfError(
+            'A PDF file must end with an EOF line.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+
+    return pdf;
+};
+
+/**
+ * @param {Buffer} pdf
+ */
+export const plainAdd = (pdfBuffer) => {
+    const pdf = removeTrailingNewLine(pdfBuffer);
+    console.log(pdf.toString());
+    return pdf;
+};
+
+/**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
  * Also includes a placeholder for the actual signature.
  * Returns an Object with all the added PDFReferences.
