@@ -126,7 +126,10 @@ describe('Test signing', () => {
     it.only('signs a ready pdf', () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../w3dummy.pdf`);
-        pdfBuffer = plainAdd(pdfBuffer);
+        pdfBuffer = plainAdd(
+            pdfBuffer,
+            {reason: 'I am actually the author'},
+        );
         fs.createWriteStream('./test.pdf').end(
             signer.sign(pdfBuffer, p12Buffer),
         );

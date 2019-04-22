@@ -1,5 +1,9 @@
+import fs from 'fs';
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './signpdf';
 import SignPdfError from './SignPdfError';
+import PDFObject, {PDFReferenceMock} from './pdfobject';
+
+export const DEFAULT_SIGNATURE_LENGTH = 8192;
 
 /**
  * Removes a trailing new line if there is such.
@@ -41,6 +45,8 @@ export const readRefTable = (pdf, position) => {
     }
     refTable = refTable.slice(4);
     refTable = refTable.slice(refTable.indexOf('\n') + 1);
+
+    // FIXME: This only expects one subsection. Will go wrong if there are multiple.
     let nextNewLine = refTable.indexOf('\n');
     let line = refTable.slice(0, nextNewLine);
     refTable = refTable.slice(nextNewLine + 1);
@@ -50,6 +56,7 @@ export const readRefTable = (pdf, position) => {
 
     const tableRows = [];
     let maxOffset = 0;
+    let maxIndex = 0;
     for (let i = startingIndex; i < startingIndex + length; i += 1) {
         nextNewLine = refTable.indexOf('\n');
         line = refTable.slice(0, nextNewLine).toString();
@@ -59,6 +66,7 @@ export const readRefTable = (pdf, position) => {
         let [offset, generation, inUseOrFree] = line.split(' ');
         offset = parseInt(offset);
         maxOffset = Math.max(maxOffset, offset);
+        maxIndex = Math.max(maxIndex, i);
 
         offsetsMap.set(i, offset);
     }
@@ -67,6 +75,8 @@ export const readRefTable = (pdf, position) => {
         tableOffset: position,
         tableRows,
         maxOffset,
+        startingIndex,
+        maxIndex,
         offsets: offsetsMap,
     };
 };
@@ -98,7 +108,7 @@ export const findObject = (pdf, refTable, ref) => {
 /**
  * @param {Buffer} pdf
  */
-export const readLastTrailer = (pdf) => {
+export const readPdf = (pdf) => {
     const trailerStart = pdf.lastIndexOf('trailer');
     const trailer = pdf.slice(trailerStart, pdf.length - 6);
 
@@ -131,17 +141,10 @@ export const readLastTrailer = (pdf) => {
         );
     }
 
-    console.log(refTable);
-    console.log(root);
-};
-
-/**
- * @param {Buffer} pdf
- */
-export const plainAdd = (pdfBuffer) => {
-    const pdf = removeTrailingNewLine(pdfBuffer);
-    console.log(readLastTrailer(pdf));
-    return pdf;
+    return {
+        xref: refTable,
+        root,
+    };
 };
 
 /**
@@ -152,7 +155,11 @@ export const plainAdd = (pdfBuffer) => {
  * @param {string} reason
  * @returns {object}
  */
-export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) => {
+export const addSignaturePlaceholder = ({
+    pdf,
+    reason,
+    signatureLength = DEFAULT_SIGNATURE_LENGTH,
+}) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
     const signature = pdf.ref({
@@ -200,6 +207,49 @@ export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) =
     /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
 
+/**
+ * @param {Buffer} pdf
+ */
+export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE_LENGTH}) => {
+    let pdf = removeTrailingNewLine(pdfBuffer);
+    const info = readPdf(pdf);
+
+    const pdfKitMock = {
+        // FIXME: Currently mocking pdfkit
+        ref: (input) => {
+            info.xref.maxIndex += 1;
+            pdf = Buffer.concat([
+                pdf,
+                Buffer.from(`\n${info.xref.maxIndex} 0 obj\n`),
+                Buffer.from(PDFObject.convert(input)),
+                Buffer.from('\nendobj\n'),
+            ]);
+            return new PDFReferenceMock(info.xref.maxIndex);
+        },
+        page: {
+            dictionary: {
+                data: {
+                    Annots: [],
+                },
+            },
+        },
+        _root: {
+            data: {},
+        },
+    };
+
+    fs.createWriteStream('./_before.pdf').end(pdf);
+    addSignaturePlaceholder({
+        pdf: pdfKitMock,
+        reason,
+        signatureLength,
+    });
+    fs.createWriteStream('./_after.pdf').end(pdf);
+
+
+    console.log(info);
+    return pdf;
+};
 
 export const extractSignature = (pdf) => {
     const byteRangePos = pdf.indexOf('/ByteRange [');
