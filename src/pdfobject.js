@@ -80,9 +80,9 @@ export default class PDFObject {
             // If so, encode it as big endian UTF-16
             let stringBuffer;
             if (isUnicode) {
-                stringBuffer = swapBytes(new Buffer(`\ufeff${string}`, 'utf16le'));
+                stringBuffer = swapBytes(Buffer.from(`\ufeff${string}`, 'utf16le'));
             } else {
-                stringBuffer = new Buffer(string, 'ascii');
+                stringBuffer = Buffer.from(string, 'ascii');
             }
 
             // Encrypt the string when necessary
@@ -107,7 +107,7 @@ export default class PDFObject {
 
             // Encrypt the string when necessary
             if (encryptFn) {
-                string = encryptFn(new Buffer(string, 'ascii')).toString('binary');
+                string = encryptFn(Buffer.from(string, 'ascii')).toString('binary');
 
                 // Escape characters as required by the spec
                 string = string.replace(escapableRe, c => escapable[c]);
