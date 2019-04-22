@@ -11,9 +11,12 @@ class PDFAbstractReference {
 }
 
 export class PDFReferenceMock extends PDFAbstractReference {
-    constructor(index) {
+    constructor(index, additionalData = undefined) {
         super();
         this.index = index;
+        if (typeof additionalData !== 'undefined') {
+            Object.assign(this, additionalData);
+        }
     }
 
     toString() {

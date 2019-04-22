@@ -231,7 +231,7 @@ const createBufferRootWithAcroform = (pdf, info, form) => {
     ]);
 };
 
-const createBufferPageWithAnnotation = (pdf, info, widget) => {
+const getPagesDictionaryRef = (info) => {
     const pagesRefRegex = new RegExp('\\/Type\\s*\\/Catalog\\s*\\/Pages\\s+(\\d+\\s\\d+\\sR)', 'g');
     const match = pagesRefRegex.exec(info.root);
     if (match === null) {
@@ -241,8 +241,10 @@ const createBufferPageWithAnnotation = (pdf, info, widget) => {
         );
     }
 
-    const pagesRef = match[1];
-    console.log(pagesRef);
+    return match[1];
+};
+
+const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
     const pagesDictionary = findObject(pdf, info.xref, pagesRef).toString();
     if (pagesDictionary.indexOf('/Annots') !== -1) {
         throw new SignPdfError(
@@ -251,10 +253,10 @@ const createBufferPageWithAnnotation = (pdf, info, widget) => {
         );
     }
 
-    const pagesIndex = getIndexFromRef(info.xref, pagesRef);
+    const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
 
     return Buffer.concat([
-        Buffer.from(`\n${pagesIndex} 0 obj\n`),
+        Buffer.from(`\n${pagesDictionaryIndex} 0 obj\n`),
         Buffer.from('<<\n'),
         Buffer.from(`${pagesDictionary}\n`),
         Buffer.from(`/Annots [${widget}]`),
@@ -268,6 +270,8 @@ const createBufferPageWithAnnotation = (pdf, info, widget) => {
 export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE_LENGTH}) => {
     let pdf = removeTrailingNewLine(pdfBuffer);
     const info = readPdf(pdf);
+    const pagesRef = getPagesDictionaryRef(info);
+    const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
 
     const pdfKitMock = {
         // FIXME: Currently mocking pdfkit
@@ -282,11 +286,14 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
             return new PDFReferenceMock(info.xref.maxIndex);
         },
         page: {
-            dictionary: {
-                data: {
-                    Annots: [],
+            dictionary: new PDFReferenceMock(
+                pagesDictionaryIndex,
+                {
+                    data: {
+                        Annots: [],
+                    },
                 },
-            },
+            ),
         },
         _root: {
             data: {},
@@ -306,7 +313,7 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
     pdf = Buffer.concat([
         pdf,
         createBufferRootWithAcroform(pdf, info, form),
-        createBufferPageWithAnnotation(pdf, info, widget),
+        createBufferPageWithAnnotation(pdf, info, pagesRef, widget),
     ]);
     // TODO: Need to add a new trailer
     fs.createWriteStream('./_after.pdf').end(pdf);
