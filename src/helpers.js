@@ -223,7 +223,7 @@ const createBufferRootWithAcroform = (pdf, info, form) => {
     const rootIndex = getIndexFromRef(info.xref, info.rootRef);
 
     return Buffer.concat([
-        Buffer.from(`\n${rootIndex} 0 obj\n`),
+        Buffer.from(`${rootIndex} 0 obj\n`),
         Buffer.from('<<\n'),
         Buffer.from(`${info.root}\n`),
         Buffer.from(`/AcroForm ${form}`),
@@ -256,11 +256,33 @@ const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
     const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
 
     return Buffer.concat([
-        Buffer.from(`\n${pagesDictionaryIndex} 0 obj\n`),
+        Buffer.from(`${pagesDictionaryIndex} 0 obj\n`),
         Buffer.from('<<\n'),
         Buffer.from(`${pagesDictionary}\n`),
         Buffer.from(`/Annots [${widget}]`),
         Buffer.from('\n>>\nendobj\n'),
+    ]);
+};
+
+const createBufferTrailer = (pdf, info, addedReferences) => {
+    const rows = info.xref.tableRows;
+    addedReferences.forEach((offset, index) => {
+        const paddedOffset = (`0000000000${offset}`).slice(-10);
+        rows[index] = `${paddedOffset} 00000 n `;
+    });
+
+    return Buffer.concat([
+        Buffer.from('xref\n'),
+        Buffer.from(`${info.xref.startingIndex} ${rows.length}\n`),
+        Buffer.from(rows.join('\n')),
+        Buffer.from('\ntrailer\n'),
+        Buffer.from('<<\n'),
+        Buffer.from(`/Size ${rows.length}\n`),
+        Buffer.from(`/Root ${info.rootRef}\n`),
+        Buffer.from('>>\n'),
+        Buffer.from('startxref\n'),
+        Buffer.from(`${pdf.length}\n`),
+        Buffer.from('%%EOF'),
     ]);
 };
 
@@ -272,14 +294,19 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
     const info = readPdf(pdf);
     const pagesRef = getPagesDictionaryRef(info);
     const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
+    const addedReferences = new Map();
 
     const pdfKitMock = {
         // FIXME: Currently mocking pdfkit
         ref: (input) => {
             info.xref.maxIndex += 1;
+
+            addedReferences.set(info.xref.maxIndex, pdf.length + 1); // + 1 new line
+
             pdf = Buffer.concat([
                 pdf,
-                Buffer.from(`\n${info.xref.maxIndex} 0 obj\n`),
+                Buffer.from('\n'),
+                Buffer.from(`${info.xref.maxIndex} 0 obj\n`),
                 Buffer.from(PDFObject.convert(input)),
                 Buffer.from('\nendobj\n'),
             ]);
@@ -310,11 +337,27 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
         signatureLength,
     });
 
+    const rootIndex = getIndexFromRef(info.xref, info.rootRef);
+    addedReferences.set(rootIndex, pdf.length + 1);
     pdf = Buffer.concat([
         pdf,
+        Buffer.from('\n'),
         createBufferRootWithAcroform(pdf, info, form),
+    ]);
+
+    addedReferences.set(pagesDictionaryIndex, pdf.length + 1);
+    pdf = Buffer.concat([
+        pdf,
+        Buffer.from('\n'),
         createBufferPageWithAnnotation(pdf, info, pagesRef, widget),
     ]);
+
+    pdf = Buffer.concat([
+        pdf,
+        Buffer.from('\n'),
+        createBufferTrailer(pdf, info, addedReferences),
+    ]);
+
     // TODO: Need to add a new trailer
     fs.createWriteStream('./_after.pdf').end(pdf);
 
