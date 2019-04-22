@@ -112,7 +112,7 @@ export const findObject = (pdf, refTable, ref) => {
 
     // FIXME: What if it is a stream?
     slice = slice.slice(slice.indexOf('<<') + 2);
-    slice = slice.slice(0, slice.indexOf('>>'));
+    slice = slice.slice(0, slice.lastIndexOf('>>'));
     return slice;
 };
 
@@ -156,6 +156,7 @@ export const readPdf = (pdf) => {
         xref: refTable,
         rootRef,
         root,
+        trailerStart,
     };
 };
 
@@ -278,6 +279,7 @@ const createBufferTrailer = (pdf, info, addedReferences) => {
         Buffer.from('\ntrailer\n'),
         Buffer.from('<<\n'),
         Buffer.from(`/Size ${rows.length}\n`),
+        Buffer.from(`/Prev ${info.xref.tableOffset}\n`),
         Buffer.from(`/Root ${info.rootRef}\n`),
         Buffer.from('>>\n'),
         Buffer.from('startxref\n'),
@@ -286,18 +288,28 @@ const createBufferTrailer = (pdf, info, addedReferences) => {
     ]);
 };
 
+const getPageRef = (pdf, info) => {
+    const pagesRef = getPagesDictionaryRef(info);
+    const pagesDictionary = findObject(pdf, info.xref, pagesRef);
+    const kidsPosition = pagesDictionary.indexOf('/Kids');
+    const kidsStart = pagesDictionary.indexOf('[', kidsPosition) + 1;
+    const kidsEnd = pagesDictionary.indexOf(']', kidsPosition);
+    const pages = pagesDictionary.slice(kidsStart, kidsEnd).toString();
+    const split = pages.trim().split(' ', 3);
+    return `${split[0]} ${split[1]} ${split[2]}`;
+};
+
 /**
  * @param {Buffer} pdf
  */
 export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE_LENGTH}) => {
     let pdf = removeTrailingNewLine(pdfBuffer);
     const info = readPdf(pdf);
-    const pagesRef = getPagesDictionaryRef(info);
-    const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
+    const pageRef = getPageRef(pdf, info);
+    const pageIndex = getIndexFromRef(info.xref, pageRef);
     const addedReferences = new Map();
 
     const pdfKitMock = {
-        // FIXME: Currently mocking pdfkit
         ref: (input) => {
             info.xref.maxIndex += 1;
 
@@ -314,7 +326,7 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
         },
         page: {
             dictionary: new PDFReferenceMock(
-                pagesDictionaryIndex,
+                pageIndex,
                 {
                     data: {
                         Annots: [],
@@ -345,11 +357,11 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
         createBufferRootWithAcroform(pdf, info, form),
     ]);
 
-    addedReferences.set(pagesDictionaryIndex, pdf.length + 1);
+    addedReferences.set(pageIndex, pdf.length + 1);
     pdf = Buffer.concat([
         pdf,
         Buffer.from('\n'),
-        createBufferPageWithAnnotation(pdf, info, pagesRef, widget),
+        createBufferPageWithAnnotation(pdf, info, pageRef, widget),
     ]);
 
     pdf = Buffer.concat([
@@ -358,10 +370,8 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
         createBufferTrailer(pdf, info, addedReferences),
     ]);
 
-    // TODO: Need to add a new trailer
     fs.createWriteStream('./_after.pdf').end(pdf);
 
-    console.log(info);
     return pdf;
 };
 
