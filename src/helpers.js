@@ -82,20 +82,31 @@ export const readRefTable = (pdf, position) => {
 };
 
 /**
- * @param {Buffer} pdf
- * @param {Map} refTable
- * @returns {object}
+ * @param {object} refTable
+ * @param {string} ref
+ * @returns {number}
  */
-export const findObject = (pdf, refTable, ref) => {
-    const [index] = ref.split(' ');
-    if (!refTable.has(parseInt(index))) {
+const getIndexFromRef = (refTable, ref) => {
+    let [index] = ref.split(' ');
+    index = parseInt(index);
+    if (!refTable.offsets.has(index)) {
         throw new SignPdfError(
             `Failed to locate object "${ref}".`,
             SignPdfError.TYPE_PARSE,
         );
     }
+    return index;
+};
 
-    const offset = refTable.get(parseInt(index));
+/**
+ * @param {Buffer} pdf
+ * @param {Map} refTable
+ * @returns {object}
+ */
+export const findObject = (pdf, refTable, ref) => {
+    const index = getIndexFromRef(refTable, ref);
+
+    const offset = refTable.offsets.get(index);
     let slice = pdf.slice(offset);
     slice = slice.slice(0, slice.indexOf('endobj'));
 
@@ -127,7 +138,7 @@ export const readPdf = (pdf) => {
     xRefPosition = parseInt(xRefPosition);
     const refTable = readRefTable(pdf, xRefPosition);
 
-    const root = findObject(pdf, refTable.offsets, rootRef).toString();
+    const root = findObject(pdf, refTable, rootRef).toString();
     if (root.indexOf('AcroForm') !== -1) {
         throw new SignPdfError(
             'The document already contains a form. This is not yet supported.',
@@ -143,6 +154,7 @@ export const readPdf = (pdf) => {
 
     return {
         xref: refTable,
+        rootRef,
         root,
     };
 };
@@ -207,6 +219,49 @@ export const addSignaturePlaceholder = ({
     /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
 
+const createBufferRootWithAcroform = (pdf, info, form) => {
+    const rootIndex = getIndexFromRef(info.xref, info.rootRef);
+
+    return Buffer.concat([
+        Buffer.from(`\n${rootIndex} 0 obj\n`),
+        Buffer.from('<<\n'),
+        Buffer.from(`${info.root}\n`),
+        Buffer.from(`/AcroForm ${form}`),
+        Buffer.from('\n>>\nendobj\n'),
+    ]);
+};
+
+const createBufferPageWithAnnotation = (pdf, info, widget) => {
+    const pagesRefRegex = new RegExp('\\/Type\\s*\\/Catalog\\s*\\/Pages\\s+(\\d+\\s\\d+\\sR)', 'g');
+    const match = pagesRefRegex.exec(info.root);
+    if (match === null) {
+        throw new SignPdfError(
+            'Failed to find the pages descriptor. This is probably a problem in node-signpdf.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+
+    const pagesRef = match[1];
+    console.log(pagesRef);
+    const pagesDictionary = findObject(pdf, info.xref, pagesRef).toString();
+    if (pagesDictionary.indexOf('/Annots') !== -1) {
+        throw new SignPdfError(
+            'There already are /Annots described. This is not yet supported',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+
+    const pagesIndex = getIndexFromRef(info.xref, pagesRef);
+
+    return Buffer.concat([
+        Buffer.from(`\n${pagesIndex} 0 obj\n`),
+        Buffer.from('<<\n'),
+        Buffer.from(`${pagesDictionary}\n`),
+        Buffer.from(`/Annots [${widget}]`),
+        Buffer.from('\n>>\nendobj\n'),
+    ]);
+};
+
 /**
  * @param {Buffer} pdf
  */
@@ -239,16 +294,22 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
     };
 
     fs.createWriteStream('./_before.pdf').end(pdf);
-    addSignaturePlaceholder({
+    const {
+        form,
+        widget,
+    } = addSignaturePlaceholder({
         pdf: pdfKitMock,
         reason,
         signatureLength,
     });
-    // TODO: Need to get the `Annots` in a real page
-    // TODO: Need to link the form in the root
+
+    pdf = Buffer.concat([
+        pdf,
+        createBufferRootWithAcroform(pdf, info, form),
+        createBufferPageWithAnnotation(pdf, info, widget),
+    ]);
     // TODO: Need to add a new trailer
     fs.createWriteStream('./_after.pdf').end(pdf);
-
 
     console.log(info);
     return pdf;
