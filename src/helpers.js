@@ -28,10 +28,10 @@ export const removeTrailingNewLine = (pdf) => {
 
 /**
  * @param {Buffer} pdf
- * @returns {Map}
+ * @returns {object}
  */
 export const readRefTable = (pdf, position) => {
-    const output = new Map();
+    const offsetsMap = new Map();
     let refTable = pdf.slice(position);
     if (refTable.indexOf('xref') !== 0) {
         throw new SignPdfError(
@@ -47,17 +47,30 @@ export const readRefTable = (pdf, position) => {
     let [startingIndex, length] = line.toString().split(' ');
     startingIndex = parseInt(startingIndex);
     length = parseInt(length);
+
+    const tableRows = [];
+    let maxOffset = 0;
     for (let i = startingIndex; i < startingIndex + length; i += 1) {
         nextNewLine = refTable.indexOf('\n');
-        line = refTable.slice(0, nextNewLine);
+        line = refTable.slice(0, nextNewLine).toString();
         refTable = refTable.slice(nextNewLine + 1);
+        tableRows.push(line);
 
-        const [offset, generation, inUseOrFree] = line.toString().split(' ');
+        let [offset, generation, inUseOrFree] = line.split(' ');
+        offset = parseInt(offset);
+        maxOffset = Math.max(maxOffset, offset);
 
-        output.set(i, offset);
+        offsetsMap.set(i, offset);
     }
-    return output;
+
+    return {
+        tableOffset: position,
+        tableRows,
+        maxOffset,
+        offsets: offsetsMap,
+    };
 };
+
 /**
  * @param {Buffer} pdf
  * @param {Map} refTable
@@ -71,6 +84,7 @@ export const findObject = (pdf, refTable, ref) => {
             SignPdfError.TYPE_PARSE,
         );
     }
+
     const offset = refTable.get(parseInt(index));
     let slice = pdf.slice(offset);
     slice = slice.slice(0, slice.indexOf('endobj'));
@@ -103,10 +117,22 @@ export const readLastTrailer = (pdf) => {
     xRefPosition = parseInt(xRefPosition);
     const refTable = readRefTable(pdf, xRefPosition);
 
-    console.log(rootSlice.toString());
-    console.log(xRefPosition);
-    console.log(rootRef);
-    console.log(findObject(pdf, refTable, rootRef).toString());
+    const root = findObject(pdf, refTable.offsets, rootRef).toString();
+    if (root.indexOf('AcroForm') !== -1) {
+        throw new SignPdfError(
+            'The document already contains a form. This is not yet supported.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    if (refTable.maxOffset > refTable.tableOffset) {
+        throw new SignPdfError(
+            'Ref table is not at the end of the document. This document can only be signed in incremental mode.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+
+    console.log(refTable);
+    console.log(root);
 };
 
 /**
