@@ -10,10 +10,14 @@ import SignPdfError from './SignPdfError';
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = (params = {
-    placeholder: {},
-    text: 'node-signpdf',
-}) => new Promise((resolve) => {
+const createPdf = params => new Promise((resolve) => {
+    const requestParams = {
+        placeholder: {},
+        text: 'node-signpdf',
+        addSignaturePlaceholder: true,
+        ...params,
+    };
+
     const pdf = new PDFDocument({
         autoFirstPage: true,
         size: 'A4',
@@ -27,7 +31,7 @@ const createPdf = (params = {
         .fillColor('#333')
         .fontSize(25)
         .moveDown()
-        .text(params.text);
+        .text(requestParams.text);
 
     // Collect the ouput PDF
     // and, when done, resolve with it stored in a Buffer
@@ -39,15 +43,17 @@ const createPdf = (params = {
         resolve(Buffer.concat(pdfChunks));
     });
 
-    // Externally (to PDFKit) add the signature placeholder.
-    const refs = addSignaturePlaceholder({
-        pdf,
-        reason: 'I am the author',
-        ...params.placeholder,
-    });
-    // Externally end the streams of the created objects.
-    // PDFKit doesn't know much about them, so it won't .end() them.
-    Object.keys(refs).forEach(key => refs[key].end());
+    if (requestParams.addSignaturePlaceholder) {
+        // Externally (to PDFKit) add the signature placeholder.
+        const refs = addSignaturePlaceholder({
+            pdf,
+            reason: 'I am the author',
+            ...requestParams.placeholder,
+        });
+        // Externally end the streams of the created objects.
+        // PDFKit doesn't know much about them, so it won't .end() them.
+        Object.keys(refs).forEach(key => refs[key].end());
+    }
 
     // Also end the PDFDocument stream.
     // See pdf.on('end'... on how it is then converted to Buffer.
@@ -123,16 +129,25 @@ describe('Test signing', () => {
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
     });
-    it.only('signs a ready pdf', () => {
+    it('signs a ready pdf', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-        let pdfBuffer = fs.readFileSync(`${__dirname}/../w3dummy.pdf`);
+        // let pdfBuffer = fs.readFileSync(`${__dirname}/../w3dummy.pdf`);
+        let pdfBuffer = await createPdf({
+            text: 'Added signature placeholder though incremental upgrade',
+            addSignaturePlaceholder: false,
+        });
+        fs.createWriteStream('./test-1.pdf').end(pdfBuffer);
         pdfBuffer = plainAdd(
             pdfBuffer,
-            {reason: 'I am actually the author'},
+            {
+                reason: 'I am actually the author',
+                signatureLength: 2000,
+            },
         );
-        fs.createWriteStream('./test.pdf').end(
-            signer.sign(pdfBuffer, p12Buffer),
-        );
+        fs.createWriteStream('./test-2.pdf').end(pdfBuffer);
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        fs.createWriteStream('./test-3.pdf').end(pdfBuffer);
+        console.log(signer.verify(pdfBuffer));
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
