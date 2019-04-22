@@ -244,6 +244,9 @@ export const plainAdd = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE
         reason,
         signatureLength,
     });
+    // TODO: Need to get the `Annots` in a real page
+    // TODO: Need to link the form in the root
+    // TODO: Need to add a new trailer
     fs.createWriteStream('./_after.pdf').end(pdf);
 
 
