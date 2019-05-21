@@ -1,6 +1,5 @@
-import fs from 'fs';
 import SignPdfError from '../SignPdfError';
-import PDFObject, {PDFReferenceMock} from '../pdfobject';
+import PDFObject, {PDFReferenceMock} from './pdfobject';
 import removeTrailingNewLine from './removeTrailingNewLine';
 import {DEFAULT_SIGNATURE_LENGTH} from './const';
 import pdfkitAddPlaceholder from './pdfkitAddPlaceholder';
