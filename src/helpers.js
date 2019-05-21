@@ -34,7 +34,7 @@ export const removeTrailingNewLine = (pdf) => {
  * @param {Buffer} pdf
  * @returns {object}
  */
-export const readRefTable = (pdf, position) => {
+const readRefTable = (pdf, position) => {
     const offsetsMap = new Map();
     let refTable = pdf.slice(position);
     if (refTable.indexOf('xref') !== 0) {
@@ -103,7 +103,7 @@ const getIndexFromRef = (refTable, ref) => {
  * @param {Map} refTable
  * @returns {object}
  */
-export const findObject = (pdf, refTable, ref) => {
+const findObject = (pdf, refTable, ref) => {
     const index = getIndexFromRef(refTable, ref);
 
     const offset = refTable.offsets.get(index);
@@ -119,7 +119,7 @@ export const findObject = (pdf, refTable, ref) => {
 /**
  * @param {Buffer} pdf
  */
-export const readPdf = (pdf) => {
+const readPdf = (pdf) => {
     const trailerStart = pdf.lastIndexOf('trailer');
     const trailer = pdf.slice(trailerStart, pdf.length - 6);
 
