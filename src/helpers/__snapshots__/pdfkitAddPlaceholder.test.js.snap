@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pdfkitAddPlaceholder adds placeholder to PDFKit document 1`] = `
+Array [
+  "signature",
+  "form",
+  "widget",
+]
+`;
