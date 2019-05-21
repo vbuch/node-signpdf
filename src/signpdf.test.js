@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
-import {addSignaturePlaceholder, extractSignature, plainAdd} from './helpers';
+import {pdfkitAddPlaceholder, extractSignature, plainAddPlaceholder} from './helpers';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -45,7 +45,7 @@ const createPdf = params => new Promise((resolve) => {
 
     if (requestParams.addSignaturePlaceholder) {
         // Externally (to PDFKit) add the signature placeholder.
-        const refs = addSignaturePlaceholder({
+        const refs = pdfkitAddPlaceholder({
             pdf,
             reason: 'I am the author',
             ...requestParams.placeholder,
@@ -95,7 +95,7 @@ describe('Test signing', () => {
                     signatureLength: 2,
                 },
             });
-            const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+            const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
             signer.sign(pdfBuffer, p12Buffer);
             expect('here').not.toBe('here');
@@ -106,7 +106,7 @@ describe('Test signing', () => {
     });
     it('signs input PDF', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         expect(pdfBuffer instanceof Buffer).toBe(true);
@@ -116,7 +116,7 @@ describe('Test signing', () => {
         expect(signedData instanceof Buffer).toBe(true);
     });
     it('signs detached', async () => {
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
         let pdfBuffer = await createPdf({text: 'Some text'});
         signer.sign(pdfBuffer, p12Buffer);
@@ -129,15 +129,12 @@ describe('Test signing', () => {
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
     });
-    it.only('signs a ready pdf', async () => {
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/contributing.pdf`);
-        pdfBuffer = plainAdd(
+    it('signs a ready pdf', async () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
+        pdfBuffer = plainAddPlaceholder(
             pdfBuffer,
-            {
-                reason: 'I have reviewed it.',
-                signatureLength: 5000,
-            },
+            {reason: 'I have reviewed it.'},
         );
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
 
@@ -147,7 +144,7 @@ describe('Test signing', () => {
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/bundle.p12`);
 
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         expect(pdfBuffer instanceof Buffer).toBe(true);
@@ -158,7 +155,7 @@ describe('Test signing', () => {
     });
     it('signs with passphrased certificate', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
 
         pdfBuffer = signer.sign(
             pdfBuffer,
@@ -173,7 +170,7 @@ describe('Test signing', () => {
     });
     it('errors on wrong certificate passphrase', async () => {
         const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
 
         try {
             signer.sign(
@@ -191,7 +188,7 @@ describe('Test signing', () => {
     });
     it('errors when no matching certificate is found in bags', async () => {
         const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/bundle.p12`);
 
         // Monkey-patch pkcs12 to return no matching certificates although bundle.p12 is correct.
         const originalPkcs12FromAsn1 = forge.pkcs12.pkcs12FromAsn1;

@@ -6,7 +6,7 @@ FIXME: Need to find a better way to reuse this.
 
 class PDFAbstractReference {
     toString() {
-        throw new Error('toString isa must.');
+        throw new Error('toString is a must.');
     }
 }
 

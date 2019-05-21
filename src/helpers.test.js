@@ -1,7 +1,7 @@
 import fs from 'fs';
 import PDFDocument from 'pdfkit';
 import signer from './signpdf';
-import {addSignaturePlaceholder, extractSignature} from './helpers';
+import {pdfkitAddPlaceholder, extractSignature} from './helpers';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -39,7 +39,7 @@ const createPdf = (params = {
     });
 
     // Externally (to PDFKit) add the signature placeholder.
-    const refs = addSignaturePlaceholder({
+    const refs = pdfkitAddPlaceholder({
         pdf,
         reason: 'I am the author',
         ...params.placeholder,
@@ -52,10 +52,15 @@ const createPdf = (params = {
     // See pdf.on('end'... on how it is then converted to Buffer.
     pdf.end();
 });
+
 describe('Helpers', () => {
     it('extract signature from signed pdf', async () => {
-        const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        const pdfBuffer = await createPdf({
+            placeholder: {
+                signatureLength: 1612,
+            },
+        });
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         const originalSignature = signer.lastSignature;
