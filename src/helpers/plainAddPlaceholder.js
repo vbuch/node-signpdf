@@ -1,5 +1,6 @@
 import SignPdfError from '../SignPdfError';
-import PDFObject, {PDFReferenceMock} from './pdfobject';
+import PDFObject from './pdfkit/pdfobject';
+import PDFKitReferenceMock from './pdfkitReferenceMock';
 import removeTrailingNewLine from './removeTrailingNewLine';
 import {DEFAULT_SIGNATURE_LENGTH} from './const';
 import pdfkitAddPlaceholder from './pdfkitAddPlaceholder';
@@ -236,10 +237,10 @@ const plainAddPlaceholder = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNA
                 Buffer.from(PDFObject.convert(input)),
                 Buffer.from('\nendobj\n'),
             ]);
-            return new PDFReferenceMock(info.xref.maxIndex);
+            return new PDFKitReferenceMock(info.xref.maxIndex);
         },
         page: {
-            dictionary: new PDFReferenceMock(
+            dictionary: new PDFKitReferenceMock(
                 pageIndex,
                 {
                     data: {

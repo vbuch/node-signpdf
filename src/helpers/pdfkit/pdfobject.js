@@ -1,28 +1,11 @@
 /*
-PDFObject By Devon Govett used below. Part of pdfkit.
-FIXME: Need to find a better way to reuse this.
+PDFObject by Devon Govett used below.
+The class is part of pdfkit. See https://github.com/foliojs/pdfkit
+LICENSE: MIT. Included in this folder.
+Modifications may have been applied for the purposes of node-signpdf.
 */
 
-
-class PDFAbstractReference {
-    toString() {
-        throw new Error('toString is a must.');
-    }
-}
-
-export class PDFReferenceMock extends PDFAbstractReference {
-    constructor(index, additionalData = undefined) {
-        super();
-        this.index = index;
-        if (typeof additionalData !== 'undefined') {
-            Object.assign(this, additionalData);
-        }
-    }
-
-    toString() {
-        return `${this.index} 0 R`;
-    }
-}
+import PDFAbstractReference from './abstract_reference';
 
 /*
 PDFObject - converts JavaScript types into their corresponding PDF types.
@@ -44,7 +27,7 @@ const escapable = {
 };
 
 // Convert little endian UTF-16 to big endian
-const swapBytes = function swapBytes(buff) {
+const swapBytes = (buff) => {
     const l = buff.length;
     if (l & 0x01) {
         throw new Error('Buffer length must be even');
@@ -70,7 +53,7 @@ export default class PDFObject {
             let string = object;
             // Detect if this is a unicode string
             let isUnicode = false;
-            for (let i = 0, end = string.length; i < end; i++) {
+            for (let i = 0, end = string.length; i < end; i += 1) {
                 if (string.charCodeAt(i) > 0x7f) {
                     isUnicode = true;
                     break;
