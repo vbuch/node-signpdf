@@ -34,7 +34,8 @@ describe('extractSignature', () => {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
         }
-
+    });
+    it('extracts signature', () => {
         const signedPdf = fs.readFileSync(`${__dirname}/../../resources/signed.pdf`);
         const extracted = extractSignature(signedPdf);
         expect(extracted).toMatchSnapshot();
