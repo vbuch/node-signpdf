@@ -10,14 +10,11 @@ Simple signing of PDFs in node.
 * [node-signpdf](#node-signpdf)
   * [Purpose](#purpose)
   * [Usage](#usage)
-    * [Signing](#signing)
-    * [Verifying](#verifying)
   * [Notes](#notes)
   * [Signing PDF in simple steps](#signing-pdf-in-simple-steps)
     * [Generate a PDF](#generate-a-pdf)
     * [Append a signature placeholder](#append-a-signature-placeholder)
     * [Generate and apply signature](#generate-and-apply-signature)
-  * [Verifying PDF signature](#verifying-pdf-signature)
   * [Dependencies](#dependencies)
   * [Credits](#credits)
   * [Contributing](#contributing)
@@ -32,8 +29,6 @@ Simply said this could be used in two steps. `install` and `sign`.
 
 Install with  `npm i -S node-signpdf node-forge`.
 
-### Signing
-
 Call `.sign()`
 
 ```javascript
@@ -46,18 +41,6 @@ const signedPdf = signer.sign(
 ```
 
 In practice we expect that most people will just read through the code we've written in the testing part of this package and figure it out themselves. If that's your case, you should read the [[Signing PDF in simple steps]](#signing-pdf-in-simple-steps) section.
-
-### Verifying
-
-To verify a signed pdf call `.verify()`.
-
-```javascript
-import signer from 'node-signpdf';
-...
-
-const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-const {verified} = signer.verify(signedPdfBuffer);
-```
 
 ## Notes
 
@@ -85,10 +68,6 @@ What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`.
 
 That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
 
-## Verifying PDF signature
-
-The signed PDF file has the public certificate embeded in it, so all we need to verify a PDF file is the file itself.
-
 ## Dependencies
 
 [node-forge](https://github.com/digitalbazaar/forge) is used for working with signatures.
@@ -100,6 +79,7 @@ The signed PDF file has the public certificate embeded in it, so all we need to 
 * The whole signing flow is a rework of what's already [in pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek)
 * [node-forge](https://github.com/digitalbazaar/forge) is an awesome package written in pure JavaScript and [supports signing in detached mode](https://github.com/digitalbazaar/forge/pull/605). Many thanks to all the guys who wrote and maintain it.
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
-* This incredible [Stack Overflow answer](https://stackoverflow.com/questions/15969733/verify-pkcs7-pem-signature-unpack-data-in-node-js/16148331#16148331) for describing the whole process of verifying PKCS7 signatures.
 
 ## [Contributing](CONTRIBUTING.md)
+
+## [Changelog](CHANGELOG.md)
