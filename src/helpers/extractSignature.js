@@ -18,8 +18,7 @@ const extractSignature = (pdf) => {
     }
 
     const byteRange = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
-    // FIXME: https://github.com/vbuch/node-signpdf/issues/23
-    const matches = (/\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/).exec(byteRange);
+    const matches = (/\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+) *\]/).exec(byteRange);
 
     const signedData = Buffer.concat([
         pdf.slice(
