@@ -1,7 +1,6 @@
-import crypto from 'crypto';
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
-import {extractSignature, removeTrailingNewLine} from './helpers';
+import {removeTrailingNewLine} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
@@ -184,61 +183,6 @@ export class SignPdf {
 
         // Magic. Done.
         return pdf;
-    }
-
-    verify(pdfBuffer) {
-        if (!(pdfBuffer instanceof Buffer)) {
-            throw new SignPdfError(
-                'PDF expected as Buffer.',
-                SignPdfError.TYPE_INPUT,
-            );
-        }
-        try {
-            const {signature, signedData} = extractSignature(pdfBuffer);
-            const p7Asn1 = forge.asn1.fromDer(signature);
-            const message = forge.pkcs7.messageFromAsn1(p7Asn1);
-            const sig = message.rawCapture.signature;
-            // TODO: when node-forge implemets pkcs7.verify method,
-            // we should use message.verify to verify the whole signature
-            // instead of validating authenticatedAttributes only
-            const attrs = message.rawCapture.authenticatedAttributes;
-            const hashAlgorithmOid = forge.asn1.derToOid(message.rawCapture.digestAlgorithm);
-            const hashAlgorithm = forge.pki.oids[hashAlgorithmOid].toUpperCase();
-            const set = forge.asn1.create(
-                forge.asn1.Class.UNIVERSAL,
-                forge.asn1.Type.SET,
-                true,
-                attrs,
-            );
-            const buf = Buffer.from(forge.asn1.toDer(set).data, 'binary');
-            const cert = forge.pki.certificateToPem(message.certificates[0]);
-            const validAuthenticatedAttributes = crypto.createVerify(hashAlgorithm)
-                .update(buf)
-                .verify(cert, sig, 'binary');
-            if (!validAuthenticatedAttributes) {
-                throw new SignPdfError(
-                    'Wrong authenticated attributes',
-                    SignPdfError.VERIFY_SIGNATURE,
-                );
-            }
-            const messageDigestAttr = forge.pki.oids.messageDigest;
-            const fullAttrDigest = attrs
-                .find(attr => forge.asn1.derToOid(attr.value[0].value) === messageDigestAttr);
-            const attrDigest = fullAttrDigest.value[1].value[0].value;
-            const dataDigest = crypto.createHash(hashAlgorithm)
-                .update(signedData)
-                .digest();
-            const validContentDigest = dataDigest.toString('binary') === attrDigest;
-            if (!validContentDigest) {
-                throw new SignPdfError(
-                    'Wrong content digest',
-                    SignPdfError.VERIFY_SIGNATURE,
-                );
-            }
-            return ({verified: true});
-        } catch (err) {
-            return ({verified: false, message: err instanceof SignPdfError ? err.message : 'couldn\'t verify file signature'});
-        }
     }
 }
 

@@ -131,22 +131,19 @@ describe('Test signing', () => {
     });
     it.only('signs a ready pdf', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-        let pdfBuffer = fs.readFileSync(`${__dirname}/../w3dummy.pdf`);
-        // let pdfBuffer = await createPdf({
-        //     text: 'Added signature placeholder though incremental upgrade',
-        //     addSignaturePlaceholder: false,
-        // });
-        // fs.createWriteStream('./test-1.pdf').end(pdfBuffer);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/contributing.pdf`);
         pdfBuffer = plainAdd(
             pdfBuffer,
             {
-                reason: 'I am actually the author',
-                signatureLength: 2000,
+                reason: 'I have reviewed it.',
+                signatureLength: 5000,
             },
         );
-        // fs.createWriteStream('./test-2.pdf').end(pdfBuffer);
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        fs.createWriteStream('./test-3.pdf').end(pdfBuffer);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
@@ -234,66 +231,3 @@ describe('Test signing', () => {
         }
     });
 });
-
-// describe('Test verification', () => {
-//     it('expects PDF to be Buffer', () => {
-//         try {
-//             signer.verify('non-buffer');
-//             expect('here').not.toBe('here');
-//         } catch (e) {
-//             expect(e instanceof SignPdfError).toBe(true);
-//             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-//         }
-//     });
-
-//     it('return {verified: true} if input is valid', async () => {
-//         const pdfBuffer = await createPdf();
-//         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-//         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-//         const verifyResult = signer.verify(signedPdfBuffer);
-//         expect(verifyResult.verified).toBe(true);
-//     });
-
-//     it('return {verified: false} if pdf data is changed', async () => {
-//         const pdfBuffer = await createPdf();
-//         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-//         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-//         const {ByteRange} = extractSignature(signedPdfBuffer);
-//         // manipulate data byte
-//         const bytePosition = ByteRange[1] + ByteRange[2] + 100;
-//         const originalByte = signedPdfBuffer[bytePosition];
-//         signedPdfBuffer[bytePosition] = originalByte + 1;
-//         const verifyResult = signer.verify(signedPdfBuffer);
-//         expect(verifyResult.verified).toBe(false);
-//     });
-
-//     it('return {verified: false} if signature is changed', async () => {
-//         const pdfBuffer = await createPdf();
-//         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-//         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-//         const {ByteRange} = extractSignature(signedPdfBuffer);
-//         // manipulate signture byte
-//         const bytePosition = ByteRange[1] + 2500;
-//         const originalByte = signedPdfBuffer[bytePosition];
-//         signedPdfBuffer[bytePosition] = originalByte + 1;
-//         const verifyResult = signer.verify(signedPdfBuffer);
-//         expect(verifyResult.verified).toBe(false);
-//     });
-
-//     it('return {verified: false} if the verify throws', async () => {
-//         const pdfBuffer = await createPdf();
-//         const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-//         const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-//         const {ByteRange} = extractSignature(signedPdfBuffer);
-//         // manipulate signture byte
-//         const bytePosition = ByteRange[1] + 1000;
-//         const originalByte = signedPdfBuffer[bytePosition];
-//         signedPdfBuffer[bytePosition] = originalByte + 1;
-//         const verifyResult = signer.verify(signedPdfBuffer);
-//         expect(verifyResult.verified).toBe(false);
-//     });
-// });

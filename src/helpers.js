@@ -63,7 +63,7 @@ export const readRefTable = (pdf, position) => {
         refTable = refTable.slice(nextNewLine + 1);
         tableRows.push(line);
 
-        let [offset, generation, inUseOrFree] = line.split(' ');
+        let [offset] = line.split(' ');
         offset = parseInt(offset);
         maxOffset = Math.max(maxOffset, offset);
         maxIndex = Math.max(maxIndex, i);
