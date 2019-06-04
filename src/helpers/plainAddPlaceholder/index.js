@@ -12,6 +12,14 @@ import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
 
 /**
+ * Adds a signature placeholder to a PDF Buffer.
+ *
+ * This contrasts with the default pdfkit-based implementation.
+ * Parsing is done using simple string operations.
+ * Adding is done with `Buffer.concat`.
+ * This is done so that node-signpdf can be used on any PDF and
+ * not only on a freshly created through PDFKit one.
+ *
  * @param {Buffer} pdf
  */
 const plainAddPlaceholder = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNATURE_LENGTH}) => {
