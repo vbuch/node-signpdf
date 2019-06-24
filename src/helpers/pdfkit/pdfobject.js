@@ -115,7 +115,7 @@ export default class PDFObject {
                         checkedValue = PDFObject.convert(val, encryptFn);
                     }
                     if (key === 'stream') {
-                        streamData = `${key}\nBT\n${checkedValue}Tj\nET\nendstream`;
+                        streamData = `${key}\n${val}\nendstream`;
                     } else {
                         out.push(`/${key} ${checkedValue}`);
                     }

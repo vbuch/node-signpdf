@@ -55,43 +55,18 @@ const pdfkitAddPlaceholder = ({
             .filter((element, index) => index % 3 === 0)
             .map(fieldId => new PDFKitReferenceMock(fieldId));
     }
-
-    const Font = pdf.ref({
-        Type: 'Font',
-        BaseFont: 'Helvetica',
-        Encoding: 'WinAnsiEncoding',
-        Subtype: 'Type1',
-    });
-    const fontObject = {Font: `<< /F2 ${Font.index} 0 R\n>>`};
-    const content = 'Content';
     const AP = pdf.ref({
-        /* CropBox: [
-            10 * fieldIds.length,
-            10 * fieldIds.length,
-            10 * fieldIds.length + 10,
-            10 * fieldIds.length + 10,
-        ], */
-        Type: 'XObject',
-        // Filter: 'FlateDecode',
-        // FormType: 1,
         BBox: [
             10 * fieldIds.length,
             10 * fieldIds.length,
-            10 * fieldIds.length + 10,
-            10 * fieldIds.length + 10,
+            10 * fieldIds.length + 40,
+            10 * fieldIds.length + 40,
         ],
-        Resources: fontObject,
-        MediaBox: [
-            10 * fieldIds.length,
-            10 * fieldIds.length,
-            10 * fieldIds.length + 10,
-            10 * fieldIds.length + 10,
-        ],
-        Length: content.length + 10,
-        Subtype: 'Form',
-        stream: new String(content), // eslint-disable-line no-new-wrappers
+        Resources: '<</ProcSet [/PDF /Text] >>',
+        MK: '<</BC [0.2 0.2 1] /BG [1 0.75 1]>>',
+        stream: '1 0.75 1 rg\n0 0 326 21 re f\n0.7 0.7 1 RG 1 w\n0.5 0.5 325 20 re\ns',
     });
-    const apObject = {N: new PDFKitReferenceMock(AP.index)};
+
     const signatureName = 'Signature';
     // Generate signature annotation widget
     const widget = pdf.ref({
@@ -101,29 +76,23 @@ const pdfkitAddPlaceholder = ({
         Rect: [
             10 * fieldIds.length,
             10 * fieldIds.length,
-            10 * fieldIds.length + 10,
-            10 * fieldIds.length + 10,
+            10 * fieldIds.length + 40,
+            10 * fieldIds.length + 40,
         ],
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
         F: 4,
+        AP: `<< /N ${AP.index} 0 R >>`,
         P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
-        AP: apObject,
-        DA: new String('/Helvetica 12 Tf 12 Tz 12 g'), // eslint-disable-line no-new-wrappers
-        MK: '<<>>',
     });
     // Include the widget in a page
     let form;
 
-    const Font2 = pdf.ref({
+    const FONT = pdf.ref({
         Type: 'Font',
+        SubType: 'Type1',
+        Name: 'F1',
         BaseFont: 'Helvetica',
-        Encoding: 'WinAnsiEncoding',
-        Subtype: 'Type1',
-    });
-
-    const DR = pdf.ref({
-        Font: Font2,
     });
 
     if (!isAcroFormExists) {
@@ -132,7 +101,8 @@ const pdfkitAddPlaceholder = ({
             Type: 'AcroForm',
             SigFlags: 3,
             Fields: [widget],
-            DR,
+            DR: `<< /Font << /Helv ${FONT.index} 0 R >> >>`,
+            DA: new String('/Helv 0 Tf 0 g'), // eslint-disable-line no-new-wrappers
         });
     } else {
         // Use existing acroform and extend the fields with newly created widgets
@@ -140,6 +110,8 @@ const pdfkitAddPlaceholder = ({
             Type: 'AcroForm',
             SigFlags: 3,
             Fields: [...fieldIds, widget],
+            DR: `<< /Font << /Helv ${FONT.index} 0 R >> >>`,
+            DA: new String('/Helv 0 Tf 0 g'), // eslint-disable-line no-new-wrappers
         }, acroFormId);
     }
 
