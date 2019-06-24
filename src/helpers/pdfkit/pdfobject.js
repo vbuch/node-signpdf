@@ -102,12 +102,30 @@ export default class PDFObject {
             return `[${items}]`;
         } if ({}.toString.call(object) === '[object Object]') {
             const out = ['<<'];
-            for (const key in object) {
-                const val = object[key];
-                out.push(`/${key} ${PDFObject.convert(val, encryptFn)}`);
-            }
+            let streamData;
 
+            for (const key in object) {
+                if (object.hasOwnProperty(key)) {
+                    const val = object[key];
+                    let checkedValue = '';
+
+                    if (val.toString().indexOf('<<') !== -1) {
+                        checkedValue = val;
+                    } else {
+                        checkedValue = PDFObject.convert(val, encryptFn);
+                    }
+                    if (key === 'stream') {
+                        streamData = `${key}\nBT\n${checkedValue}Tj\nET\nendstream`;
+                    } else {
+                        out.push(`/${key} ${checkedValue}`);
+                    }
+                }
+            }
             out.push('>>');
+
+            if (streamData) {
+                out.push(streamData);
+            }
             return out.join('\n');
         } if (typeof object === 'number') {
             return PDFObject.number(object);

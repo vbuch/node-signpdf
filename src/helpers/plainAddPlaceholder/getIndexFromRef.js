@@ -8,6 +8,7 @@ import SignPdfError from '../../SignPdfError';
 const getIndexFromRef = (refTable, ref) => {
     let [index] = ref.split(' ');
     index = parseInt(index);
+
     if (!refTable.offsets.has(index)) {
         throw new SignPdfError(
             `Failed to locate object "${ref}".`,
