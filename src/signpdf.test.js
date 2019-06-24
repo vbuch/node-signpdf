@@ -68,6 +68,7 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects P12 certificate to be Buffer', () => {
@@ -77,6 +78,7 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects PDF to contain a ByteRange placeholder', () => {
@@ -86,9 +88,7 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toEqual(
-                expect.stringMatching(/^Could not find ByteRange placeholder:.+/),
-            );
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects a reasonably sized placeholder', async () => {
@@ -105,6 +105,7 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('signs input PDF', async () => {
@@ -184,9 +185,7 @@ describe('Test signing', () => {
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof Error).toBe(true);
-            const error = e.message.toLowerCase();
-            expect(error.indexOf('invalid')).not.toBe(-1);
-            expect(error.indexOf('password')).not.toBe(-1);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('errors when no matching certificate is found in bags', async () => {
@@ -223,9 +222,8 @@ describe('Test signing', () => {
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
-            const error = e.message.toLowerCase();
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-            expect(error.indexOf('matches')).not.toBe(-1);
+            expect(e.message).toMatchSnapshot();
         } finally {
             forge.pkcs12.pkcs12FromAsn1 = originalPkcs12FromAsn1;
         }

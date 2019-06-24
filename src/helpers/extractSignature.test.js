@@ -19,6 +19,7 @@ describe('extractSignature', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+            expect(e.message).toMatchSnapshot();
         }
         try {
             extractSignature(Buffer.from('Some /ByteRange [ with no end'));
@@ -26,6 +27,7 @@ describe('extractSignature', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+            expect(e.message).toMatchSnapshot();
         }
         try {
             extractSignature(Buffer.from('Some /ByteRange [ inv alid byte range ]'));
@@ -33,6 +35,7 @@ describe('extractSignature', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('extracts signature', () => {
