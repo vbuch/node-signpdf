@@ -81,11 +81,14 @@ describe('Test signing', () => {
     });
     it('expects PDF to contain a ByteRange placeholder', () => {
         try {
-            signer.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
+            signer.sign(Buffer.from('No BR placeholder\n%%EOF'), Buffer.from(''));
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+            expect(e.message).toEqual(
+                expect.stringMatching(/^Could not find ByteRange placeholder:.+/),
+            );
         }
     });
     it('expects a reasonably sized placeholder', async () => {
