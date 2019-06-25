@@ -138,7 +138,10 @@ describe('Test signing', () => {
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
         pdfBuffer = plainAddPlaceholder(
             pdfBuffer,
-            {reason: 'I have reviewed it.'},
+            {
+                reason: 'I have reviewed it.',
+                signatureLength: 1612,
+            },
         );
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
 
