@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`readPdf Errors an incrementally updated PDF is passed in 1`] = `"Incrementally updated PDFs are not yet supported."`;
