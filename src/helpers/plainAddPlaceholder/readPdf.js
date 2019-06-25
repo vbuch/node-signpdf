@@ -31,12 +31,6 @@ const readPdf = (pdf) => {
             SignPdfError.TYPE_PARSE,
         );
     }
-    if (refTable.maxOffset > refTable.tableOffset) {
-        throw new SignPdfError(
-            'Ref table is not at the end of the document. This document can only be signed in incremental mode.',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
 
     return {
         xref: refTable,
