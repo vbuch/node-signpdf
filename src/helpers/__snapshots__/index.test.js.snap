@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Helpers index Exports expected helpers 1`] = `
+Array [
+  "extractSignature",
+  "pdfkitAddPlaceholder",
+  "plainAddPlaceholder",
+  "removeTrailingNewLine",
+]
+`;
