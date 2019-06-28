@@ -31,17 +31,26 @@ In practice we expect that most people will just read through the code we've wri
 
 ### With pdfkit-created document
 
-You have already created a PDF using foliojs/pdfkit and you want to sign that. Here's how this becomes possible:
+You have already created a PDF using foliojs/pdfkit and you want to sign that. Before saving (writing to fs) your file, you need to a add a signature placehoolder to it. We have a helper for that. This is dempnstrated in [the `signs input PDF` test](./src/signpdf.test.js#L111).
 
-Before saving your file, you need to a add a signature placehoolder to it. We have a helper for that.
-
-Once you have the placeholder, just [sign the document].
+Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
 ### With any PDF document
 
-Yes. This is new since version 1.0. We have a helper that can add a signature placeholder in at least the most basic PDFs without depending on pdfkit.
+Yes. This is new since version 1.0. We have a helper that can add a signature placeholder in at least the most basic PDFs without depending on pdfkit. You can see how this is done in [the `signs a ready pdf` test](./src/signpdf.test.js#L136).
 
-Once you have the placeholder, just [sign the document].
+Once you have the placeholder, just [[sign the document]](#sign-the-document).
+
+### Sign the document
+
+```javascript
+import signer from 'node-signpdf';
+...
+const signedPdf = signer.sign(
+  fs.readFileSync(PATH_TO_PDF_FILE)
+  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
+);
+```
 
 ## Notes
 
