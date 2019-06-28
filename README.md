@@ -25,6 +25,8 @@ The purpose of this package is not as much to be used as a dependendency, althou
 
 ## Usage
 
+### With PdfKit
+
 Simply said this could be used in two steps. `install` and `sign`.
 
 Install with  `npm i -S node-signpdf node-forge`.
