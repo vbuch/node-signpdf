@@ -25,24 +25,23 @@ The purpose of this package is not as much to be used as a dependendency, althou
 
 ## Usage
 
-### With PdfKit
-
-Simply said this could be used in two steps. `install` and `sign`.
-
 Install with  `npm i -S node-signpdf node-forge`.
 
-Call `.sign()`
-
-```javascript
-import signer from 'node-signpdf';
-
-const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_PDF_FILE)
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
-);
-```
-
 In practice we expect that most people will just read through the code we've written in the testing part of this package and figure it out themselves. If that's your case, you should read the [[Signing PDF in simple steps]](#signing-pdf-in-simple-steps) section.
+
+### With pdfkit-created document
+
+You have already created a PDF using foliojs/pdfkit and you want to sign that. Here's how this becomes possible:
+
+Before saving your file, you need to a add a signature placehoolder to it. We have a helper for that.
+
+Once you have the placeholder, just [sign the document].
+
+### With any PDF document
+
+Yes. This is new since version 1.0. We have a helper that can add a signature placeholder in at least the most basic PDFs without depending on pdfkit.
+
+Once you have the placeholder, just [sign the document].
 
 ## Notes
 
