@@ -1,4 +1,4 @@
-import PDFKitReferenceMock from './pdfkitReferenceMock';
+import PDFKitReferenceMock from './pdfkit_ReferenceMock';
 
 describe('pdfkitReferenceMock', () => {
     it('stores index', () => {
