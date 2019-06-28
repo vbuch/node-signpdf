@@ -1,12 +1,12 @@
 import SignPdfError from '../../SignPdfError';
 
 /**
- * @param {Buffer} pdf
+ * @param {Buffer} pdfBuffer
  * @returns {object}
  */
-const readRefTable = (pdf, position) => {
+const readRefTable = (pdfBuffer, position) => {
     const offsetsMap = new Map();
-    let refTable = pdf.slice(position);
+    let refTable = pdfBuffer.slice(position);
     if (refTable.indexOf('xref') !== 0) {
         throw new SignPdfError(
             'Unexpected cross-reference table format.',
