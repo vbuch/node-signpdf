@@ -3,11 +3,18 @@ import readRefTable from './readRefTable';
 import findObject from './findObject';
 
 /**
- * @param {Buffer} pdf
+ * Simplified parsing of a PDF Buffer.
+ * Extracts reference table, root info and trailer start.
+ *
+ * See section 7.5.5 (File Trailer) of the PDF specs.
+ *
+ * @param {Buffer} pdfBuffer
  */
-const readPdf = (pdf) => {
-    const trailerStart = pdf.lastIndexOf('trailer');
-    const trailer = pdf.slice(trailerStart, pdf.length - 6);
+const readPdf = (pdfBuffer) => {
+    // Extract the trailer dictionary.
+    const trailerStart = pdfBuffer.lastIndexOf('trailer');
+    // The trailer is followed by xref. Then an EOF. EOF's length is 6 characters.
+    const trailer = pdfBuffer.slice(trailerStart, pdfBuffer.length - 6);
 
     if (trailer.lastIndexOf('/Prev') !== -1) {
         throw new SignPdfError(
@@ -20,11 +27,14 @@ const readPdf = (pdf) => {
     rootSlice = rootSlice.slice(0, rootSlice.indexOf('/', 1));
     const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
 
+    // We've invcluded startxref in the trailer extracted above.
+    // They are two separate things but as per 7.5.5 they are always one after the other.
     let xRefPosition = trailer.slice(trailer.lastIndexOf('startxref') + 10).toString();
     xRefPosition = parseInt(xRefPosition);
-    const refTable = readRefTable(pdf, xRefPosition);
+    const refTable = readRefTable(pdfBuffer, xRefPosition);
 
-    const root = findObject(pdf, refTable, rootRef).toString();
+    // Now find the actual root.
+    const root = findObject(pdfBuffer, refTable, rootRef).toString();
     if (root.indexOf('AcroForm') !== -1) {
         throw new SignPdfError(
             'The document already contains a form. This is not yet supported.',
