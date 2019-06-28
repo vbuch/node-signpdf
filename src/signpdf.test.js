@@ -136,13 +136,11 @@ describe('Test signing', () => {
     it('signs a ready pdf', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
-        pdfBuffer = plainAddPlaceholder(
+        pdfBuffer = plainAddPlaceholder({
             pdfBuffer,
-            {
-                reason: 'I have reviewed it.',
-                signatureLength: 1612,
-            },
-        );
+            reason: 'I have reviewed it.',
+            signatureLength: 1612,
+        });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
 
         const {signature, signedData} = extractSignature(pdfBuffer);
