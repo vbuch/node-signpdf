@@ -1,5 +1,5 @@
 import PDFObject from '../pdfkit/pdfobject';
-import PDFKitReferenceMock from '../pdfkit_ReferenceMock';
+import PDFKitReferenceMock from '../pdfkitReferenceMock';
 import removeTrailingNewLine from '../removeTrailingNewLine';
 import {DEFAULT_SIGNATURE_LENGTH} from '../const';
 import pdfkitAddPlaceholder from '../pdfkitAddPlaceholder';
