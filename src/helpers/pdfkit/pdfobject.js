@@ -6,7 +6,6 @@ Modifications may have been applied for the purposes of node-signpdf.
 */
 
 import PDFAbstractReference from './abstract_reference';
-
 /*
 PDFObject - converts JavaScript types into their corresponding PDF types.
 By Devon Govett
@@ -106,7 +105,7 @@ export default class PDFObject {
 
             for (const key in object) {
                 if (object.hasOwnProperty(key)) {
-                    const val = object[key];
+                    let val = object[key];
                     let checkedValue = '';
 
                     if (val.toString().indexOf('<<') !== -1) {
@@ -114,6 +113,7 @@ export default class PDFObject {
                     } else {
                         checkedValue = PDFObject.convert(val, encryptFn);
                     }
+
                     if (key === 'stream') {
                         streamData = `${key}\n${val}\nendstream`;
                     } else {
