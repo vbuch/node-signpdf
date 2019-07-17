@@ -41,6 +41,7 @@ const createPdf = (params = {
     // Externally (to PDFKit) add the signature placeholder.
     const refs = pdfkitAddPlaceholder({
         pdf,
+        pdfBuffer: Buffer.from([pdf]),
         reason: 'I am the author',
         ...params.placeholder,
     });

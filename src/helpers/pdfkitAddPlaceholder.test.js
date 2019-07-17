@@ -11,7 +11,7 @@ describe('pdfkitAddPlaceholder', () => {
         });
         pdf.info.CreationDate = '';
 
-        const refs = pdfkitAddPlaceholder({pdf});
+        const refs = pdfkitAddPlaceholder({pdf, pdfBuffer: Buffer.from([pdf])});
         expect(Object.keys(refs)).toMatchSnapshot();
         expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
         expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');

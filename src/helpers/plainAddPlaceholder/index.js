@@ -1,5 +1,5 @@
 import PDFObject from '../pdfkit/pdfobject';
-import PDFKitReferenceMock from '../PDFKitReferenceMock';
+import PDFKitReferenceMock from '../pdfkitReferenceMock';
 import removeTrailingNewLine from '../removeTrailingNewLine';
 import {DEFAULT_SIGNATURE_LENGTH} from '../const';
 import pdfkitAddPlaceholder from '../pdfkitAddPlaceholder';
@@ -10,6 +10,13 @@ import getPageRef from './getPageRef';
 import createBufferRootWithAcroform from './createBufferRootWithAcroform';
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
+
+const isContainBufferRootWithAcrofrom = (pdf) => {
+    const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+    const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
+
+    return match != null && match[1] != null && match[1] !== '';
+};
 
 /**
  * Adds a signature placeholder to a PDF Buffer.
@@ -71,7 +78,7 @@ const plainAddPlaceholder = (pdfBuffer, {reason, signatureLength = DEFAULT_SIGNA
         signatureLength,
     });
 
-    if (reason === '1') {
+    if (!isContainBufferRootWithAcrofrom(pdf)) {
         const rootIndex = getIndexFromRef(info.xref, info.rootRef);
         addedReferences.set(rootIndex, pdf.length + 1);
         pdf = Buffer.concat([

@@ -1,8 +1,6 @@
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH} from './const';
 // eslint-disable-next-line import/no-unresolved
 import PDFKitReferenceMock from './PDFKitReferenceMock';
-import fs from 'fs';
-import zlib from 'zlib';
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
  * Also includes a placeholder for the actual signature.
@@ -33,9 +31,9 @@ const pdfkitAddPlaceholder = ({
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
-        ContactInfo: new String('vizi.csaba89@gmail.com'), // eslint-disable-line no-new-wrappers
-        Name: new String('vizi.csaba89@gmail.com'), // eslint-disable-line no-new-wrappers
-        Location: new String('Atlanta, GA, USA'), // eslint-disable-line no-new-wrappers
+        ContactInfo: new String('emailfromp1289@gmail.com'), // eslint-disable-line no-new-wrappers
+        Name: new String('Name from p12'), // eslint-disable-line no-new-wrappers
+        Location: new String('Location from p12'), // eslint-disable-line no-new-wrappers
     });
 
     // Check if pdf already contains acroform field
@@ -56,102 +54,6 @@ const pdfkitAddPlaceholder = ({
             .filter((element, index) => index % 3 === 0)
             .map(fieldId => new PDFKitReferenceMock(fieldId));
     }
-    const FONT = pdf.ref({
-        Type: 'Font',
-        BaseFont: 'Helvetica',
-        Encoding: 'WinAnsiEncoding',
-        Subtype: 'Type1',
-    });
-
-    const ZAF = pdf.ref({
-        Type: 'Font',
-        BaseFont: 'ZapfDingbats',
-        Subtype: 'Type1',
-    });
-
-    const APFONT = pdf.ref({
-        Type: 'Font',
-        BaseFont: 'Helvetica',
-        Encoding: 'WinAnsiEncoding',
-        Subtype: 'Type1',
-    });
-
-    const imagetest = fs.readFileSync('./resources/sig.png');
-
-    const img = pdf.ref({
-        Width: 1000,
-        Filter: 'FlateDecode',
-        Type: 'XObject',
-        BitsPerComponent: 8,
-        Subtype: 'Image',
-        // ColorSpace: 'DeviceRGB',
-        Height: 245,
-        Predictor: 15,
-        stream: zlib.deflateRawSync(imagetest),
-    });
-
-    const AP = pdf.ref({
-        CropBox: [0, 0, 197, 70],
-        Type: 'XObject',
-        // Filter: 'FlateDecode',
-        FormType: 1,
-        BBox: [0, 0, 197.0, 70.0],
-        Resources: `<</XObject <<\n/Img1 ${img.index} 0 R\n>>\n/Font <<\n/f1 ${APFONT.index} 0 R\n>>\n>>`,
-        MediaBox: [0, 0, 197, 70],
-        Subtype: 'Form',
-        stream: Buffer.from(`
-            1.0 1.0 1.0 rg
-            0.0 0.0 0.0 RG
-            q
-            q
-            98 0 0 24 0 23 cm
-            /Img1 Do
-            Q
-            0 0 0 rg
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 58.77881 Tm
-            (Digitally signed by) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 49.97412 Tm
-            (gerald.holmann@qoppa.com) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 41.16943 Tm
-            (cn=gerald.holmann@qoppa.) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 32.36475 Tm
-            (com, email= gerald.) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 23.56006 Tm
-            (holmann@qoppa.com) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 14.75537 Tm
-            (Date: 2016.09.01 11:51:37 ) Tj
-            ET
-            BT
-            0 Tr
-            /f1 7.0 Tf
-            1 0 0 1 100 5.95068 Tm
-            (EDT) Tj
-            ET
-            Q`),
-    });
     const signatureName = 'Signature';
 
     // Generate signature annotation widget
@@ -163,10 +65,9 @@ const pdfkitAddPlaceholder = ({
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
         F: 4,
-        AP: `<</N ${AP.index} 0 R>>`,
         P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
-        DA: new String('/Helvetica 0 Tf 0 g'), // eslint-disable-line no-new-wrappers
     });
+    pdf.page.dictionary.data.Annots = [widget];
     // Include the widget in a page
     let form;
 
@@ -176,7 +77,6 @@ const pdfkitAddPlaceholder = ({
             Type: 'AcroForm',
             SigFlags: 3,
             Fields: [...fieldIds, widget],
-            DR: `<</Font\n<</Helvetica ${FONT.index} 0 R/ZapfDingbats ${ZAF.index} 0 R>>\n>>`,
         });
     } else {
         // Use existing acroform and extend the fields with newly created widgets
@@ -184,9 +84,9 @@ const pdfkitAddPlaceholder = ({
             Type: 'AcroForm',
             SigFlags: 3,
             Fields: [...fieldIds, widget],
-            DR: `<</Font\n<</Helvetica ${FONT.index} 0 R/ZapfDingbats ${ZAF.index} 0 R>>\n>>`,
         }, acroFormId);
     }
+    pdf._root.data.AcroForm = form;
 
     return {
         signature,

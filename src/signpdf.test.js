@@ -47,6 +47,7 @@ const createPdf = params => new Promise((resolve) => {
         // Externally (to PDFKit) add the signature placeholder.
         const refs = pdfkitAddPlaceholder({
             pdf,
+            pdfBuffer: Buffer.from([pdf]),
             reason: 'I am the author',
             ...requestParams.placeholder,
         });
@@ -142,35 +143,18 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
-    it('signs a ready pdf twice', async () => {
-        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/vizics.p12`);
-        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/testa.pdf`);
-        pdfBuffer = plainAddPlaceholder(
-            pdfBuffer,
-            {reason: '1'},
-        );
-        pdfBuffer = signer.sign(pdfBuffer, p12Buffer, {passphrase: 'oekrew'});
-        fs.writeFileSync(`${__dirname}/../resources/test-1.pdf`, pdfBuffer);
+    it('signs a ready pdf two times', async () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
+        pdfBuffer = plainAddPlaceholder(pdfBuffer, {reason: 'first'});
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        fs.writeFileSync(`${__dirname}/../resources/signed-once.pdf`, pdfBuffer);
 
-        const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/vizics.p12`);
-        let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/test-1.pdf`);
-        signedPdfBuffer = plainAddPlaceholder(
-            signedPdfBuffer,
-            {reason: 'second one'},
-        );
-        signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, { passphrase:'oekrew'});
-        fs.writeFileSync(`${__dirname}/../resources/test-2.pdf`, signedPdfBuffer);
-
-        const thirdP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
-        let signedTwicePdfBuffer = fs.readFileSync(`${__dirname}/../resources/test-2.pdf`);
-        signedTwicePdfBuffer = plainAddPlaceholder(
-            signedTwicePdfBuffer,
-            {reason: 'third one'},
-        );
-        signedTwicePdfBuffer = signer.sign(signedTwicePdfBuffer, thirdP12Buffer, {passphrase: 'node-signpdf'});
-        fs.writeFileSync(`${__dirname}/../resources/test-3.pdf`, signedTwicePdfBuffer);
-
-        expect(false).toBe(true);
+        const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
+        let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed-once.pdf`);
+        signedPdfBuffer = plainAddPlaceholder(signedPdfBuffer, {reason: 'second'});
+        signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
+        fs.writeFileSync(`${__dirname}/../resources/signed-twice.pdf`, signedPdfBuffer);
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
