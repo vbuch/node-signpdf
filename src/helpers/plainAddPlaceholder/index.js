@@ -11,6 +11,13 @@ import createBufferRootWithAcroform from './createBufferRootWithAcroform';
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
 
+const isContainBufferRootWithAcrofrom = (pdf) => {
+    const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+    const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
+
+    return match != null && match[1] != null && match[1] !== '';
+};
+
 /**
  * Adds a signature placeholder to a PDF Buffer.
  *
@@ -73,7 +80,7 @@ const plainAddPlaceholder = ({
         signatureLength,
     });
 
-    if (reason === '1') {
+    if (!isContainBufferRootWithAcrofrom(pdf)) {
         const rootIndex = getIndexFromRef(info.xref, info.rootRef);
         addedReferences.set(rootIndex, pdf.length + 1);
         pdf = Buffer.concat([
