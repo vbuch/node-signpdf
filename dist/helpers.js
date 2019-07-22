@@ -82,7 +82,13 @@ const extractSignature = pdf => {
   }
 
   const byteRangeText = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
-  const ByteRange = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/.exec(byteRangeText).slice(1).map(Number);
+  const matches = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+) *\]/.exec(byteRangeText);
+
+  if (matches === null) {
+    throw new _SignPdfError.default('Failed to parse the ByteRange.', _SignPdfError.default.TYPE_PARSE);
+  }
+
+  const ByteRange = matches.slice(1).map(Number);
   const signedData = Buffer.concat([pdf.slice(ByteRange[0], ByteRange[0] + ByteRange[1]), pdf.slice(ByteRange[2], ByteRange[2] + ByteRange[3])]);
   const signatureHex = pdf.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2]).toString('binary').replace(/(?:00|>)+$/, '');
   const signature = Buffer.from(signatureHex, 'hex').toString('binary');
