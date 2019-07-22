@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.0.1]
+
+* Republish to fix messed up `latest` tag
+
 ## [1.0.0]
 
 * Removed signature verification as it is an incomplete implementation
@@ -9,6 +13,10 @@
 * Started this CHNAGELOG
 * Switched from npm to yarn
 * Upgraded dependencies due to vulnerabilities
+
+## [0.3.2]
+
+* Fixed the ByteRange-matching regex
 
 ## [0.3.1]
 
