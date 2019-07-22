@@ -11,8 +11,6 @@ Object.defineProperty(exports, "SignPdfError", {
 });
 exports.default = exports.SignPdf = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = void 0;
 
-var _crypto = _interopRequireDefault(require("crypto"));
-
 var _nodeForge = _interopRequireDefault(require("node-forge"));
 
 var _SignPdfError = _interopRequireDefault(require("./SignPdfError"));
@@ -45,14 +43,7 @@ class SignPdf {
       throw new _SignPdfError.default('p12 certificate expected as Buffer.', _SignPdfError.default.TYPE_INPUT);
     }
 
-    let pdf = pdfBuffer;
-    const lastChar = pdfBuffer.slice(pdfBuffer.length - 1).toString();
-
-    if (lastChar === '\n') {
-      // remove the trailing new line
-      pdf = pdf.slice(0, pdf.length - 1);
-    } // Find the ByteRange placeholder.
-
+    let pdf = (0, _helpers.removeTrailingNewLine)(pdfBuffer); // Find the ByteRange placeholder.
 
     const byteRangePlaceholder = [0, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`];
     const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
@@ -162,66 +153,6 @@ class SignPdf {
     pdf = Buffer.concat([pdf.slice(0, byteRange[1]), Buffer.from(`<${signature}>`), pdf.slice(byteRange[1])]); // Magic. Done.
 
     return pdf;
-  }
-
-  verify(pdfBuffer) {
-    if (!(pdfBuffer instanceof Buffer)) {
-      throw new _SignPdfError.default('PDF expected as Buffer.', _SignPdfError.default.TYPE_INPUT);
-    }
-
-    try {
-      const {
-        signature,
-        signedData
-      } = (0, _helpers.extractSignature)(pdfBuffer);
-
-      const p7Asn1 = _nodeForge.default.asn1.fromDer(signature);
-
-      const message = _nodeForge.default.pkcs7.messageFromAsn1(p7Asn1);
-
-      const sig = message.rawCapture.signature; // TODO: when node-forge implemets pkcs7.verify method,
-      // we should use message.verify to verify the whole signature
-      // instead of validating authenticatedAttributes only
-
-      const attrs = message.rawCapture.authenticatedAttributes;
-
-      const hashAlgorithmOid = _nodeForge.default.asn1.derToOid(message.rawCapture.digestAlgorithm);
-
-      const hashAlgorithm = _nodeForge.default.pki.oids[hashAlgorithmOid].toUpperCase();
-
-      const set = _nodeForge.default.asn1.create(_nodeForge.default.asn1.Class.UNIVERSAL, _nodeForge.default.asn1.Type.SET, true, attrs);
-
-      const buf = Buffer.from(_nodeForge.default.asn1.toDer(set).data, 'binary');
-
-      const cert = _nodeForge.default.pki.certificateToPem(message.certificates[0]);
-
-      const validAuthenticatedAttributes = _crypto.default.createVerify(hashAlgorithm).update(buf).verify(cert, sig, 'binary');
-
-      if (!validAuthenticatedAttributes) {
-        throw new _SignPdfError.default('Wrong authenticated attributes', _SignPdfError.default.VERIFY_SIGNATURE);
-      }
-
-      const messageDigestAttr = _nodeForge.default.pki.oids.messageDigest;
-      const fullAttrDigest = attrs.find(attr => _nodeForge.default.asn1.derToOid(attr.value[0].value) === messageDigestAttr);
-      const attrDigest = fullAttrDigest.value[1].value[0].value;
-
-      const dataDigest = _crypto.default.createHash(hashAlgorithm).update(signedData).digest();
-
-      const validContentDigest = dataDigest.toString('binary') === attrDigest;
-
-      if (!validContentDigest) {
-        throw new _SignPdfError.default('Wrong content digest', _SignPdfError.default.VERIFY_SIGNATURE);
-      }
-
-      return {
-        verified: true
-      };
-    } catch (err) {
-      return {
-        verified: false,
-        message: err instanceof _SignPdfError.default ? err.message : 'couldn\'t verify file signature'
-      };
-    }
   }
 
 }

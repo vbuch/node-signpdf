@@ -17,5 +17,6 @@ module.exports = {
     ],
     coveragePathIgnorePatterns: [
         '/node_modules/',
+        '/src/helpers/pdfkit/',
     ],
 };

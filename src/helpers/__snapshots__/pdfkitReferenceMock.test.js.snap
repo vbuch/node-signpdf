@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pdfkitReferenceMock can be converted to string 1`] = `"123 0 R"`;

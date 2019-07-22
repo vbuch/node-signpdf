@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createBufferPageWithAnnotation Reports unsupported feature 1`] = `"There already are /Annots described. This is not yet supported"`;

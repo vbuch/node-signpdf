@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getPagesDictionaryRef Errors when pages descriptor is not found 1`] = `"Failed to find the pages descriptor. This is probably a problem in node-signpdf."`;
