@@ -76,7 +76,16 @@ export const extractSignature = (pdf) => {
     }
 
     const byteRangeText = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
-    const ByteRange = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/.exec(byteRangeText).slice(1).map(Number);
+    const matches = (/\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+) *\]/).exec(byteRangeText);
+    if (matches === null) {
+        throw new SignPdfError(
+            'Failed to parse the ByteRange.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    const ByteRange = matches
+        .slice(1)
+        .map(Number);
 
     const signedData = Buffer.concat([
         pdf.slice(ByteRange[0], ByteRange[0] + ByteRange[1]),
