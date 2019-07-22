@@ -3,6 +3,7 @@
 [![npm version](https://badge.fury.io/js/node-signpdf.svg)](https://badge.fury.io/js/node-signpdf)
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
 [![Coverage Status](https://coveralls.io/repos/github/vbuch/node-signpdf/badge.svg?branch=master)](https://coveralls.io/github/vbuch/node-signpdf?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/npm/node-signpdf/badge.svg)](https://snyk.io/test/npm/node-signpdf)
 
 Simple signing of PDFs in node.
 
@@ -60,7 +61,7 @@ const {verified} = signer.verify(signedPdfBuffer);
 
 ## Notes
 
-* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document.
+* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eSignature+standards#eSignaturestandards-PAdES%28PDFAdvancedElectronicSignature%29BaselineProfile).
 * This lib:
   * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document;
   * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
@@ -101,8 +102,4 @@ The signed PDF file has the public certificate embeded in it, so all we need to 
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
 * This incredible [Stack Overflow answer](https://stackoverflow.com/questions/15969733/verify-pkcs7-pem-signature-unpack-data-in-node-js/16148331#16148331) for describing the whole process of verifying PKCS7 signatures.
 
-## Contributing
-
-* All PRs are welcome in the `develop` branch.
-* This is a git-flow repo. We use the default git flow with a `v` version prefix.
-* Note that [gitmoji](https://gitmoji.carloscuesta.me/) is used in the commit messages. That's not a must but we think it's nice.
+## [Contributing](CONTRIBUTING.md)

@@ -1,15 +1,15 @@
 {
     "presets": [
-        ["env", {
+        ["@babel/preset-env", {
             "targets": {
                 "node": "current"
             }
-        }]
+        }],
     ],
     "plugins": [
         ["module-resolver", {
             "root": ["./src"]
         }],
-        "syntax-object-rest-spread"
+        "@babel/plugin-syntax-object-rest-spread"
     ]
 }
