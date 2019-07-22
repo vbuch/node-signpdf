@@ -1,5 +1,4 @@
-import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './signpdf';
-import SignPdfError from './SignPdfError';
+import {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH} from './const';
 
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
@@ -9,7 +8,12 @@ import SignPdfError from './SignPdfError';
  * @param {string} reason
  * @returns {object}
  */
-export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) => {
+const pdfkitAddPlaceholder = ({
+    pdf,
+    reason,
+    signatureLength = DEFAULT_SIGNATURE_LENGTH,
+    byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
+}) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
     const signature = pdf.ref({
@@ -18,9 +22,9 @@ export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) =
         SubFilter: 'adbe.pkcs7.detached',
         ByteRange: [
             0,
-            DEFAULT_BYTE_RANGE_PLACEHOLDER,
-            DEFAULT_BYTE_RANGE_PLACEHOLDER,
-            DEFAULT_BYTE_RANGE_PLACEHOLDER,
+            byteRangePlaceholder,
+            byteRangePlaceholder,
+            byteRangePlaceholder,
         ],
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
@@ -57,37 +61,4 @@ export const addSignaturePlaceholder = ({pdf, reason, signatureLength = 8192}) =
     /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
 
-
-export const extractSignature = (pdf) => {
-    const byteRangePos = pdf.indexOf('/ByteRange [');
-    if (byteRangePos === -1) {
-        throw new SignPdfError(
-            'Failed to locate ByteRange.',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
-
-    const byteRangeEnd = pdf.indexOf(']', byteRangePos);
-    if (byteRangeEnd === -1) {
-        throw new SignPdfError(
-            'Failed to locate the end of the ByteRange.',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
-
-    const byteRangeText = pdf.slice(byteRangePos, byteRangeEnd + 1).toString();
-    const ByteRange = /\/ByteRange \[(\d+) +(\d+) +(\d+) +(\d+)\]/.exec(byteRangeText).slice(1).map(Number);
-
-    const signedData = Buffer.concat([
-        pdf.slice(ByteRange[0], ByteRange[0] + ByteRange[1]),
-        pdf.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
-    ]);
-    const signatureHex = pdf.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-        .toString('binary').replace(/(?:00|>)+$/, '');
-    const signature = Buffer.from(signatureHex, 'hex').toString('binary');
-    return {
-        ByteRange,
-        signature,
-        signedData,
-    };
-};
+export default pdfkitAddPlaceholder;

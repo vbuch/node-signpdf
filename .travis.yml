@@ -4,9 +4,9 @@ node_js:
   - "10"
   - "node"
 sudo: false
-install: npm install
+install: yarn install
 script:
-  - npm test
+  - yarn test
 notifications:
   email:
     on_success: change

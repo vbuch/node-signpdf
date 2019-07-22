@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit';
 import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
-import {addSignaturePlaceholder, extractSignature} from './helpers';
+import {pdfkitAddPlaceholder, extractSignature, plainAddPlaceholder} from './helpers';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -10,10 +10,14 @@ import SignPdfError from './SignPdfError';
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = (params = {
-    placeholder: {},
-    text: 'node-signpdf',
-}) => new Promise((resolve) => {
+const createPdf = params => new Promise((resolve) => {
+    const requestParams = {
+        placeholder: {},
+        text: 'node-signpdf',
+        addSignaturePlaceholder: true,
+        ...params,
+    };
+
     const pdf = new PDFDocument({
         autoFirstPage: true,
         size: 'A4',
@@ -27,7 +31,7 @@ const createPdf = (params = {
         .fillColor('#333')
         .fontSize(25)
         .moveDown()
-        .text(params.text);
+        .text(requestParams.text);
 
     // Collect the ouput PDF
     // and, when done, resolve with it stored in a Buffer
@@ -39,15 +43,17 @@ const createPdf = (params = {
         resolve(Buffer.concat(pdfChunks));
     });
 
-    // Externally (to PDFKit) add the signature placeholder.
-    const refs = addSignaturePlaceholder({
-        pdf,
-        reason: 'I am the author',
-        ...params.placeholder,
-    });
-    // Externally end the streams of the created objects.
-    // PDFKit doesn't know much about them, so it won't .end() them.
-    Object.keys(refs).forEach(key => refs[key].end());
+    if (requestParams.addSignaturePlaceholder) {
+        // Externally (to PDFKit) add the signature placeholder.
+        const refs = pdfkitAddPlaceholder({
+            pdf,
+            reason: 'I am the author',
+            ...requestParams.placeholder,
+        });
+        // Externally end the streams of the created objects.
+        // PDFKit doesn't know much about them, so it won't .end() them.
+        Object.keys(refs).forEach(key => refs[key].end());
+    }
 
     // Also end the PDFDocument stream.
     // See pdf.on('end'... on how it is then converted to Buffer.
@@ -62,6 +68,7 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects P12 certificate to be Buffer', () => {
@@ -71,15 +78,17 @@ describe('Test signing', () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects PDF to contain a ByteRange placeholder', () => {
         try {
-            signer.sign(Buffer.from('No BR placeholder'), Buffer.from(''));
+            signer.sign(Buffer.from('No BR placeholder\n%%EOF'), Buffer.from(''));
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('expects a reasonably sized placeholder', async () => {
@@ -89,18 +98,19 @@ describe('Test signing', () => {
                     signatureLength: 2,
                 },
             });
-            const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+            const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
             signer.sign(pdfBuffer, p12Buffer);
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('signs input PDF', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         expect(pdfBuffer instanceof Buffer).toBe(true);
@@ -110,7 +120,7 @@ describe('Test signing', () => {
         expect(signedData instanceof Buffer).toBe(true);
     });
     it('signs detached', async () => {
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
         let pdfBuffer = await createPdf({text: 'Some text'});
         signer.sign(pdfBuffer, p12Buffer);
@@ -123,9 +133,23 @@ describe('Test signing', () => {
         expect(signature1).not.toBe(signature2);
         expect(signature1).toHaveLength(signature2.length);
     });
+    it('signs a ready pdf', async () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
+        pdfBuffer = plainAddPlaceholder({
+            pdfBuffer,
+            reason: 'I have reviewed it.',
+            signatureLength: 1612,
+        });
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+    });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/bundle.p12`);
 
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         expect(pdfBuffer instanceof Buffer).toBe(true);
@@ -136,7 +160,7 @@ describe('Test signing', () => {
     });
     it('signs with passphrased certificate', async () => {
         let pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
 
         pdfBuffer = signer.sign(
             pdfBuffer,
@@ -151,7 +175,7 @@ describe('Test signing', () => {
     });
     it('errors on wrong certificate passphrase', async () => {
         const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../withpass.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
 
         try {
             signer.sign(
@@ -162,14 +186,12 @@ describe('Test signing', () => {
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof Error).toBe(true);
-            const error = e.message.toLowerCase();
-            expect(error.indexOf('invalid')).not.toBe(-1);
-            expect(error.indexOf('password')).not.toBe(-1);
+            expect(e.message).toMatchSnapshot();
         }
     });
     it('errors when no matching certificate is found in bags', async () => {
         const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../bundle.p12`);
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/bundle.p12`);
 
         // Monkey-patch pkcs12 to return no matching certificates although bundle.p12 is correct.
         const originalPkcs12FromAsn1 = forge.pkcs12.pkcs12FromAsn1;
@@ -201,74 +223,10 @@ describe('Test signing', () => {
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
-            const error = e.message.toLowerCase();
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-            expect(error.indexOf('matches')).not.toBe(-1);
+            expect(e.message).toMatchSnapshot();
         } finally {
             forge.pkcs12.pkcs12FromAsn1 = originalPkcs12FromAsn1;
         }
-    });
-});
-
-describe('Test verification', () => {
-    it('expects PDF to be Buffer', () => {
-        try {
-            signer.verify('non-buffer');
-            expect('here').not.toBe('here');
-        } catch (e) {
-            expect(e instanceof SignPdfError).toBe(true);
-            expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-        }
-    });
-
-    it('return {verified: true} if input is valid', async () => {
-        const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        const verifyResult = signer.verify(signedPdfBuffer);
-        expect(verifyResult.verified).toBe(true);
-    });
-
-    it('return {verified: false} if pdf data is changed', async () => {
-        const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        const {ByteRange} = extractSignature(signedPdfBuffer);
-        // manipulate data byte
-        const bytePosition = ByteRange[1] + ByteRange[2] + 100;
-        const originalByte = signedPdfBuffer[bytePosition];
-        signedPdfBuffer[bytePosition] = originalByte + 1;
-        const verifyResult = signer.verify(signedPdfBuffer);
-        expect(verifyResult.verified).toBe(false);
-    });
-
-    it('return {verified: false} if signature is changed', async () => {
-        const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        const {ByteRange} = extractSignature(signedPdfBuffer);
-        // manipulate signture byte
-        const bytePosition = ByteRange[1] + 2500;
-        const originalByte = signedPdfBuffer[bytePosition];
-        signedPdfBuffer[bytePosition] = originalByte + 1;
-        const verifyResult = signer.verify(signedPdfBuffer);
-        expect(verifyResult.verified).toBe(false);
-    });
-
-    it('return {verified: false} if the verify throws', async () => {
-        const pdfBuffer = await createPdf();
-        const p12Buffer = fs.readFileSync(`${__dirname}/../certificate.p12`);
-
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        const {ByteRange} = extractSignature(signedPdfBuffer);
-        // manipulate signture byte
-        const bytePosition = ByteRange[1] + 1000;
-        const originalByte = signedPdfBuffer[bytePosition];
-        signedPdfBuffer[bytePosition] = originalByte + 1;
-        const verifyResult = signer.verify(signedPdfBuffer);
-        expect(verifyResult.verified).toBe(false);
     });
 });

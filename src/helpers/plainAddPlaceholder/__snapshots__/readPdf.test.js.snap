@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`readPdf Errors when a PDF that already contains forms is passed in 1`] = `"The document already contains a form. This is not yet supported."`;
+
+exports[`readPdf Errors when an incrementally updated PDF is passed in 1`] = `"Incrementally updated PDFs are not yet supported."`;
