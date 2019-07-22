@@ -1,12 +1,20 @@
 # CHANGELOG
 
-## [next]
+## [1.0.0]
 
-* Remove signature verification as it is an incomplete implementation
+* Removed signature verification as it is an incomplete implementation
 * Split helpers as they became a huge piece of code
-* Renamed addSignaturePlaceholder to pdfkitAddPlaceholder
-* Implemented plainAddPlaceholder that works without pdfkit but with string/Buffer operations instead
+* Renamed `addSignaturePlaceholder` to `pdfkitAddPlaceholder`
+* Implemented `plainAddPlaceholder` that works without pdfkit but with string/Buffer operations instead
 * Started this CHNAGELOG
+* Switched from npm to yarn
+* Upgraded dependencies due to vulnerabilities
+
+## [0.3.1]
+
+* Fixed ByteRange logic in extractSignature
+* Updated the way the page dictionary is refernced to make it work with both pdfkit 0.8 and 0.9
+* Upgraded dependencies due to vulnerabilities
 
 ## [0.3.0]
 

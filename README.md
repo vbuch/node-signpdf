@@ -56,10 +56,10 @@ const signedPdf = signer.sign(
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eSignature+standards#eSignaturestandards-PAdES%28PDFAdvancedElectronicSignature%29BaselineProfile).
 * This lib:
-  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document;
+  * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document (There are helpers included that can try to add it);
   * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
   * takes `Buffer`s of the PDF and a P12 certificate to use when [signing](#generate-and-apply-signature);
-  * does not cover multiple signatures, incremental updates, etc. Only the basic scenario of signing a freshly created PDF. We actually only worked with documents created with PDFKit;
+  * does cover only basic scenarios of signing a PDF. If you have suggestions, ideas or anything, please [CONTRIBUTE](#contributing);
 * Feel free to copy and paste any part of this code. See its defined [Purpose](#purpose).
 
 ## Signing PDF in simple steps
@@ -81,7 +81,7 @@ This package provides two [helpers](https://github.com/vbuch/node-signpdf/blob/m
 
 ### Generate and apply signature
 
-That's where `node-signpdf` kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
+That's where the Signer kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
 
 ## Dependencies
 
