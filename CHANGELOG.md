@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [1.0.1]
+## [1.0.1, 1.0.2]
 
 * Republish to fix messed up `latest` tag
 
