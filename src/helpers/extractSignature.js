@@ -42,26 +42,23 @@ const extractSignature = (pdf) => {
         );
     }
 
+    const ByteRange = matches.slice(1).map(Number);
     const signedData = Buffer.concat([
-        pdf.slice(
-            parseInt(matches[1]),
-            parseInt(matches[1]) + parseInt(matches[2]),
-        ),
-        pdf.slice(
-            parseInt(matches[3]),
-            parseInt(matches[3]) + parseInt(matches[4]),
-        ),
+        pdf.slice(ByteRange[0], ByteRange[0] + ByteRange[1]),
+        pdf.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
     ]);
 
-    let signatureHex = pdf.slice(
-        parseInt(matches[1]) + parseInt(matches[2]) + 1,
-        parseInt(matches[3]) - 1,
-    ).toString('binary');
-    signatureHex = signatureHex.replace(/(?:00)*$/, '');
+    const signatureHex = pdf.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
+        .toString('binary')
+        .replace(/(?:00|>)+$/, '');
 
     const signature = Buffer.from(signatureHex, 'hex').toString('binary');
 
-    return {ByteRange: matches.slice(1, 5).map(Number), signature, signedData};
+    return {
+        ByteRange: matches.slice(1, 5).map(Number),
+        signature,
+        signedData,
+    };
 };
 
 export default extractSignature;
