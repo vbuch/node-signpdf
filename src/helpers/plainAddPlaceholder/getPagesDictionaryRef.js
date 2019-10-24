@@ -18,3 +18,5 @@ const getPagesDictionaryRef = (info) => {
 
     return match[1];
 }
+
+export default getPagesDictionaryRef;

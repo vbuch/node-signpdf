@@ -24,7 +24,7 @@ const readPdf = (pdfBuffer) => {
     let rootSlice = trailer.slice(trailer.indexOf('/Root'));
     rootSlice = rootSlice.slice(0, rootSlice.indexOf('/', 1));
     const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
-    const root = findObject(pdf, refTable, rootRef).toString();
+    const root = findObject(pdfBuffer, refTable, rootRef).toString();
 
     if (refTable.maxOffset > xRefPosition) {
         throw new SignPdfError(
@@ -32,6 +32,13 @@ const readPdf = (pdfBuffer) => {
             SignPdfError.TYPE_PARSE,
         );
     }
+
+    // if (root.indexOf('AcroForm') !== -1) {
+    //     throw new SignPdfError(
+    //         'The document already contains a form. This is not yet supported.',
+    //         SignPdfError.TYPE_PARSE,
+    //     );
+    // }
 
     return {
         xref: refTable,

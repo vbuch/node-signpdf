@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`readRefTable Errors when wrong ref table position is given 1`] = `"Unexpected cross-reference table format."`;

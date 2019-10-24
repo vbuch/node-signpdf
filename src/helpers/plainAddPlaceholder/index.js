@@ -32,6 +32,9 @@ const plainAddPlaceholder = ({
     reason,
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
 }) => {
+    if (!(pdfBuffer instanceof Buffer)) {
+        console.log(pdfBuffer);
+    }
     let pdf = removeTrailingNewLine(pdfBuffer);
     const info = readPdf(pdf);
     const pageRef = getPageRef(pdf, info);

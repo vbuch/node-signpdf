@@ -1,6 +1,6 @@
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH} from './const';
 // eslint-disable-next-line import/no-unresolved
-import PDFKitReferenceMock from './PDFKitReferenceMock';
+import PDFKitReferenceMock from './pdfkitReferenceMock';
 /**
  * Adds the objects that are needed for Adobe.PPKLite to read the signature.
  * Also includes a placeholder for the actual signature.
