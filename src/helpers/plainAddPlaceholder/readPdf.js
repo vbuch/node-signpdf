@@ -33,13 +33,6 @@ const readPdf = (pdfBuffer) => {
         );
     }
 
-    // if (root.indexOf('AcroForm') !== -1) {
-    //     throw new SignPdfError(
-    //         'The document already contains a form. This is not yet supported.',
-    //         SignPdfError.TYPE_PARSE,
-    //     );
-    // }
-
     return {
         xref: refTable,
         rootRef,
