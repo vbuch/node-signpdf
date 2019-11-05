@@ -74,6 +74,7 @@ const getXref = (pdf, position) => {
         const [fullString, prevPosition] = match;
         prev = prevPosition;
 
+        console.log(objects);
         xRefContent = objects
             .split('\n')
             .filter(l => l !== '')
@@ -107,10 +108,6 @@ const parseRootXref = (prev, l, i) => {
 };
 
 const parseTrailerXref = (prev, curr, index, array) => {
-    if (array.length === 1) {
-        return {};
-    }
-
     const isObjectId = curr.split(' ').length === 2;
 
     if (isObjectId) {
