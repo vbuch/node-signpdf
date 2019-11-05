@@ -24,10 +24,10 @@ const removeTrailingNewLine = (pdf) => {
 
     const lastLine = output.slice(output.length - 6).toString();
     if (lastLine !== '\n%%EOF') {
-        output = Buffer.concat([
-            output,
-            Buffer.from('\n%%EOF'),
-        ]);
+        throw new SignPdfError(
+            'A PDF file must end with an EOF line.',
+            SignPdfError.TYPE_PARSE,
+        );
     }
 
     return output;

@@ -61,7 +61,7 @@ const pdfkitAddPlaceholder = ({
         Type: 'Annot',
         Subtype: 'Widget',
         FT: 'Sig',
-        Rect: [188.67, 679.07, 384.78, 748.04],
+        Rect: [0, 0, 0, 0],
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
         F: 4,

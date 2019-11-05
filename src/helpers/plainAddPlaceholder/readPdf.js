@@ -19,19 +19,12 @@ const readPdf = (pdfBuffer) => {
     let xRefPosition = trailer.slice(trailer.lastIndexOf('startxref') + 10).toString();
 
     xRefPosition = parseInt(xRefPosition);
-    const refTable = readRefTable(pdfBuffer, xRefPosition);
+    const refTable = readRefTable(pdfBuffer);
 
     let rootSlice = trailer.slice(trailer.indexOf('/Root'));
     rootSlice = rootSlice.slice(0, rootSlice.indexOf('/', 1));
     const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
     const root = findObject(pdfBuffer, refTable, rootRef).toString();
-
-    if (refTable.maxOffset > xRefPosition) {
-        throw new SignPdfError(
-            'Ref table is not at the end of the document. This document can only be signed in incremental mode.',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
 
     return {
         xref: refTable,
