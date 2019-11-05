@@ -11,7 +11,7 @@ import createBufferRootWithAcroform from './createBufferRootWithAcroform';
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
 
-const isContainBufferRootWithAcrofrom = (pdf) => {
+const isContainBufferRootWithAcroform = (pdf) => {
     const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
     const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
 
@@ -83,7 +83,7 @@ const plainAddPlaceholder = ({
         signatureLength,
     });
 
-    if (!isContainBufferRootWithAcrofrom(pdf)) {
+    if (!isContainBufferRootWithAcroform(pdf)) {
         const rootIndex = getIndexFromRef(info.xref, info.rootRef);
         addedReferences.set(rootIndex, pdf.length + 1);
         pdf = Buffer.concat([

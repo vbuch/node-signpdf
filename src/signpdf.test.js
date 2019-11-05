@@ -153,7 +153,8 @@ describe('Test signing', () => {
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
         pdfBuffer = plainAddPlaceholder({
             pdfBuffer, 
-            reason: 'first'
+            reason: 'first',
+            signatureLength: p12Buffer.length
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
         fs.writeFileSync(`${__dirname}/../resources/signed-once.pdf`, pdfBuffer);
@@ -162,7 +163,8 @@ describe('Test signing', () => {
         let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed-once.pdf`);
         signedPdfBuffer = plainAddPlaceholder({ 
             pdfBuffer: signedPdfBuffer, 
-            reason: 'second'
+            reason: 'second',
+            signatureLength: secondP12Buffer.length
         });
         signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
         fs.writeFileSync(`${__dirname}/../resources/signed-twice.pdf`, signedPdfBuffer);
