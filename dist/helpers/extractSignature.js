@@ -9,17 +9,6 @@ var _SignPdfError = _interopRequireDefault(require("../SignPdfError"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const getSubstringIndex = (str, substring, n) => {
-  var times = 0,
-      index = null;
-
-  while (times < n && index !== -1) {
-    index = str.indexOf(substring, index + 1);
-    times++;
-  }
-
-  return index;
-};
 /**
  * Basic implementation of signature extraction.
  *
@@ -29,15 +18,12 @@ const getSubstringIndex = (str, substring, n) => {
  * @param {Buffer} pdf
  * @returns {Object} {ByteRange: Number[], signature: Buffer, signedData: Buffer}
  */
-
-
-const extractSignature = (pdf, signatureCount = 1) => {
+const extractSignature = pdf => {
   if (!(pdf instanceof Buffer)) {
     throw new _SignPdfError.default('PDF expected as Buffer.', _SignPdfError.default.TYPE_INPUT);
-  } // const byteRangePos = pdf.indexOf('/ByteRange [');
+  }
 
-
-  const byteRangePos = getSubstringIndex(pdf, '/ByteRange [', signatureCount);
+  const byteRangePos = pdf.indexOf('/ByteRange [');
 
   if (byteRangePos === -1) {
     throw new _SignPdfError.default('Failed to locate ByteRange.', _SignPdfError.default.TYPE_PARSE);

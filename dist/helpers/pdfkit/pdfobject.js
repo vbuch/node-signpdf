@@ -117,33 +117,13 @@ class PDFObject {
 
     if ({}.toString.call(object) === '[object Object]') {
       const out = ['<<'];
-      let streamData;
 
       for (const key in object) {
-        if (object.hasOwnProperty(key)) {
-          let val = object[key];
-          let checkedValue = '';
-
-          if (val.toString().indexOf('<<') !== -1) {
-            checkedValue = val;
-          } else {
-            checkedValue = PDFObject.convert(val, encryptFn);
-          }
-
-          if (key === 'stream') {
-            streamData = `${key}\n${val}\nendstream`;
-          } else {
-            out.push(`/${key} ${checkedValue}`);
-          }
-        }
+        const val = object[key];
+        out.push(`/${key} ${PDFObject.convert(val, encryptFn)}`);
       }
 
       out.push('>>');
-
-      if (streamData) {
-        out.push(streamData);
-      }
-
       return out.join('\n');
     }
 
