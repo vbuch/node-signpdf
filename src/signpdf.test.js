@@ -151,10 +151,10 @@ describe('Test signing', () => {
     it('signs a ready pdf two times', async () => {
         const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
         let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed-once.pdf`);
-        signedPdfBuffer = plainAddPlaceholder({ 
-            pdfBuffer: signedPdfBuffer, 
+        signedPdfBuffer = plainAddPlaceholder({
+            pdfBuffer: signedPdfBuffer,
             reason: 'second',
-            signatureLength: secondP12Buffer.length
+            signatureLength: 1592,
         });
         signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
         const {signature, signedData} = extractSignature(signedPdfBuffer, 2);
