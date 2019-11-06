@@ -29,6 +29,11 @@ var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const isContainBufferRootWithAcroform = pdf => {
+  const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+  const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
+  return match != null && match[1] != null && match[1] !== '';
+};
 /**
  * Adds a signature placeholder to a PDF Buffer.
  *
@@ -38,6 +43,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * This allows node-signpdf to be used on any PDF and
  * not only on a freshly created through PDFKit one.
  */
+
+
 const plainAddPlaceholder = ({
   pdfBuffer,
   reason,
@@ -49,11 +56,12 @@ const plainAddPlaceholder = ({
   const pageIndex = (0, _getIndexFromRef.default)(info.xref, pageRef);
   const addedReferences = new Map();
   const pdfKitMock = {
-    ref: input => {
+    ref: (input, additionalIndex) => {
       info.xref.maxIndex += 1;
-      addedReferences.set(info.xref.maxIndex, pdf.length + 1); // + 1 new line
+      const index = additionalIndex != null ? additionalIndex : info.xref.maxIndex;
+      addedReferences.set(index, pdf.length + 1); // + 1 new line
 
-      pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${info.xref.maxIndex} 0 obj\n`), Buffer.from(_pdfobject.default.convert(input)), Buffer.from('\nendobj\n')]);
+      pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${index} 0 obj\n`), Buffer.from(_pdfobject.default.convert(input)), Buffer.from('\nendobj\n')]);
       return new _pdfkitReferenceMock.default(info.xref.maxIndex);
     },
     page: {
@@ -72,12 +80,17 @@ const plainAddPlaceholder = ({
     widget
   } = (0, _pdfkitAddPlaceholder.default)({
     pdf: pdfKitMock,
+    pdfBuffer,
     reason,
     signatureLength
   });
-  const rootIndex = (0, _getIndexFromRef.default)(info.xref, info.rootRef);
-  addedReferences.set(rootIndex, pdf.length + 1);
-  pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferRootWithAcroform.default)(pdf, info, form)]);
+
+  if (!isContainBufferRootWithAcroform(pdf)) {
+    const rootIndex = (0, _getIndexFromRef.default)(info.xref, info.rootRef);
+    addedReferences.set(rootIndex, pdf.length + 1);
+    pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferRootWithAcroform.default)(pdf, info, form)]);
+  }
+
   addedReferences.set(pageIndex, pdf.length + 1);
   pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferPageWithAnnotation.default)(pdf, info, pageRef, widget)]);
   pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferTrailer.default)(pdf, info, addedReferences)]);
