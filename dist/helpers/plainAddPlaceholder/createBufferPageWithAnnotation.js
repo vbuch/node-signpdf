@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _SignPdfError = _interopRequireDefault(require("../../SignPdfError"));
-
 var _findObject = _interopRequireDefault(require("./findObject"));
 
 var _getIndexFromRef = _interopRequireDefault(require("./getIndexFromRef"));
@@ -14,14 +12,15 @@ var _getIndexFromRef = _interopRequireDefault(require("./getIndexFromRef"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
-  const pagesDictionary = (0, _findObject.default)(pdf, info.xref, pagesRef).toString();
+  const pagesDictionary = (0, _findObject.default)(pdf, info.xref, pagesRef).toString(); // Extend page dictionary with newly created annotations
 
-  if (pagesDictionary.indexOf('/Annots') !== -1) {
-    throw new _SignPdfError.default('There already are /Annots described. This is not yet supported', _SignPdfError.default.TYPE_PARSE);
-  }
+  const splittedDictionary = pagesDictionary.split('/Annots')[0];
+  let splittedIds = pagesDictionary.split('/Annots')[1]; // eslint-disable-next-line no-useless-escape
 
+  splittedIds = splittedIds === undefined ? '' : splittedIds.replace(/[\[\]]/g, '');
   const pagesDictionaryIndex = (0, _getIndexFromRef.default)(info.xref, pagesRef);
-  return Buffer.concat([Buffer.from(`${pagesDictionaryIndex} 0 obj\n`), Buffer.from('<<\n'), Buffer.from(`${pagesDictionary}\n`), Buffer.from(`/Annots [${widget}]`), Buffer.from('\n>>\nendobj\n')]);
+  const widgetValue = widget.toString();
+  return Buffer.concat([Buffer.from(`${pagesDictionaryIndex} 0 obj\n`), Buffer.from('<<\n'), Buffer.from(`${splittedDictionary}\n`), Buffer.from(`/Annots [${splittedIds} ${widgetValue}]`), Buffer.from('\n>>\nendobj\n')]);
 };
 
 var _default = createBufferPageWithAnnotation;
