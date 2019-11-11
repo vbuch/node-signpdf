@@ -11,6 +11,13 @@ import createBufferRootWithAcroform from './createBufferRootWithAcroform';
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
 
+const isContainBufferRootWithAcroform = (pdf) => {
+    const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+    const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
+
+    return match != null && match[1] != null && match[1] !== '';
+};
+
 /**
  * Adds a signature placeholder to a PDF Buffer.
  *
@@ -32,15 +39,17 @@ const plainAddPlaceholder = ({
     const addedReferences = new Map();
 
     const pdfKitMock = {
-        ref: (input) => {
+        ref: (input, additionalIndex) => {
             info.xref.maxIndex += 1;
 
-            addedReferences.set(info.xref.maxIndex, pdf.length + 1); // + 1 new line
+            const index = additionalIndex != null ? additionalIndex : info.xref.maxIndex;
+
+            addedReferences.set(index, pdf.length + 1); // + 1 new line
 
             pdf = Buffer.concat([
                 pdf,
                 Buffer.from('\n'),
-                Buffer.from(`${info.xref.maxIndex} 0 obj\n`),
+                Buffer.from(`${index} 0 obj\n`),
                 Buffer.from(PDFObject.convert(input)),
                 Buffer.from('\nendobj\n'),
             ]);
@@ -66,18 +75,20 @@ const plainAddPlaceholder = ({
         widget,
     } = pdfkitAddPlaceholder({
         pdf: pdfKitMock,
+        pdfBuffer,
         reason,
         signatureLength,
     });
 
-    const rootIndex = getIndexFromRef(info.xref, info.rootRef);
-    addedReferences.set(rootIndex, pdf.length + 1);
-    pdf = Buffer.concat([
-        pdf,
-        Buffer.from('\n'),
-        createBufferRootWithAcroform(pdf, info, form),
-    ]);
-
+    if (!isContainBufferRootWithAcroform(pdf)) {
+        const rootIndex = getIndexFromRef(info.xref, info.rootRef);
+        addedReferences.set(rootIndex, pdf.length + 1);
+        pdf = Buffer.concat([
+            pdf,
+            Buffer.from('\n'),
+            createBufferRootWithAcroform(pdf, info, form),
+        ]);
+    }
     addedReferences.set(pageIndex, pdf.length + 1);
     pdf = Buffer.concat([
         pdf,

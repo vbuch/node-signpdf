@@ -1,5 +1,14 @@
 import SignPdfError from '../SignPdfError';
+const getSubstringIndex = (str, substring, n) => {
+    var times = 0, index = null;
 
+    while (times < n && index !== -1) {
+        index = str.indexOf(substring, index+1);
+        times++;
+    }
+
+    return index;
+}
 /**
  * Basic implementation of signature extraction.
  *
@@ -9,7 +18,7 @@ import SignPdfError from '../SignPdfError';
  * @param {Buffer} pdf
  * @returns {Object} {ByteRange: Number[], signature: Buffer, signedData: Buffer}
  */
-const extractSignature = (pdf) => {
+const extractSignature = (pdf, signatureCount = 1) => {
     if (!(pdf instanceof Buffer)) {
         throw new SignPdfError(
             'PDF expected as Buffer.',
@@ -17,7 +26,8 @@ const extractSignature = (pdf) => {
         );
     }
 
-    const byteRangePos = pdf.indexOf('/ByteRange [');
+    // const byteRangePos = pdf.indexOf('/ByteRange [');
+    const byteRangePos = getSubstringIndex(pdf, '/ByteRange [', signatureCount);
     if (byteRangePos === -1) {
         throw new SignPdfError(
             'Failed to locate ByteRange.',
