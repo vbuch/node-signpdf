@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.1.0]
+
+* `plainAddPlaceholder` creates an incremental change to allow signing a document multiple times.
+
 ## [1.0.1, 1.0.2]
 
 * Republish to fix messed up `latest` tag
