@@ -1,6 +1,6 @@
 {
     "name": "node-signpdf",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
@@ -40,28 +40,6 @@
             "dist"
         ]
     },
-    "contributors": [
-        {
-            "name": "vbuch",
-            "url": "https://github.com/vbuch"
-        },
-        {
-            "name": "maldimirov",
-            "url": "https://github.com/maldimirov"
-        },
-        {
-            "name": "alekssakovsky",
-            "url": "https://github.com/alekssakovsky"
-        },
-        {
-            "name": "MohammedEssehemy",
-            "url": "https://github.com/mohammedessehemy"
-        },
-        {
-            "name": "samaleksov",
-            "url": "https://github.com/samaleksov"
-        }
-    ],
     "peerDependencies": {
         "node-forge": "^0.7.6"
     },
