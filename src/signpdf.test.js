@@ -3,6 +3,8 @@ import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
 import {pdfkitAddPlaceholder, extractSignature, plainAddPlaceholder} from './helpers';
+import getSignatureInfo from './helpers/pdfLibMark/getSignatureInfo';
+import addMarkToDocument from './helpers/pdfLibMark/addMarkToDocument';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -171,6 +173,27 @@ describe('Test signing', () => {
         const {signature, signedData} = extractSignature(signedPdfBuffer, 2);
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
+    });
+    it('sign with mark in the document', async () => {
+      const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
+      let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
+      console.log(pdfBuffer.toString())
+      const textMark = await getSignatureInfo(p12Buffer, 'node-signpdf');
+      pdfBuffer = await addMarkToDocument(pdfBuffer, textMark);
+      console.log(pdfBuffer.toString())
+      pdfBuffer = plainAddPlaceholder({
+        pdfBuffer, 
+        reason: 'Sign with mark',
+        signatureLength: p12Buffer.length
+      });
+      pdfBuffer = signer.sign(pdfBuffer, p12Buffer, {
+        passphrase: 'node-signpdf'
+      });
+      expect(pdfBuffer instanceof Buffer).toBe(true);
+      fs.writeFileSync(`${__dirname}/../resources/signed-with-mark.pdf`, pdfBuffer);
+      const {signature, signedData} = extractSignature(pdfBuffer);
+      expect(typeof signature === 'string').toBe(true);
+      expect(signedData instanceof Buffer).toBe(true);
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
