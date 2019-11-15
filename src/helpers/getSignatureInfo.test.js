@@ -1,5 +1,5 @@
 import fs from 'fs'
-import SignPdfError from '../../SignPdfError'
+import SignPdfError from '../SignPdfError'
 import getSignatureInfo from './getSignatureInfo'
 
 describe('getSignatureInfo', () => {
@@ -15,7 +15,7 @@ describe('getSignatureInfo', () => {
   })
   it('get signature information', () => {
     try {
-      const p12Buffer = fs.readFileSync(`${__dirname}/../../../resources/withpass.p12`)
+      const p12Buffer = fs.readFileSync(`${__dirname}/../../resources/withpass.p12`)
       const info = getSignatureInfo(p12Buffer, 'node-signpdf')
       expect('SignPdf').toBe('SignPdf')
     } catch (e) {

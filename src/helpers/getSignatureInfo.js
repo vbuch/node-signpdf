@@ -1,5 +1,5 @@
 import forge from 'node-forge'
-import SignPdfError from '../../SignPdfError'
+import SignPdfError from '../SignPdfError'
 
 const { pki } = forge
 
