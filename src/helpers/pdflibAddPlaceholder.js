@@ -145,7 +145,7 @@ const pdflibAddPlaceholder = async ({
   )
 
   // Similar Function is PDFContext.register, but it doesn't work
-  const sigAppearanceStreamRef = pdfDoc.register(sigAppearanceStream)
+  const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream)
   
   // Define the signature widget annotation
   const widgetDict = PDFDict.withContext({
@@ -167,7 +167,7 @@ const pdflibAddPlaceholder = async ({
     }, pdfDoc.context),
   }, pdfDoc.context)
   // Similar Function is PDFContext.register, but it doesn't work
-  const widgetDictRef = pdfDoc.register(widgetDict)
+  const widgetDictRef = pdfDoc.context.register(widgetDict)
 
   // Add our signature widget to the first page
   // by parameter it should also be sent which pages you want to sign - ojo
