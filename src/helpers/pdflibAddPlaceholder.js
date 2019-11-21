@@ -51,7 +51,7 @@ const pdflibAddPlaceholder = async ({
       PDFNumber.of(byteRangePlaceholder),
       PDFNumber.of(byteRangePlaceholder),
       PDFNumber.of(byteRangePlaceholder),
-    ], pdfDoc.context),
+    ]),
     Contents: PDFHexString.of(String.fromCharCode(0).repeat(signatureLength)),
     Reason: PDFString.of(infoSignature.reason),
     M: PDFString.of(dateString),
@@ -59,7 +59,7 @@ const pdflibAddPlaceholder = async ({
     Name: PDFString.of(infoSignature.name || ''),
     Location: PDFString.of(infoSignature.location || ''),
   }, pdfDoc.context)
-
+  
   // Check if pdf already contains acroform field
   const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm')
   const isAcroFormExists = acroFormPosition !== -1
@@ -96,73 +96,65 @@ const pdflibAddPlaceholder = async ({
     PDFDict.withContext({
       Type: PDFName.of('XObject'),
       Subtype: PDFName.of('Form'),
-      BBox: PDFArray.withContext([
-        PDFNumber.of(infoSignature.positionBBox.left),
-        PDFNumber.of(infoSignature.positionBBox.bottom),
-        PDFNumber.of(infoSignature.positionBBox.right),
-        PDFNumber.of(infoSignature.positionBBox.top),
-      ], pdfDoc.context),
       Resources: PDFDict.withContext({
         Font: PDFDict.withContext({
           Helvetica: FontHelvetica
         }, pdfDoc.context)
       }, pdfDoc.context),
     }, pdfDoc.context),
-    PDFArray.withContext([
-      drawRectangle({
-        x: infoSignature.positionBBox.left,
-        y: infoSignature.positionBBox.bottom,
-        width: infoSignature.positionBBox.right,
-        height: infoSignature.positionBBox.top,
-        color: rgb(0.95, 0.95, 0.95),
-        borderWidth: 3,
-        borderColor: rgb(0, 0, 0),
-        rotate: degrees(0),
-        xSkew: degrees(0),
-        ySkew: degrees(0)
-      }),
-      drawText(info, {
-        x: 10,
-        y: 15,
-        font: 'Helvetica',
-        size: 15,
-        color: rgb(0.5, 0.5, 0.5),
-        rotate: degrees(0),
-        xSkew: degrees(0),
-        ySkew: degrees(0)
-      }),
-      drawRectangle({
-        x: 4,
-        y: 4,
-        width: 192,
-        height: 2,
-        color: rgb(0.5, 0.5, 0.5),
-        rotate: degrees(0),
-        borderWidth: 0,
-        borderColor: rgb(0, 0, 0),
-        xSkew: degrees(0),
-        ySkew: degrees(0)
-      }),
-    ])
+    drawRectangle({
+      x: PDFNumber.of(infoSignature.positionBBox.left),
+      y: PDFNumber.of(infoSignature.positionBBox.bottom),
+      width: PDFNumber.of(infoSignature.positionBBox.right),
+      height: PDFNumber.of(infoSignature.positionBBox.top),
+      color: rgb(0.95, 0.95, 0.95),
+      borderWidth: 3,
+      borderColor: rgb(0, 0, 0),
+      rotate: degrees(0),
+      xSkew: degrees(0),
+      ySkew: degrees(0)
+    }),
+    drawText(info, {
+      x: PDFNumber.of(10),
+      y: PDFNumber.of(15),
+      font: 'Helvetica',
+      size: PDFNumber.of(15),
+      color: rgb(0.5, 0.5, 0.5),
+      rotate: degrees(0),
+      xSkew: degrees(0),
+      ySkew: degrees(0)
+    }),
+    drawRectangle({
+      x: PDFNumber.of(4),
+      y: PDFNumber.of(4),
+      width: PDFNumber.of(192),
+      height: PDFNumber.of(2),
+      color: rgb(0.5, 0.5, 0.5),
+      rotate: degrees(0),
+      borderWidth: 0,
+      borderColor: rgb(0, 0, 0),
+      xSkew: degrees(0),
+      ySkew: degrees(0)
+    })
   )
 
   const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream)
-  
-  // Define the signature widget annotation
+
+  // Define the signature widget annotation - Table 164
   const widgetDict = PDFDict.withContext({
-    Type: pdfDoc.catalog.get(PDFName.of('Annot')),
-    Subtype: pdfDoc.catalog.get(PDFName.of('Widget')),
-    FT: pdfDoc.catalog.get(PDFName.of('Sig')),
+    Type: PDFName.of('Annot'),
+    Subtype: PDFName.of('Widget'),
+    FT: PDFName.of('Sig'),
     Rect: PDFArray.withContext([
       PDFNumber.of(50),
       PDFNumber.of(50),
       PDFNumber.of(300),
       PDFNumber.of(100),
-    ], pdfDoc.context),
+    ]),
     V: signatureDict,
     T: PDFString.of(signatureName + (fieldIds.length + 1)),
     F: PDFNumber.of(4),
-    // P: (pdfDoc.catalog.Pages.get('Kids') as PDFArray).get(0),
+    P: pdfDoc.catalog.Pages().Kids().get(0),
     AP: PDFDict.withContext({
       N: sigAppearanceStreamRef,
     }, pdfDoc.context)
@@ -174,13 +166,13 @@ const pdflibAddPlaceholder = async ({
   const pages = pdfDoc.getPages()
   pages[0].node.set(
     PDFName.of('Annots'),
-    PDFArray.withContext([widgetDictRef], pdfDoc.context),
+    PDFArray.withContext([widgetDictRef]),
   )
 
   // Create an AcroForm object containing our signature widget
   const formDict = PDFDict.withContext({
     SigFlags: PDFNumber.of(3),
-    Fields: PDFArray.withContext([widgetDictRef], pdfDoc.context),
+    Fields: PDFArray.withContext([widgetDictRef]),
   }, pdfDoc.context)
   
   pdfDoc.catalog.set(PDFName.of('AcroForm'), formDict)

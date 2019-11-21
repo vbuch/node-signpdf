@@ -43,7 +43,7 @@ const pdflibAddPlaceholder = async ({
     Type: _pdfLib.PDFName.of('Sig'),
     Filter: _pdfLib.PDFName.of('Adobe.PPKLite'),
     SubFilter: _pdfLib.PDFName.of('adbe.pkcs7.detached'),
-    ByteRange: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(0), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder)], pdfDoc.context),
+    ByteRange: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(0), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder)]),
     Contents: _pdfLib.PDFHexString.of(String.fromCharCode(0).repeat(signatureLength)),
     Reason: _pdfLib.PDFString.of(infoSignature.reason),
     M: _pdfLib.PDFString.of(dateString),
@@ -84,17 +84,16 @@ const pdflibAddPlaceholder = async ({
   const sigAppearanceStream = _pdfLib.PDFContentStream.of(_pdfLib.PDFDict.withContext({
     Type: _pdfLib.PDFName.of('XObject'),
     Subtype: _pdfLib.PDFName.of('Form'),
-    BBox: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(infoSignature.positionBBox.left), _pdfLib.PDFNumber.of(infoSignature.positionBBox.bottom), _pdfLib.PDFNumber.of(infoSignature.positionBBox.right), _pdfLib.PDFNumber.of(infoSignature.positionBBox.top)], pdfDoc.context),
     Resources: _pdfLib.PDFDict.withContext({
       Font: _pdfLib.PDFDict.withContext({
         Helvetica: FontHelvetica
       }, pdfDoc.context)
     }, pdfDoc.context)
   }, pdfDoc.context), (0, _pdfLib.drawRectangle)({
-    x: infoSignature.positionBBox.left,
-    y: infoSignature.positionBBox.bottom,
-    width: infoSignature.positionBBox.right,
-    height: infoSignature.positionBBox.top,
+    x: _pdfLib.PDFNumber.of(infoSignature.positionBBox.left),
+    y: _pdfLib.PDFNumber.of(infoSignature.positionBBox.bottom),
+    width: _pdfLib.PDFNumber.of(infoSignature.positionBBox.right),
+    height: _pdfLib.PDFNumber.of(infoSignature.positionBBox.top),
     color: (0, _pdfLib.rgb)(0.95, 0.95, 0.95),
     borderWidth: 3,
     borderColor: (0, _pdfLib.rgb)(0, 0, 0),
@@ -102,58 +101,57 @@ const pdflibAddPlaceholder = async ({
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
   }), (0, _pdfLib.drawText)(info, {
-    x: 10,
-    y: 15,
+    x: _pdfLib.PDFNumber.of(10),
+    y: _pdfLib.PDFNumber.of(15),
     font: 'Helvetica',
-    size: 15,
+    size: _pdfLib.PDFNumber.of(15),
     color: (0, _pdfLib.rgb)(0.5, 0.5, 0.5),
     rotate: (0, _pdfLib.degrees)(0),
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
   }), (0, _pdfLib.drawRectangle)({
-    x: 4,
-    y: 4,
-    width: 192,
-    height: 2,
+    x: _pdfLib.PDFNumber.of(4),
+    y: _pdfLib.PDFNumber.of(4),
+    width: _pdfLib.PDFNumber.of(192),
+    height: _pdfLib.PDFNumber.of(2),
     color: (0, _pdfLib.rgb)(0.5, 0.5, 0.5),
     rotate: (0, _pdfLib.degrees)(0),
     borderWidth: 0,
     borderColor: (0, _pdfLib.rgb)(0, 0, 0),
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
-  })); // Similar Function is PDFContext.register, but it doesn't work
+  }));
 
-
-  const sigAppearanceStreamRef = pdfDoc.register(sigAppearanceStream); // Define the signature widget annotation
+  const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream); // Define the signature widget annotation - Table 164
 
   const widgetDict = _pdfLib.PDFDict.withContext({
     Type: _pdfLib.PDFName.of('Annot'),
     Subtype: _pdfLib.PDFName.of('Widget'),
     FT: _pdfLib.PDFName.of('Sig'),
-    Rect: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(300), _pdfLib.PDFNumber.of(100)], pdfDoc.context),
+    Rect: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(300), _pdfLib.PDFNumber.of(100)]),
     V: signatureDict,
     T: _pdfLib.PDFString.of(signatureName + (fieldIds.length + 1)),
     F: _pdfLib.PDFNumber.of(4),
-    // P: (pdfDoc.catalog.Pages.get('Kids') as PDFArray).get(0),
+    P: pdfDoc.catalog.Pages().Kids().get(0),
     AP: _pdfLib.PDFDict.withContext({
       N: sigAppearanceStreamRef
     }, pdfDoc.context)
-  }, pdfDoc.context); // Similar Function is PDFContext.register, but it doesn't work
+  }, pdfDoc.context);
 
-
-  const widgetDictRef = pdfDoc.register(widgetDict); // Add our signature widget to the first page
+  const widgetDictRef = pdfDoc.context.register(widgetDict); // Add our signature widget to the first page
   // by parameter it should also be sent which pages you want to sign - ojo
 
   const pages = pdfDoc.getPages();
-  pages[0].set('Annots', _pdfLib.PDFArray.withContext([widgetDictRef], pdfDoc.context)); // Create an AcroForm object containing our signature widget
+  pages[0].node.set(_pdfLib.PDFName.of('Annots'), _pdfLib.PDFArray.withContext([widgetDictRef])); // Create an AcroForm object containing our signature widget
 
   const formDict = _pdfLib.PDFDict.withContext({
     SigFlags: _pdfLib.PDFNumber.of(3),
-    Fields: _pdfLib.PDFArray.withContext([widgetDictRef], pdfDoc.context)
+    Fields: _pdfLib.PDFArray.withContext([widgetDictRef])
   }, pdfDoc.context);
 
-  pdfDoc.catalog.set('AcroForm', formDict);
-  return Buffer.from(pdfDoc);
+  pdfDoc.catalog.set(_pdfLib.PDFName.of('AcroForm'), formDict);
+  const pdfDocBytes = await pdfDoc.save();
+  return Buffer.from(pdfDocBytes);
 };
 
 var _default = pdflibAddPlaceholder;
