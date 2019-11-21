@@ -10,7 +10,7 @@ describe('pdflib add placeholder', () => {
         reason: 'Sign Test',
         contactInfo: 'example123@gmail.com',
         name: 'Name Example',
-        location: 'LOcation Example',
+        location: 'Location Example',
       }
       const buffer = await pdflibAddPlaceholder({pdfBuffer, infoSignature})
       expect(buffer instanceof Buffer).toBe(true)

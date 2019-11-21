@@ -144,14 +144,13 @@ const pdflibAddPlaceholder = async ({
     }),
   )
 
-  // Similar Function is PDFContext.register, but it doesn't work
   const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream)
   
   // Define the signature widget annotation
   const widgetDict = PDFDict.withContext({
-    Type: PDFName.of('Annot'),
-    Subtype: PDFName.of('Widget'),
-    FT: PDFName.of('Sig'),
+    Type: pdfDoc.catalog.get(PDFName.of('Annot')),
+    Subtype: pdfDoc.catalog.get(PDFName.of('Widget')),
+    FT: pdfDoc.catalog.get(PDFName.of('Sig')),
     Rect: PDFArray.withContext([
       PDFNumber.of(50),
       PDFNumber.of(50),
@@ -164,27 +163,27 @@ const pdflibAddPlaceholder = async ({
     // P: (pdfDoc.catalog.Pages.get('Kids') as PDFArray).get(0),
     AP: PDFDict.withContext({
       N: sigAppearanceStreamRef,
-    }, pdfDoc.context),
+    }, pdfDoc.context)
   }, pdfDoc.context)
-  // Similar Function is PDFContext.register, but it doesn't work
+  
   const widgetDictRef = pdfDoc.context.register(widgetDict)
-
   // Add our signature widget to the first page
   // by parameter it should also be sent which pages you want to sign - ojo
   const pages = pdfDoc.getPages()
-  pages[0].set(
-    'Annots',
+  pages[0].node.set(
+    PDFName.of('Annots'),
     PDFArray.withContext([widgetDictRef], pdfDoc.context),
   )
-  
+
   // Create an AcroForm object containing our signature widget
   const formDict = PDFDict.withContext({
     SigFlags: PDFNumber.of(3),
     Fields: PDFArray.withContext([widgetDictRef], pdfDoc.context),
   }, pdfDoc.context)
   
-  pdfDoc.catalog.set('AcroForm', formDict)
-  return Buffer.from(pdfDoc)
+  pdfDoc.catalog.set(PDFName.of('AcroForm'), formDict)
+  const pdfDocBytes = await pdfDoc.save()
+  return Buffer.from(pdfDocBytes)
 }
 
 export default pdflibAddPlaceholder
