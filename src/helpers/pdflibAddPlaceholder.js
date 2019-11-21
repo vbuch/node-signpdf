@@ -108,40 +108,42 @@ const pdflibAddPlaceholder = async ({
         }, pdfDoc.context)
       }, pdfDoc.context),
     }, pdfDoc.context),
-    drawRectangle({
-      x: infoSignature.positionBBox.left,
-      y: infoSignature.positionBBox.bottom,
-      width: infoSignature.positionBBox.right,
-      height: infoSignature.positionBBox.top,
-      color: rgb(0.95, 0.95, 0.95),
-      borderWidth: 3,
-      borderColor: rgb(0, 0, 0),
-      rotate: degrees(0),
-      xSkew: degrees(0),
-      ySkew: degrees(0)
-    }),
-    drawText(info, {
-      x: 10,
-      y: 15,
-      font: 'Helvetica',
-      size: 15,
-      color: rgb(0.5, 0.5, 0.5),
-      rotate: degrees(0),
-      xSkew: degrees(0),
-      ySkew: degrees(0)
-    }),
-    drawRectangle({
-      x: 4,
-      y: 4,
-      width: 192,
-      height: 2,
-      color: rgb(0.5, 0.5, 0.5),
-      rotate: degrees(0),
-      borderWidth: 0,
-      borderColor: rgb(0, 0, 0),
-      xSkew: degrees(0),
-      ySkew: degrees(0)
-    }),
+    PDFArray.withContext([
+      drawRectangle({
+        x: infoSignature.positionBBox.left,
+        y: infoSignature.positionBBox.bottom,
+        width: infoSignature.positionBBox.right,
+        height: infoSignature.positionBBox.top,
+        color: rgb(0.95, 0.95, 0.95),
+        borderWidth: 3,
+        borderColor: rgb(0, 0, 0),
+        rotate: degrees(0),
+        xSkew: degrees(0),
+        ySkew: degrees(0)
+      }),
+      drawText(info, {
+        x: 10,
+        y: 15,
+        font: 'Helvetica',
+        size: 15,
+        color: rgb(0.5, 0.5, 0.5),
+        rotate: degrees(0),
+        xSkew: degrees(0),
+        ySkew: degrees(0)
+      }),
+      drawRectangle({
+        x: 4,
+        y: 4,
+        width: 192,
+        height: 2,
+        color: rgb(0.5, 0.5, 0.5),
+        rotate: degrees(0),
+        borderWidth: 0,
+        borderColor: rgb(0, 0, 0),
+        xSkew: degrees(0),
+        ySkew: degrees(0)
+      }),
+    ])
   )
 
   const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream)
