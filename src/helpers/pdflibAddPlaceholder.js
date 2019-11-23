@@ -2,6 +2,8 @@ import PDFKitReferenceMock from './pdfkitReferenceMock'
 import { DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH } from './const'
 import {
   PDFDocument,
+  StandardFonts,
+  PDFWriter,
   PDFDict,
   PDFName,
   PDFArray,
@@ -34,32 +36,31 @@ const pdflibAddPlaceholder = async ({
       throw err
     }
   }
-  const FontHelvetica = pdfDoc.embedStandardFont('Helvetica')
   const date = new Date()
-  const pad = (str, length) => (Array(length + 1).join('0') + str).slice(-length)
-  const dateString = `D:${pad(date.getUTCFullYear(), 4)}` +
-    pad(date.getUTCMonth() + 1, 2) + pad(date.getUTCDate(), 2) +
-    pad(date.getUTCHours(), 2) + pad(date.getUTCMinutes(), 2) +
-    pad(date.getUTCSeconds(), 2) + 'Z'
-  // Table 252 of the PDF specification.
-  const signatureDict = PDFDict.withContext({
-    Type: PDFName.of('Sig'),
-    Filter: PDFName.of('Adobe.PPKLite'),
-    SubFilter: PDFName.of('adbe.pkcs7.detached'),
-    ByteRange: PDFArray.withContext([
-      PDFNumber.of(0),
-      PDFNumber.of(byteRangePlaceholder),
-      PDFNumber.of(byteRangePlaceholder),
-      PDFNumber.of(byteRangePlaceholder),
-    ]),
-    Contents: PDFHexString.of(String.fromCharCode(0).repeat(signatureLength)),
-    Reason: PDFString.of(infoSignature.reason),
-    M: PDFString.of(dateString),
-    ContactInfo: PDFString.of(infoSignature.contactInfo || ''),
-    Name: PDFString.of(infoSignature.name || ''),
-    Location: PDFString.of(infoSignature.location || ''),
-  }, pdfDoc.context)
-  
+  const arrayByteRange = PDFArray.withContext(pdfDoc.context)
+  arrayByteRange.push(PDFNumber.of(0))
+  arrayByteRange.push(PDFName.of(byteRangePlaceholder))
+  arrayByteRange.push(PDFName.of(byteRangePlaceholder))
+  arrayByteRange.push(PDFName.of(byteRangePlaceholder))
+  const signatureDictMap = new Map()
+  signatureDictMap.set(PDFName.Type, PDFName.of('Sig'))
+  signatureDictMap.set(PDFName.of('Filter'), PDFName.of('Adobe.PPKLite'))
+  signatureDictMap.set(PDFName.of('SubFilter'), PDFName.of('adbe.pkcs7.detached'))
+  signatureDictMap.set(PDFName.of('ByteRange'), arrayByteRange)
+  signatureDictMap.set(
+    PDFName.of('Contents'),
+    PDFHexString.of('0'.repeat(signatureLength))
+  )
+  signatureDictMap.set(PDFName.of('Reason'), PDFString.of(infoSignature.reason))
+  signatureDictMap.set(PDFName.of('M'), PDFString.fromDate(date))
+  signatureDictMap.set(
+    PDFName.of('ContactInfo'),
+    PDFString.of(infoSignature.contactInfo || '')
+  )
+  signatureDictMap.set(PDFName.of('Name'), PDFString.of(infoSignature.name || ''))
+  signatureDictMap.set(PDFName.of('Location'), PDFString.of(infoSignature.location || ''))
+  const signatureDict = PDFDict.fromMapWithContext(signatureDictMap, pdfDoc.context)
+
   // Check if pdf already contains acroform field
   const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm')
   const isAcroFormExists = acroFormPosition !== -1
@@ -76,7 +77,6 @@ const pdflibAddPlaceholder = async ({
       .filter((element, index) => index % 3 === 0)
       .map(fieldId => new PDFKitReferenceMock(fieldId))
   }
-  
   const signatureName = 'Signature'
   const info = (infoSignature.name || 'Signed') + '\n' + date.toISOString()
   if (!infoSignature.positionBBox || !infoSignature.positionBBox.left ||
@@ -89,19 +89,24 @@ const pdflibAddPlaceholder = async ({
       top: 50
     }
   }
-
+  
+  const sigAppearanceStreamMapDict = new Map()
+  // const FontHelvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica)
+  // const resourcesMap = new Map()
+  // const fontMap = new Map()
+  // fontMap.set(PDFName.of('Helvetica'), FontHelvetica)
+  // resourcesMap.set(PDFName.Font, PDFDict.fromMapWithContext(fontMap, pdfDoc.context))
+  // sigAppearanceStreamMapDict.set(
+  //   PDFName.of('Resources'),
+  //   PDFDict.fromMapWithContext(resourcesMap, pdfDoc.context)
+  // )
+  sigAppearanceStreamMapDict.set(PDFName.Type, PDFName.XObject)
+  sigAppearanceStreamMapDict.set(PDFName.of('Subtype'), PDFName.of('Form'))
+  
   // Define a content stream that defines how the signature field should appear
   // on the PDF. - Table 95 of the PDF specification.
   const sigAppearanceStream = PDFContentStream.of(
-    PDFDict.withContext({
-      Type: PDFName.of('XObject'),
-      Subtype: PDFName.of('Form'),
-      Resources: PDFDict.withContext({
-        Font: PDFDict.withContext({
-          Helvetica: FontHelvetica
-        }, pdfDoc.context)
-      }, pdfDoc.context),
-    }, pdfDoc.context),
+    PDFDict.fromMapWithContext(sigAppearanceStreamMapDict, pdfDoc.context),
     drawRectangle({
       x: PDFNumber.of(infoSignature.positionBBox.left),
       y: PDFNumber.of(infoSignature.positionBBox.bottom),
@@ -113,70 +118,72 @@ const pdflibAddPlaceholder = async ({
       rotate: degrees(0),
       xSkew: degrees(0),
       ySkew: degrees(0)
-    }),
-    drawText(info, {
-      x: PDFNumber.of(10),
-      y: PDFNumber.of(15),
-      font: 'Helvetica',
-      size: PDFNumber.of(15),
-      color: rgb(0.5, 0.5, 0.5),
-      rotate: degrees(0),
-      xSkew: degrees(0),
-      ySkew: degrees(0)
-    }),
-    drawRectangle({
-      x: PDFNumber.of(4),
-      y: PDFNumber.of(4),
-      width: PDFNumber.of(192),
-      height: PDFNumber.of(2),
-      color: rgb(0.5, 0.5, 0.5),
-      rotate: degrees(0),
-      borderWidth: 0,
-      borderColor: rgb(0, 0, 0),
-      xSkew: degrees(0),
-      ySkew: degrees(0)
     })
   )
-
+  drawText(info, {
+    x: PDFNumber.of(10),
+    y: PDFNumber.of(15),
+    font: 'Helvetica',
+    size: PDFNumber.of(15),
+    color: rgb(0.5, 0.5, 0.5),
+    rotate: degrees(0),
+    xSkew: degrees(0),
+    ySkew: degrees(0)
+  }).forEach(x => { sigAppearanceStream.push(x) })
+  drawRectangle({
+    x: PDFNumber.of(4),
+    y: PDFNumber.of(4),
+    width: PDFNumber.of(192),
+    height: PDFNumber.of(2),
+    color: rgb(0.5, 0.5, 0.5),
+    rotate: degrees(0),
+    borderWidth: 0,
+    borderColor: rgb(0, 0, 0),
+    xSkew: degrees(0),
+    ySkew: degrees(0)
+  }).forEach(x => { sigAppearanceStream.push(x) })
   const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream)
 
   // Define the signature widget annotation - Table 164
-  const widgetDict = PDFDict.withContext({
-    Type: PDFName.of('Annot'),
-    Subtype: PDFName.of('Widget'),
-    FT: PDFName.of('Sig'),
-    Rect: PDFArray.withContext([
-      PDFNumber.of(50),
-      PDFNumber.of(50),
-      PDFNumber.of(300),
-      PDFNumber.of(100),
-    ]),
-    V: signatureDict,
-    T: PDFString.of(signatureName + (fieldIds.length + 1)),
-    F: PDFNumber.of(4),
-    P: pdfDoc.catalog.Pages().Kids().get(0),
-    AP: PDFDict.withContext({
-      N: sigAppearanceStreamRef,
-    }, pdfDoc.context)
-  }, pdfDoc.context)
+  const widgetDictMap = new Map()
+  const APMap = new Map()
+  const arrayRect = PDFArray.withContext(pdfDoc.context)
+  arrayRect.push(PDFNumber.of(50))
+  arrayRect.push(PDFNumber.of(50))
+  arrayRect.push(PDFNumber.of(300))
+  arrayRect.push(PDFNumber.of(100))
+  APMap.set(PDFName.of('N'), sigAppearanceStreamRef)
   
+  widgetDictMap.set(PDFName.Type, PDFName.of('Annot'))
+  widgetDictMap.set(PDFName.of('Subtype'), PDFName.of('Widget'))
+  widgetDictMap.set(PDFName.of('FT'), PDFName.of('Sig'))
+  widgetDictMap.set(PDFName.of('Rect'), arrayRect)
+  widgetDictMap.set(PDFName.of('V'), signatureDict)
+  widgetDictMap.set(PDFName.of('T'), PDFString.of(signatureName + (fieldIds.length + 1)))
+  widgetDictMap.set(PDFName.of('F'), PDFNumber.of(4))
+  widgetDictMap.set(PDFName.of('P'), pdfDoc.catalog.Pages().Kids().get(0))
+  widgetDictMap.set(PDFName.of('AP'), PDFDict.fromMapWithContext(APMap, pdfDoc.context))
+  
+  const widgetDict = PDFDict.fromMapWithContext(widgetDictMap, pdfDoc.context)
   const widgetDictRef = pdfDoc.context.register(widgetDict)
+
   // Add our signature widget to the first page
   // by parameter it should also be sent which pages you want to sign - ojo
   const pages = pdfDoc.getPages()
-  pages[0].node.set(
-    PDFName.of('Annots'),
-    PDFArray.withContext([widgetDictRef]),
-  )
-
-  // Create an AcroForm object containing our signature widget
-  const formDict = PDFDict.withContext({
-    SigFlags: PDFNumber.of(3),
-    Fields: PDFArray.withContext([widgetDictRef]),
-  }, pdfDoc.context)
+  const arrayAnnots = PDFArray.withContext(pdfDoc.context)
+  arrayAnnots.push(widgetDictRef)
+  pages[0].node.set(PDFName.Annots, arrayAnnots)
   
+  // Create an AcroForm object containing our signature widget
+  const formDictMap = new Map()
+  const arrayFields = PDFArray.withContext(pdfDoc.context)
+  arrayFields.push(widgetDictRef)
+  formDictMap.set(PDFName.of('SigFlags'), PDFNumber.of(3))
+  formDictMap.set(PDFName.of('Fields'), arrayFields)
+  const formDict = PDFDict.fromMapWithContext(formDictMap, pdfDoc.context)  
   pdfDoc.catalog.set(PDFName.of('AcroForm'), formDict)
-  const pdfDocBytes = await pdfDoc.save()
+
+  const pdfDocBytes = await PDFWriter.forContext(pdfDoc.context).serializeToBuffer()
   return Buffer.from(pdfDocBytes)
 }
 
