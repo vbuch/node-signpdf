@@ -182,8 +182,29 @@ const pdflibAddPlaceholder = async ({
   formDictMap.set(PDFName.of('Fields'), arrayFields)
   const formDict = PDFDict.fromMapWithContext(formDictMap, pdfDoc.context)  
   pdfDoc.catalog.set(PDFName.of('AcroForm'), formDict)
+  
+  let pdfDocBytes = await PDFWriter.forContext(pdfDoc.context).serializeToBuffer()
 
-  const pdfDocBytes = await PDFWriter.forContext(pdfDoc.context).serializeToBuffer()
+  // Delete spaces in ByteRange
+  pdfDocBytes = Buffer.from(pdfDocBytes)
+  const byteRangePlaceholderContent = [
+    0,
+    `/${byteRangePlaceholder}`,
+    `/${byteRangePlaceholder}`,
+    `/${byteRangePlaceholder}`
+  ]
+  const byteRangeString = `/ByteRange [ ${byteRangePlaceholderContent.join(' ')} ]`
+  let actualByteRange = `/ByteRange [${byteRangePlaceholderContent.join(' ')}]`
+  actualByteRange += '  '
+  const byteRangePos = pdfDocBytes.indexOf(byteRangeString)
+  if (byteRangePos !== -1) {
+    const byteRangeEnd = byteRangePos + byteRangeString.length
+    pdfDocBytes = Buffer.concat([
+      pdfDocBytes.slice(0, byteRangePos),
+      Buffer.from(actualByteRange),
+      pdfDocBytes.slice(byteRangeEnd),
+    ])
+  }
   return Buffer.from(pdfDocBytes)
 }
 
