@@ -27,6 +27,12 @@ Object.defineProperty(exports, "removeTrailingNewLine", {
     return _removeTrailingNewLine.default;
   }
 });
+Object.defineProperty(exports, "pdflibAddPlaceholder", {
+  enumerable: true,
+  get: function () {
+    return _pdflibAddPlaceholder.default;
+  }
+});
 
 var _extractSignature = _interopRequireDefault(require("./extractSignature"));
 
@@ -35,6 +41,8 @@ var _pdfkitAddPlaceholder = _interopRequireDefault(require("./pdfkitAddPlacehold
 var _plainAddPlaceholder = _interopRequireDefault(require("./plainAddPlaceholder"));
 
 var _removeTrailingNewLine = _interopRequireDefault(require("./removeTrailingNewLine"));
+
+var _pdflibAddPlaceholder = _interopRequireDefault(require("./pdflibAddPlaceholder"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

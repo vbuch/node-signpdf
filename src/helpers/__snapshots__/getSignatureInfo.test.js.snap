@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getSignatureInfo expects P12 certificate to be Buffer 1`] = `"Too few bytes to parse DER."`;

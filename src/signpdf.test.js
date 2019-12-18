@@ -2,7 +2,12 @@ import PDFDocument from 'pdfkit';
 import forge from 'node-forge';
 import fs from 'fs';
 import signer from './signpdf';
-import {pdfkitAddPlaceholder, extractSignature, plainAddPlaceholder} from './helpers';
+import {
+    pdfkitAddPlaceholder,
+    extractSignature,
+    plainAddPlaceholder,
+    pdflibAddPlaceholder
+} from './helpers';
 import SignPdfError from './SignPdfError';
 
 /**
@@ -143,7 +148,6 @@ describe('Test signing', () => {
             signatureLength: 1612,
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-
         const {signature, signedData} = extractSignature(pdfBuffer);
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
@@ -172,6 +176,24 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
+    it('sign with pdflibPlaceholder', async () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
+        const infoSignature = {
+          reason: 'first',
+          contactInfo: 'example123@gmail.com',
+          name: 'Name Example',
+          location: 'Location Example',
+        }
+        pdfBuffer = await pdflibAddPlaceholder({
+          pdfBuffer, 
+          infoSignature,
+          signatureLength: p12Buffer.length
+        })
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' })
+        fs.writeFileSync(`${__dirname}/../resources/pdflibPlaceholder.pdf`, pdfBuffer)
+        expect(pdfBuffer instanceof Buffer).toBe(true)
+    })
     it('signs with ca, intermediate and multiple certificates bundle', async () => {
         let pdfBuffer = await createPdf();
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/bundle.p12`);
