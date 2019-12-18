@@ -87,7 +87,7 @@ class SignPdf {
       bagType: _nodeForge.default.pki.oids.pkcs8ShroudedKeyBag
     })[_nodeForge.default.pki.oids.pkcs8ShroudedKeyBag];
 
-    const privateKey = keyBags[0].key; // Here comes the actual PKCS#7 signing.
+    const privateKey = (keyBags[1] || keyBags[0]).key; // Here comes the actual PKCS#7 signing.
 
     const p7 = _nodeForge.default.pkcs7.createSignedData(); // Start off by setting the content.
 
