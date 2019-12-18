@@ -19,6 +19,7 @@ const pdflibAddPlaceholder = async ({
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH,
   byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER
 }) => {
+  signatureLength = signatureLength * 2;
   let pdfDoc;
 
   try {
@@ -32,25 +33,27 @@ const pdflibAddPlaceholder = async ({
     }
   }
 
-  const FontHelvetica = pdfDoc.embedStandardFont('Helvetica');
   const date = new Date();
 
-  const pad = (str, length) => (Array(length + 1).join('0') + str).slice(-length);
+  const arrayByteRange = _pdfLib.PDFArray.withContext(pdfDoc.context);
 
-  const dateString = `D:${pad(date.getUTCFullYear(), 4)}` + pad(date.getUTCMonth() + 1, 2) + pad(date.getUTCDate(), 2) + pad(date.getUTCHours(), 2) + pad(date.getUTCMinutes(), 2) + pad(date.getUTCSeconds(), 2) + 'Z'; // Table 252 of the PDF specification.
+  arrayByteRange.push(_pdfLib.PDFNumber.of(0));
+  arrayByteRange.push(_pdfLib.PDFName.of(byteRangePlaceholder));
+  arrayByteRange.push(_pdfLib.PDFName.of(byteRangePlaceholder));
+  arrayByteRange.push(_pdfLib.PDFName.of(byteRangePlaceholder));
+  const signatureDictMap = new Map();
+  signatureDictMap.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.of('Sig'));
+  signatureDictMap.set(_pdfLib.PDFName.of('Filter'), _pdfLib.PDFName.of('Adobe.PPKLite'));
+  signatureDictMap.set(_pdfLib.PDFName.of('SubFilter'), _pdfLib.PDFName.of('adbe.pkcs7.detached'));
+  signatureDictMap.set(_pdfLib.PDFName.of('ByteRange'), arrayByteRange);
+  signatureDictMap.set(_pdfLib.PDFName.of('Contents'), _pdfLib.PDFHexString.of('0'.repeat(signatureLength)));
+  signatureDictMap.set(_pdfLib.PDFName.of('Reason'), _pdfLib.PDFString.of(infoSignature.reason));
+  signatureDictMap.set(_pdfLib.PDFName.of('M'), _pdfLib.PDFString.fromDate(date));
+  signatureDictMap.set(_pdfLib.PDFName.of('ContactInfo'), _pdfLib.PDFString.of(infoSignature.contactInfo || ''));
+  signatureDictMap.set(_pdfLib.PDFName.of('Name'), _pdfLib.PDFString.of(infoSignature.name || ''));
+  signatureDictMap.set(_pdfLib.PDFName.of('Location'), _pdfLib.PDFString.of(infoSignature.location || ''));
 
-  const signatureDict = _pdfLib.PDFDict.withContext({
-    Type: _pdfLib.PDFName.of('Sig'),
-    Filter: _pdfLib.PDFName.of('Adobe.PPKLite'),
-    SubFilter: _pdfLib.PDFName.of('adbe.pkcs7.detached'),
-    ByteRange: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(0), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder), _pdfLib.PDFNumber.of(byteRangePlaceholder)]),
-    Contents: _pdfLib.PDFHexString.of(String.fromCharCode(0).repeat(signatureLength)),
-    Reason: _pdfLib.PDFString.of(infoSignature.reason),
-    M: _pdfLib.PDFString.of(dateString),
-    ContactInfo: _pdfLib.PDFString.of(infoSignature.contactInfo || ''),
-    Name: _pdfLib.PDFString.of(infoSignature.name || ''),
-    Location: _pdfLib.PDFString.of(infoSignature.location || '')
-  }, pdfDoc.context); // Check if pdf already contains acroform field
+  const signatureDict = _pdfLib.PDFDict.fromMapWithContext(signatureDictMap, pdfDoc.context); // Check if pdf already contains acroform field
 
 
   const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
@@ -77,19 +80,23 @@ const pdflibAddPlaceholder = async ({
       right: 200,
       top: 50
     };
-  } // Define a content stream that defines how the signature field should appear
+  }
+
+  const sigAppearanceStreamMapDict = new Map(); // const FontHelvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica)
+  // const resourcesMap = new Map()
+  // const fontMap = new Map()
+  // fontMap.set(PDFName.of('Helvetica'), FontHelvetica)
+  // resourcesMap.set(PDFName.Font, PDFDict.fromMapWithContext(fontMap, pdfDoc.context))
+  // sigAppearanceStreamMapDict.set(
+  //   PDFName.of('Resources'),
+  //   PDFDict.fromMapWithContext(resourcesMap, pdfDoc.context)
+  // )
+
+  sigAppearanceStreamMapDict.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.XObject);
+  sigAppearanceStreamMapDict.set(_pdfLib.PDFName.of('Subtype'), _pdfLib.PDFName.of('Form')); // Define a content stream that defines how the signature field should appear
   // on the PDF. - Table 95 of the PDF specification.
 
-
-  const sigAppearanceStream = _pdfLib.PDFContentStream.of(_pdfLib.PDFDict.withContext({
-    Type: _pdfLib.PDFName.of('XObject'),
-    Subtype: _pdfLib.PDFName.of('Form'),
-    Resources: _pdfLib.PDFDict.withContext({
-      Font: _pdfLib.PDFDict.withContext({
-        Helvetica: FontHelvetica
-      }, pdfDoc.context)
-    }, pdfDoc.context)
-  }, pdfDoc.context), (0, _pdfLib.drawRectangle)({
+  const sigAppearanceStream = _pdfLib.PDFContentStream.of(_pdfLib.PDFDict.fromMapWithContext(sigAppearanceStreamMapDict, pdfDoc.context), (0, _pdfLib.drawRectangle)({
     x: _pdfLib.PDFNumber.of(infoSignature.positionBBox.left),
     y: _pdfLib.PDFNumber.of(infoSignature.positionBBox.bottom),
     width: _pdfLib.PDFNumber.of(infoSignature.positionBBox.right),
@@ -100,7 +107,9 @@ const pdflibAddPlaceholder = async ({
     rotate: (0, _pdfLib.degrees)(0),
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
-  }), (0, _pdfLib.drawText)(info, {
+  }));
+
+  (0, _pdfLib.drawText)(info, {
     x: _pdfLib.PDFNumber.of(10),
     y: _pdfLib.PDFNumber.of(15),
     font: 'Helvetica',
@@ -109,7 +118,10 @@ const pdflibAddPlaceholder = async ({
     rotate: (0, _pdfLib.degrees)(0),
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
-  }), (0, _pdfLib.drawRectangle)({
+  }).forEach(x => {
+    sigAppearanceStream.push(x);
+  });
+  (0, _pdfLib.drawRectangle)({
     x: _pdfLib.PDFNumber.of(4),
     y: _pdfLib.PDFNumber.of(4),
     width: _pdfLib.PDFNumber.of(192),
@@ -120,37 +132,68 @@ const pdflibAddPlaceholder = async ({
     borderColor: (0, _pdfLib.rgb)(0, 0, 0),
     xSkew: (0, _pdfLib.degrees)(0),
     ySkew: (0, _pdfLib.degrees)(0)
-  }));
-
+  }).forEach(x => {
+    sigAppearanceStream.push(x);
+  });
   const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream); // Define the signature widget annotation - Table 164
 
-  const widgetDict = _pdfLib.PDFDict.withContext({
-    Type: _pdfLib.PDFName.of('Annot'),
-    Subtype: _pdfLib.PDFName.of('Widget'),
-    FT: _pdfLib.PDFName.of('Sig'),
-    Rect: _pdfLib.PDFArray.withContext([_pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(50), _pdfLib.PDFNumber.of(300), _pdfLib.PDFNumber.of(100)]),
-    V: signatureDict,
-    T: _pdfLib.PDFString.of(signatureName + (fieldIds.length + 1)),
-    F: _pdfLib.PDFNumber.of(4),
-    P: pdfDoc.catalog.Pages().Kids().get(0),
-    AP: _pdfLib.PDFDict.withContext({
-      N: sigAppearanceStreamRef
-    }, pdfDoc.context)
-  }, pdfDoc.context);
+  const widgetDictMap = new Map();
+  const APMap = new Map();
+
+  const arrayRect = _pdfLib.PDFArray.withContext(pdfDoc.context);
+
+  arrayRect.push(_pdfLib.PDFNumber.of(50));
+  arrayRect.push(_pdfLib.PDFNumber.of(50));
+  arrayRect.push(_pdfLib.PDFNumber.of(300));
+  arrayRect.push(_pdfLib.PDFNumber.of(100));
+  APMap.set(_pdfLib.PDFName.of('N'), sigAppearanceStreamRef);
+  widgetDictMap.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.of('Annot'));
+  widgetDictMap.set(_pdfLib.PDFName.of('Subtype'), _pdfLib.PDFName.of('Widget'));
+  widgetDictMap.set(_pdfLib.PDFName.of('FT'), _pdfLib.PDFName.of('Sig'));
+  widgetDictMap.set(_pdfLib.PDFName.of('Rect'), arrayRect);
+  widgetDictMap.set(_pdfLib.PDFName.of('V'), signatureDict);
+  widgetDictMap.set(_pdfLib.PDFName.of('T'), _pdfLib.PDFString.of(signatureName + (fieldIds.length + 1)));
+  widgetDictMap.set(_pdfLib.PDFName.of('F'), _pdfLib.PDFNumber.of(4));
+  widgetDictMap.set(_pdfLib.PDFName.of('P'), pdfDoc.catalog.Pages().Kids().get(0));
+  widgetDictMap.set(_pdfLib.PDFName.of('AP'), _pdfLib.PDFDict.fromMapWithContext(APMap, pdfDoc.context));
+
+  const widgetDict = _pdfLib.PDFDict.fromMapWithContext(widgetDictMap, pdfDoc.context);
 
   const widgetDictRef = pdfDoc.context.register(widgetDict); // Add our signature widget to the first page
   // by parameter it should also be sent which pages you want to sign - ojo
 
   const pages = pdfDoc.getPages();
-  pages[0].node.set(_pdfLib.PDFName.of('Annots'), _pdfLib.PDFArray.withContext([widgetDictRef])); // Create an AcroForm object containing our signature widget
 
-  const formDict = _pdfLib.PDFDict.withContext({
-    SigFlags: _pdfLib.PDFNumber.of(3),
-    Fields: _pdfLib.PDFArray.withContext([widgetDictRef])
-  }, pdfDoc.context);
+  const arrayAnnots = _pdfLib.PDFArray.withContext(pdfDoc.context);
+
+  arrayAnnots.push(widgetDictRef);
+  pages[0].node.set(_pdfLib.PDFName.Annots, arrayAnnots); // Create an AcroForm object containing our signature widget
+
+  const formDictMap = new Map();
+
+  const arrayFields = _pdfLib.PDFArray.withContext(pdfDoc.context);
+
+  arrayFields.push(widgetDictRef);
+  formDictMap.set(_pdfLib.PDFName.of('SigFlags'), _pdfLib.PDFNumber.of(3));
+  formDictMap.set(_pdfLib.PDFName.of('Fields'), arrayFields);
+
+  const formDict = _pdfLib.PDFDict.fromMapWithContext(formDictMap, pdfDoc.context);
 
   pdfDoc.catalog.set(_pdfLib.PDFName.of('AcroForm'), formDict);
-  const pdfDocBytes = await pdfDoc.save();
+  let pdfDocBytes = await _pdfLib.PDFWriter.forContext(pdfDoc.context).serializeToBuffer(); // Delete spaces in ByteRange
+
+  pdfDocBytes = Buffer.from(pdfDocBytes);
+  const byteRangePlaceholderContent = [0, `/${byteRangePlaceholder}`, `/${byteRangePlaceholder}`, `/${byteRangePlaceholder}`];
+  const byteRangeString = `/ByteRange [ ${byteRangePlaceholderContent.join(' ')} ]`;
+  let actualByteRange = `/ByteRange [${byteRangePlaceholderContent.join(' ')}]`;
+  actualByteRange += '  ';
+  const byteRangePos = pdfDocBytes.indexOf(byteRangeString);
+
+  if (byteRangePos !== -1) {
+    const byteRangeEnd = byteRangePos + byteRangeString.length;
+    pdfDocBytes = Buffer.concat([pdfDocBytes.slice(0, byteRangePos), Buffer.from(actualByteRange), pdfDocBytes.slice(byteRangeEnd)]);
+  }
+
   return Buffer.from(pdfDocBytes);
 };
 
