@@ -25,6 +25,7 @@ const pdflibAddPlaceholder = async ({
   signatureLength = DEFAULT_SIGNATURE_LENGTH,
   byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
 }) => {
+  signatureLength = signatureLength * 2
   let pdfDoc
   try {
     pdfBuffer = pdfBuffer.toString('base64')
