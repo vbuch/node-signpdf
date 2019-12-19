@@ -12,8 +12,8 @@ describe('pdflib add placeholder', () => {
         name: 'Name Example',
         location: 'Location Example',
       }
-      const buffer = await pdflibAddPlaceholder({pdfBuffer, infoSignature})
-      expect(buffer instanceof Buffer).toBe(true)
+      pdfBuffer = await pdflibAddPlaceholder({pdfBuffer, infoSignature})
+      expect(pdfBuffer instanceof Buffer).toBe(true)
     } catch (e) {
       console.log('error', e)
       expect(e instanceof SignPdfError).toBe(true)
