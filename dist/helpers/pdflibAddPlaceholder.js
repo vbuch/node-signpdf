@@ -56,6 +56,7 @@ const pdflibAddPlaceholder = async ({
   const signatureDict = _pdfLib.PDFDict.fromMapWithContext(signatureDictMap, pdfDoc.context); // Check if pdf already contains acroform field
 
 
+  pdfBuffer = Buffer.from(pdfBuffer, 'base64');
   const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
   const isAcroFormExists = acroFormPosition !== -1;
   let fieldIds = [];
@@ -63,10 +64,10 @@ const pdflibAddPlaceholder = async ({
 
   if (isAcroFormExists) {
     const pdfSlice = pdfBuffer.slice(acroFormPosition - 12);
-    const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
+    const acroForm = pdfBuffer.slice(0, pdfSlice.indexOf('endobj')).toString();
     const acroFormFirsRow = acroForm.split('\n')[0];
     acroFormId = parseInt(acroFormFirsRow.split(' ')[0]);
-    const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
+    const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 10, acroForm.indexOf(']') - 1);
     fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
   }
 
@@ -82,16 +83,11 @@ const pdflibAddPlaceholder = async ({
     };
   }
 
-  const sigAppearanceStreamMapDict = new Map(); // const FontHelvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica)
-  // const resourcesMap = new Map()
-  // const fontMap = new Map()
-  // fontMap.set(PDFName.of('Helvetica'), FontHelvetica)
-  // resourcesMap.set(PDFName.Font, PDFDict.fromMapWithContext(fontMap, pdfDoc.context))
-  // sigAppearanceStreamMapDict.set(
-  //   PDFName.of('Resources'),
-  //   PDFDict.fromMapWithContext(resourcesMap, pdfDoc.context)
-  // )
-
+  const sigAppearanceStreamMapDict = new Map();
+  const FontHelvetica = pdfDoc.embedStandardFont(_pdfLib.StandardFonts.Helvetica);
+  const resourcesMap = new Map();
+  resourcesMap.set(_pdfLib.PDFName.Font, _pdfLib.PDFName.of('Helvetica'));
+  sigAppearanceStreamMapDict.set(_pdfLib.PDFName.of('Resources'), _pdfLib.PDFDict.fromMapWithContext(resourcesMap, pdfDoc.context));
   sigAppearanceStreamMapDict.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.XObject);
   sigAppearanceStreamMapDict.set(_pdfLib.PDFName.of('Subtype'), _pdfLib.PDFName.of('Form')); // Define a content stream that defines how the signature field should appear
   // on the PDF. - Table 95 of the PDF specification.
@@ -135,7 +131,8 @@ const pdflibAddPlaceholder = async ({
   }).forEach(x => {
     sigAppearanceStream.push(x);
   });
-  const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream); // Define the signature widget annotation - Table 164
+  const sigAppearanceStreamRef = pdfDoc.context.register(sigAppearanceStream);
+  const signatureDictRef = pdfDoc.context.register(signatureDict); // Define the signature widget annotation - Table 164
 
   const widgetDictMap = new Map();
   const APMap = new Map();
@@ -151,7 +148,7 @@ const pdflibAddPlaceholder = async ({
   widgetDictMap.set(_pdfLib.PDFName.of('Subtype'), _pdfLib.PDFName.of('Widget'));
   widgetDictMap.set(_pdfLib.PDFName.of('FT'), _pdfLib.PDFName.of('Sig'));
   widgetDictMap.set(_pdfLib.PDFName.of('Rect'), arrayRect);
-  widgetDictMap.set(_pdfLib.PDFName.of('V'), signatureDict);
+  widgetDictMap.set(_pdfLib.PDFName.of('V'), signatureDictRef);
   widgetDictMap.set(_pdfLib.PDFName.of('T'), _pdfLib.PDFString.of(signatureName + (fieldIds.length + 1)));
   widgetDictMap.set(_pdfLib.PDFName.of('F'), _pdfLib.PDFNumber.of(4));
   widgetDictMap.set(_pdfLib.PDFName.of('P'), pdfDoc.catalog.Pages().Kids().get(0));
@@ -174,12 +171,16 @@ const pdflibAddPlaceholder = async ({
   const arrayFields = _pdfLib.PDFArray.withContext(pdfDoc.context);
 
   arrayFields.push(widgetDictRef);
+  formDictMap.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.of('AcroForm'));
   formDictMap.set(_pdfLib.PDFName.of('SigFlags'), _pdfLib.PDFNumber.of(3));
   formDictMap.set(_pdfLib.PDFName.of('Fields'), arrayFields);
 
   const formDict = _pdfLib.PDFDict.fromMapWithContext(formDictMap, pdfDoc.context);
 
-  pdfDoc.catalog.set(_pdfLib.PDFName.of('AcroForm'), formDict);
+  const formDictRef = pdfDoc.context.register(formDict); // SOLUCIONAR EL HECHO DE QUE ESTE UN NUEVO ACROFORM Y CATALOG como SE MUESTRA
+  // EN EL OTRO PLACEHOLDER
+
+  const catalogMap = pdfDoc.catalog.dict.set(_pdfLib.PDFName.of('AcroForm'), formDictRef);
   let pdfDocBytes = await _pdfLib.PDFWriter.forContext(pdfDoc.context).serializeToBuffer(); // Delete spaces in ByteRange
 
   pdfDocBytes = Buffer.from(pdfDocBytes);
