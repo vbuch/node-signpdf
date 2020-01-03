@@ -177,18 +177,24 @@ const pdflibAddPlaceholder = async ({
   pages[0].node.set(PDFName.Annots, arrayAnnots)
   
   // Create an AcroForm object containing our signature widget
-  const formDictMap = new Map()
-  const arrayFields = PDFArray.withContext(pdfDoc.context)
-  arrayFields.push(widgetDictRef)
-  formDictMap.set(PDFName.Type, PDFName.of('AcroForm'))
-  formDictMap.set(PDFName.of('SigFlags'), PDFNumber.of(3))
-  formDictMap.set(PDFName.of('Fields'), arrayFields)
-  const formDict = PDFDict.fromMapWithContext(formDictMap, pdfDoc.context)
-  const formDictRef = pdfDoc.context.register(formDict)
+  // const formDictMap = new Map()
+  // const arrayFields = PDFArray.withContext(pdfDoc.context)
+  // arrayFields.push(widgetDictRef)
+  // formDictMap.set(PDFName.Type, PDFName.of('AcroForm'))
+  // formDictMap.set(PDFName.of('SigFlags'), PDFNumber.of(3))
+  // formDictMap.set(PDFName.of('Fields'), arrayFields)
+  // const formDict = PDFDict.fromMapWithContext(formDictMap, pdfDoc.context)
+  // const formDictRef = pdfDoc.context.register(formDict)
+  // 
+  // const catalogMap = pdfDoc.catalog.dict.set(PDFName.of('AcroForm'), formDictRef)
 
-  // SOLUCIONAR EL HECHO DE QUE ESTE UN NUEVO ACROFORM Y CATALOG como SE MUESTRA
-  // EN EL OTRO PLACEHOLDER
-  const catalogMap = pdfDoc.catalog.dict.set(PDFName.of('AcroForm'), formDictRef)
+  pdfDoc.catalog.set(
+    PDFName.of('AcroForm'),
+    pdfDoc.context.obj({
+      SigFlags: 3,
+      Fields: [widgetDictRef],
+    }),
+  )
 
   let pdfDocBytes = await PDFWriter.forContext(pdfDoc.context).serializeToBuffer()
 

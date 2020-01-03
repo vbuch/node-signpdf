@@ -161,7 +161,6 @@ describe('Test signing', () => {
           signatureLength: p12Buffer.length
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' });
-        fs.writeFileSync(`${__dirname}/../resources/signed-once.pdf`, pdfBuffer);
         const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
         let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed-once.pdf`);
         signedPdfBuffer = plainAddPlaceholder({ 
@@ -171,7 +170,6 @@ describe('Test signing', () => {
         });
         signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {
           passphrase: 'node-signpdf' });
-        fs.writeFileSync(`${__dirname}/../resources/signed-twice.pdf`, signedPdfBuffer);
         const {signature, signedData} = extractSignature(signedPdfBuffer, 2);
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
