@@ -175,9 +175,9 @@ describe('Test signing', () => {
         expect(signedData instanceof Buffer).toBe(true);
     });
     it('sign with pdflibPlaceholder', async () => {
-        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
-        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`);
-        const infoSignature = {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`)
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy.pdf`)
+        let infoSignature = {
           reason: 'first',
           contactInfo: 'example123@gmail.com',
           name: 'Name Example',
@@ -190,6 +190,21 @@ describe('Test signing', () => {
         })
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' })
         fs.writeFileSync(`${__dirname}/../resources/pdflibPlaceholder.pdf`, pdfBuffer)
+        expect(pdfBuffer instanceof Buffer).toBe(true)
+        pdfBuffer = fs.readFileSync(`${__dirname}/../resources/pdflibPlaceholder.pdf`)
+        infoSignature = {
+          reason: 'second',
+          contactInfo: 'example456@gmail.com',
+          name: 'Name Example Two',
+          location: 'Location Example Two',
+        }
+        pdfBuffer = await pdflibAddPlaceholder({
+          pdfBuffer, 
+          infoSignature,
+          signatureLength: p12Buffer.length
+        })
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' })
+        fs.writeFileSync(`${__dirname}/../resources/pdflibPlaceholderTwo.pdf`, pdfBuffer)
         expect(pdfBuffer instanceof Buffer).toBe(true)
     });
     it('signs with ca, intermediate and multiple certificates bundle', async () => {

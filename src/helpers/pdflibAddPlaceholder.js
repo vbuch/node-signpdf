@@ -64,22 +64,18 @@ const pdflibAddPlaceholder = async ({
   const signatureDict = PDFDict.fromMapWithContext(signatureDictMap, pdfDoc.context)
 
   // Check if pdf already contains acroform field
-  pdfBuffer = Buffer.from(pdfBuffer, 'base64')
-  const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm')
-  const isAcroFormExists = acroFormPosition !== -1
   let fieldIds = []
-  let acroFormId
-  if (isAcroFormExists) {
-    const pdfSlice = pdfBuffer.slice(acroFormPosition - 12)
-    const acroForm = pdfBuffer.slice(0, pdfSlice.indexOf('endobj')).toString()
-    const acroFormFirsRow = acroForm.split('\n')[0]
-    acroFormId = parseInt(acroFormFirsRow.split(' ')[0])
-    const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 10, acroForm.indexOf(']') - 1)
-    fieldIds = acroFormFields
+  const acroForm = pdfDoc.catalog.lookupMaybe(PDFName.of('AcroForm'), PDFDict)
+  if (acroForm) {
+    const acroFormId = acroForm.toString()
+    const startFields = acroFormId.indexOf('/Fields [') + 10
+    const endFields = acroFormId.indexOf(']') - 1
+    fieldIds = acroFormId
+      .slice(startFields, endFields)
       .split(' ')
       .filter((element, index) => index % 3 === 0)
-      .map(fieldId => new PDFKitReferenceMock(fieldId))
   }
+  
   const signatureName = 'Signature'
   const info = (infoSignature.name || 'Signed') + '\n' + date.toISOString()
   if (!infoSignature.positionBBox || !infoSignature.positionBBox.left ||
@@ -177,24 +173,18 @@ const pdflibAddPlaceholder = async ({
   pages[0].node.set(PDFName.Annots, arrayAnnots)
   
   // Create an AcroForm object containing our signature widget
-  // const formDictMap = new Map()
-  // const arrayFields = PDFArray.withContext(pdfDoc.context)
-  // arrayFields.push(widgetDictRef)
-  // formDictMap.set(PDFName.Type, PDFName.of('AcroForm'))
-  // formDictMap.set(PDFName.of('SigFlags'), PDFNumber.of(3))
-  // formDictMap.set(PDFName.of('Fields'), arrayFields)
-  // const formDict = PDFDict.fromMapWithContext(formDictMap, pdfDoc.context)
-  // const formDictRef = pdfDoc.context.register(formDict)
-  // 
-  // const catalogMap = pdfDoc.catalog.dict.set(PDFName.of('AcroForm'), formDictRef)
-
-  pdfDoc.catalog.set(
-    PDFName.of('AcroForm'),
-    pdfDoc.context.obj({
-      SigFlags: 3,
-      Fields: [widgetDictRef],
-    }),
-  )
+  if (!acroForm) {
+    pdfDoc.catalog.set(
+      PDFName.of('AcroForm'),
+      pdfDoc.context.obj({
+        SigFlags: 3,
+        Fields: [widgetDictRef],
+      }),
+    )
+  } else {
+    const fields = acroForm.lookup(PDFName.of('Fields'), PDFArray)
+    fields.push(widgetDictRef)
+  }
 
   let pdfDocBytes = await PDFWriter.forContext(pdfDoc.context).serializeToBuffer()
 
