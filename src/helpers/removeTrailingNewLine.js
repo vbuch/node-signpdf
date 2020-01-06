@@ -1,5 +1,14 @@
 import SignPdfError from '../SignPdfError';
 
+const sliceLastChar = (pdf, character) => {
+    const lastChar = pdf.slice(pdf.length - 1).toString();
+    if (lastChar === character) {
+        return pdf.slice(0, pdf.length - 1);
+    }
+
+    return pdf;
+};
+
 /**
  * Removes a trailing new line if there is such.
  *
@@ -14,13 +23,10 @@ const removeTrailingNewLine = (pdf) => {
             SignPdfError.TYPE_INPUT,
         );
     }
-
-    const lastChar = pdf.slice(pdf.length - 1).toString();
     let output = pdf;
-    if (lastChar === '\n') {
-        // remove the trailing new line
-        output = pdf.slice(0, pdf.length - 1);
-    }
+
+    output = sliceLastChar(output, '\n');
+    output = sliceLastChar(output, '\r');
 
     const lastLine = output.slice(output.length - 6).toString();
     if (lastLine !== '\n%%EOF') {
