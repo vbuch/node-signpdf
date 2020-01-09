@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.2.0]
+
+* `removeTrailingNewLine` removes both `\r` and `\n`.
+* Simplified regex that finds page dictionary ref.
+* Introduced the logo.
+
 ## [1.1.0]
 
 * `plainAddPlaceholder` creates an incremental change to allow signing a document multiple times.
