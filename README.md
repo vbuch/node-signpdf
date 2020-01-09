@@ -1,4 +1,4 @@
-# node-signpdf
+# ![node-signpdf](resources/logo-horizontal.svg)
 
 [![npm version](https://badge.fury.io/js/node-signpdf.svg)](https://badge.fury.io/js/node-signpdf)
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
