@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.1]
+
+* Fixed the logo for display in npmjs.com.
+
 ## [1.2.0]
 
 * `removeTrailingNewLine` removes both `\r` and `\n`.
