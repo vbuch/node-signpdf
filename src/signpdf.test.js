@@ -161,7 +161,7 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
-    it.only('signs a ready pdf containing a link', async () => {
+    it('signs a ready pdf containing a link', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/including-a-link.pdf`);
         pdfBuffer = plainAddPlaceholder({
@@ -170,8 +170,6 @@ describe('Test signing', () => {
             signatureLength: 1612,
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-
-        fs.createWriteStream(`${__dirname}/../resources/signed-with-link.pdf`).end(pdfBuffer);
 
         const {signature, signedData} = extractSignature(pdfBuffer);
         expect(typeof signature === 'string').toBe(true);
