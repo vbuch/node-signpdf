@@ -11,7 +11,7 @@ describe('createBufferPageWithAnnotation', () => {
     it('Reports unsupported feature', () => {
         findObject.mockImplementation(() => {
             console.log('aham');
-            return '/Annots [1 0 R]'
+            return '/Annots [1 0 R]\n/Something [ELSE HERE]'
         });
         const info = {xref: {}};
         info.xref.offsets = new Map();
