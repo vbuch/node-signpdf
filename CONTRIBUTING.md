@@ -17,3 +17,4 @@
 * [pankucsi](https://github.com/pankucsi)
 * [andres-blanco](https://github.com/andres-blanco)
 * [therpobinski](https://github.com/therpobinski)
+* [Godoy](https://github.com/Godoy)

@@ -8,17 +8,19 @@ jest.mock('./findObject', () => ({
 }));
 
 describe('createBufferPageWithAnnotation', () => {
-    it('should be tested', () => {
+    it('Adds annotation to an existing array', () => {
+        findObject.mockImplementation(() => (
+            '/Annots [1 0 R]\n/Something [ELSE HERE]'
+        ));
+        const info = {xref: {}};
+        info.xref.offsets = new Map();
+        info.xref.offsets.set(1, 1);
+        const buffer = createBufferPageWithAnnotation(
+            'pdf',
+            info,
+            '1 0 R',
+            '2 0 R',
+        );
+        expect(buffer.toString().indexOf('/Annots [1 0 R 2 0 R]')).not.toBe(-1);
     });
-//     it('Reports unsupported feature', () => {
-//         findObject.mockImplementation(() => '/Annots Exists');
-//         try {
-//             createBufferPageWithAnnotation('pdf', 'info', 'pageRef', 'widget');
-//             expect('here').not.toBe('here');
-//         } catch (e) {
-//             expect(e instanceof SignPdfError).toBe(true);
-//             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-//             expect(e.message).toMatchSnapshot();
-//         }
-//     });
 });
