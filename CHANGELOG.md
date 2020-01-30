@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.2]
+
+* Fixed an issue in plainAddPlaceholder that used to fail when the source PDF already contained /Annots.
+
 ## [1.2.1]
 
 * Fixed the logo for display in npmjs.com.
