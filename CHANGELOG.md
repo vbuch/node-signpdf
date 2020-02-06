@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.3]
+
+* Fixed the opposite of 1.2.2's fix: adding placeholder failed when there were no previous /Annots.
+
 ## [1.2.2]
 
 * Fixed an issue in plainAddPlaceholder that used to fail when the source PDF already contained /Annots.
