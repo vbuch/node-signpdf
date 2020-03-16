@@ -53,8 +53,8 @@ const swapBytes = buff => {
 class PDFObject {
   static convert(object, encryptFn = null) {
     // String literals are converted to the PDF name type
-    if (typeof object === 'string') {
-      return `/${object}`; // String objects are converted to PDF strings (UTF-16)
+	if (typeof object === 'string') {
+	  return `/${object}`; // String objects are converted to PDF strings (UTF-16)
     }
 
     if (object instanceof String) {
@@ -68,26 +68,29 @@ class PDFObject {
           break;
         }
       } // If so, encode it as big endian UTF-16
-
-
+	  
       let stringBuffer;
-
       if (isUnicode) {
         stringBuffer = swapBytes(Buffer.from(`\ufeff${string}`, 'utf16le'));
       } else {
         stringBuffer = Buffer.from(string, 'ascii');
       } // Encrypt the string when necessary
 
-
-      if (encryptFn) {
+	//COMMENTED CODE
+    /*  if (encryptFn) {
+		console.log("2a1: " + string);
         string = encryptFn(stringBuffer).toString('binary');
+		console.log("2a2: " + string);
       } else {
+		console.log("2b1: " + string);
         string = stringBuffer.toString('binary');
+		console.log("2b2: " + string);
       } // Escape characters as required by the spec
-
-
+	*/
+	  
       string = string.replace(escapableRe, c => escapable[c]);
-      return `(${string})`; // Buffers are converted to PDF hex strings
+	  
+	  return `(${string})`; // Buffers are converted to PDF hex strings
     }
 
     if (Buffer.isBuffer(object)) {
@@ -106,13 +109,13 @@ class PDFObject {
 
         string = string.replace(escapableRe, c => escapable[c]);
       }
-
+		
       return `(${string})`;
     }
 
     if (Array.isArray(object)) {
       const items = object.map(e => PDFObject.convert(e, encryptFn)).join(' ');
-      return `[${items}]`;
+	  return `[${items}]`;
     }
 
     if ({}.toString.call(object) === '[object Object]') {
@@ -146,11 +149,11 @@ class PDFObject {
 
       return out.join('\n');
     }
-
+	
     if (typeof object === 'number') {
       return PDFObject.number(object);
     }
-
+	
     return `${object}`;
   }
 
