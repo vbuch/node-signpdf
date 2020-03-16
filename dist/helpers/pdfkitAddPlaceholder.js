@@ -25,8 +25,12 @@ const pdfkitAddPlaceholder = ({
   pdf,
   pdfBuffer,
   reason,
+  contact,
+  name,
+  localSign,
+  signatureName='Signature',
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH,
-  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER
+  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER,
 }) => {
   /* eslint-disable no-underscore-dangle,no-param-reassign */
   // Generate the signature placeholder
@@ -39,11 +43,11 @@ const pdfkitAddPlaceholder = ({
     Reason: new String(reason),
     // eslint-disable-line no-new-wrappers
     M: new Date(),
-    ContactInfo: new String('emailfromp1289@gmail.com'),
+    ContactInfo: new String(contact),
     // eslint-disable-line no-new-wrappers
-    Name: new String('Name from p12'),
+    Name: new String(name),
     // eslint-disable-line no-new-wrappers
-    Location: new String('Location from p12') // eslint-disable-line no-new-wrappers
+    Location: new String(localSign) // eslint-disable-line no-new-wrappers
 
   }); // Check if pdf already contains acroform field
 
@@ -60,8 +64,6 @@ const pdfkitAddPlaceholder = ({
     const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
     fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
   }
-
-  const signatureName = 'Signature'; // Generate signature annotation widget
 
   const widget = pdf.ref({
     Type: 'Annot',
