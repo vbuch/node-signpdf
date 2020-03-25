@@ -5,7 +5,7 @@ import SignPdfError from '../../SignPdfError';
  */
 
 export default function getPagesDictionaryRef(info) {
-    const pagesRefRegex = new RegExp('\\/Type\\s*\\/Catalog\\s*\\/Pages\\s+(\\d+\\s\\d+\\sR)', 'g');
+    const pagesRefRegex = new RegExp('\\/Pages\\s+(\\d+\\s+\\d+\\s+R)', 'g');
     const match = pagesRefRegex.exec(info.root);
     if (match === null) {
         throw new SignPdfError(
