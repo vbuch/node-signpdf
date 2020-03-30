@@ -56,19 +56,14 @@ const pdflibAddPlaceholder = async ({
   const signatureDict = _pdfLib.PDFDict.fromMapWithContext(signatureDictMap, pdfDoc.context); // Check if pdf already contains acroform field
 
 
-  pdfBuffer = Buffer.from(pdfBuffer, 'base64');
-  const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
-  const isAcroFormExists = acroFormPosition !== -1;
   let fieldIds = [];
-  let acroFormId;
+  const acroForm = pdfDoc.catalog.lookupMaybe(_pdfLib.PDFName.of('AcroForm'), _pdfLib.PDFDict);
 
-  if (isAcroFormExists) {
-    const pdfSlice = pdfBuffer.slice(acroFormPosition - 12);
-    const acroForm = pdfBuffer.slice(0, pdfSlice.indexOf('endobj')).toString();
-    const acroFormFirsRow = acroForm.split('\n')[0];
-    acroFormId = parseInt(acroFormFirsRow.split(' ')[0]);
-    const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 10, acroForm.indexOf(']') - 1);
-    fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
+  if (acroForm) {
+    const acroFormId = acroForm.toString();
+    const startFields = acroFormId.indexOf('/Fields [') + 10;
+    const endFields = acroFormId.indexOf(']') - 1;
+    fieldIds = acroFormId.slice(startFields, endFields).split(' ').filter((element, index) => index % 3 === 0);
   }
 
   const signatureName = 'Signature';
@@ -166,21 +161,16 @@ const pdflibAddPlaceholder = async ({
   arrayAnnots.push(widgetDictRef);
   pages[0].node.set(_pdfLib.PDFName.Annots, arrayAnnots); // Create an AcroForm object containing our signature widget
 
-  const formDictMap = new Map();
+  if (!acroForm) {
+    pdfDoc.catalog.set(_pdfLib.PDFName.of('AcroForm'), pdfDoc.context.obj({
+      SigFlags: 3,
+      Fields: [widgetDictRef]
+    }));
+  } else {
+    const fields = acroForm.lookup(_pdfLib.PDFName.of('Fields'), _pdfLib.PDFArray);
+    fields.push(widgetDictRef);
+  }
 
-  const arrayFields = _pdfLib.PDFArray.withContext(pdfDoc.context);
-
-  arrayFields.push(widgetDictRef);
-  formDictMap.set(_pdfLib.PDFName.Type, _pdfLib.PDFName.of('AcroForm'));
-  formDictMap.set(_pdfLib.PDFName.of('SigFlags'), _pdfLib.PDFNumber.of(3));
-  formDictMap.set(_pdfLib.PDFName.of('Fields'), arrayFields);
-
-  const formDict = _pdfLib.PDFDict.fromMapWithContext(formDictMap, pdfDoc.context);
-
-  const formDictRef = pdfDoc.context.register(formDict); // SOLUCIONAR EL HECHO DE QUE ESTE UN NUEVO ACROFORM Y CATALOG como SE MUESTRA
-  // EN EL OTRO PLACEHOLDER
-
-  const catalogMap = pdfDoc.catalog.dict.set(_pdfLib.PDFName.of('AcroForm'), formDictRef);
   let pdfDocBytes = await _pdfLib.PDFWriter.forContext(pdfDoc.context).serializeToBuffer(); // Delete spaces in ByteRange
 
   pdfDocBytes = Buffer.from(pdfDocBytes);
