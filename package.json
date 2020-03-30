@@ -19,6 +19,7 @@
         "sign detached",
         "pkcs7",
         "pkcs#7",
+        "pades",
         "digital signature"
     ],
     "main": "dist/signpdf.js",
