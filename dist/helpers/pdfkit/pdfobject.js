@@ -76,17 +76,12 @@ class PDFObject {
         stringBuffer = Buffer.from(string, 'ascii');
       } // Encrypt the string when necessary
 
-	//COMMENTED CODE
     /*  if (encryptFn) {
-		console.log("2a1: " + string);
         string = encryptFn(stringBuffer).toString('binary');
-		console.log("2a2: " + string);
       } else {
-		console.log("2b1: " + string);
         string = stringBuffer.toString('binary');
-		console.log("2b2: " + string);
       } // Escape characters as required by the spec
-	*/
+    */
 	  
       string = string.replace(escapableRe, c => escapable[c]);
 	  
