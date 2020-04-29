@@ -64,6 +64,7 @@ const plainAddPlaceholder = ({
       info.xref.maxIndex += 1;
       const index = additionalIndex != null ? additionalIndex : info.xref.maxIndex;
       addedReferences.set(index, pdf.length + 1); // + 1 new line		
+
       pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${index} 0 obj\n`), Buffer.from(_pdfobject.default.convert(input)), Buffer.from('\nendobj\n')]); //this convert maybe -> console.log(_pdfobject.default.convert(input))
       return new _pdfkitReferenceMock.default(info.xref.maxIndex);
     },
