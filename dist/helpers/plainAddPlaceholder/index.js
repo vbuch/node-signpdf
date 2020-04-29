@@ -55,22 +55,16 @@ const plainAddPlaceholder = ({
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH
 }) => {
   let pdf = (0, _removeTrailingNewLine.default)(pdfBuffer);
-  
   const info = (0, _readPdf.default)(pdf);
   const pageRef = (0, _getPageRef.default)(pdf, info);
   const pageIndex = (0, _getIndexFromRef.default)(info.xref, pageRef);
-  
   const addedReferences = new Map();
-  
-
   const pdfKitMock = {
     ref: (input, additionalIndex) => {
       info.xref.maxIndex += 1;
       const index = additionalIndex != null ? additionalIndex : info.xref.maxIndex;
-      addedReferences.set(index, pdf.length + 1); // + 1 new line
-		
+      addedReferences.set(index, pdf.length + 1); // + 1 new line		
       pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${index} 0 obj\n`), Buffer.from(_pdfobject.default.convert(input)), Buffer.from('\nendobj\n')]); //this convert maybe -> console.log(_pdfobject.default.convert(input))
-	  
       return new _pdfkitReferenceMock.default(info.xref.maxIndex);
     },
     page: {
@@ -84,7 +78,6 @@ const plainAddPlaceholder = ({
       data: {}
     }
   };
-  
   const {
     form,
     widget
@@ -92,7 +85,7 @@ const plainAddPlaceholder = ({
     pdf: pdfKitMock,
     pdfBuffer,
     reason,
-	contact,
+    contact,
     name,
     localSign,
     signatureName,
@@ -106,7 +99,6 @@ const plainAddPlaceholder = ({
   }
 
   addedReferences.set(pageIndex, pdf.length + 1);
-  
   pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferPageWithAnnotation.default)(pdf, info, pageRef, widget)]);
   pdf = Buffer.concat([pdf, Buffer.from('\n'), (0, _createBufferTrailer.default)(pdf, info, addedReferences)]);
   return pdf;
