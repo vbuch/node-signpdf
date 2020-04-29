@@ -41,6 +41,22 @@ Yes. This is new since version 1.0. We have a helper that can add a signature pl
 
 Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
+### Add a plain placeholder
+
+```javascript
+import plainAddPlaceholder from 'node-signpdf';
+...
+const signedPdf = plainAddPlaceholder({
+			pdfBuffer: myPdfBuffer,
+			reason: "I have read and agree with the terms and conditions.",
+			contact: "myemail@fakedomain.com",
+			name: "The Signer",
+			localSign: "The Signer Home",
+			signatureName: "PlainPlaceholder",
+			signatureLength: myPdfBuffer.length //or another better way to get a length
+});
+```
+
 ### Sign the document
 
 ```javascript
