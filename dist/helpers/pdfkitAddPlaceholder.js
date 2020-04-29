@@ -30,7 +30,7 @@ const pdfkitAddPlaceholder = ({
   localSign,
   signatureName='Signature',
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH,
-  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER,
+  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER
 }) => {
   /* eslint-disable no-underscore-dangle,no-param-reassign */
   // Generate the signature placeholder
@@ -64,6 +64,7 @@ const pdfkitAddPlaceholder = ({
     const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
     fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
   }
+
 
   const widget = pdf.ref({
     Type: 'Annot',
