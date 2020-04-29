@@ -68,25 +68,25 @@ class PDFObject {
           break;
         }
       } // If so, encode it as big endian UTF-16
-	  
-	    
+
+
       let stringBuffer;
-	    
+
       if (isUnicode) {
         stringBuffer = swapBytes(Buffer.from(`\ufeff${string}`, 'utf16le'));
       } else {
         stringBuffer = Buffer.from(string, 'ascii');
       } // Encrypt the string when necessary
 
+
     /*  if (encryptFn) { //commented due to breaking signature (empty fields) on react native
         string = encryptFn(stringBuffer).toString('binary');
       } else {
         string = stringBuffer.toString('binary');
-      } // Escape characters as required by the spec
-    */
-	  
-      string = string.replace(escapableRe, c => escapable[c]);
-	  
+      }*/ // Escape characters as required by the spec
+
+
+      string = string.replace(escapableRe, c => escapable[c]);  
       return `(${string})`; // Buffers are converted to PDF hex strings
     }
 
@@ -106,13 +106,13 @@ class PDFObject {
 
         string = string.replace(escapableRe, c => escapable[c]);
       }
-		
+
       return `(${string})`;
     }
 
     if (Array.isArray(object)) {
       const items = object.map(e => PDFObject.convert(e, encryptFn)).join(' ');
-	  return `[${items}]`;
+      return `[${items}]`;
     }
 
     if ({}.toString.call(object) === '[object Object]') {
@@ -146,11 +146,11 @@ class PDFObject {
 
       return out.join('\n');
     }
-	
+
     if (typeof object === 'number') {
       return PDFObject.number(object);
     }
-	
+
     return `${object}`;
   }
 
