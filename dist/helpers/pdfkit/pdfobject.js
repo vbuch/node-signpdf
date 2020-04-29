@@ -86,7 +86,7 @@ class PDFObject {
       }*/ // Escape characters as required by the spec
 
 
-      string = string.replace(escapableRe, c => escapable[c]);  
+      string = string.replace(escapableRe, c => escapable[c]);
       return `(${string})`; // Buffers are converted to PDF hex strings
     }
 
