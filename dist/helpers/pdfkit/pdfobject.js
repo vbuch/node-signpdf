@@ -53,8 +53,8 @@ const swapBytes = buff => {
 class PDFObject {
   static convert(object, encryptFn = null) {
     // String literals are converted to the PDF name type
-	if (typeof object === 'string') {
-	  return `/${object}`; // String objects are converted to PDF strings (UTF-16)
+    if (typeof object === 'string') {
+      return `/${object}`; // String objects are converted to PDF strings (UTF-16)
     }
 
     if (object instanceof String) {
@@ -76,7 +76,7 @@ class PDFObject {
         stringBuffer = Buffer.from(string, 'ascii');
       } // Encrypt the string when necessary
 
-    /*  if (encryptFn) {
+    /*  if (encryptFn) { //commented due to breaking signature (empty fields) on react native
         string = encryptFn(stringBuffer).toString('binary');
       } else {
         string = stringBuffer.toString('binary');
@@ -85,7 +85,7 @@ class PDFObject {
 	  
       string = string.replace(escapableRe, c => escapable[c]);
 	  
-	  return `(${string})`; // Buffers are converted to PDF hex strings
+      return `(${string})`; // Buffers are converted to PDF hex strings
     }
 
     if (Buffer.isBuffer(object)) {
