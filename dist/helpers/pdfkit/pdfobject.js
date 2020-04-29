@@ -69,7 +69,9 @@ class PDFObject {
         }
       } // If so, encode it as big endian UTF-16
 	  
+	    
       let stringBuffer;
+	    
       if (isUnicode) {
         stringBuffer = swapBytes(Buffer.from(`\ufeff${string}`, 'utf16le'));
       } else {
