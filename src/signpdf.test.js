@@ -49,10 +49,6 @@ const createPdf = params => new Promise((resolve) => {
             pdf,
             pdfBuffer: Buffer.from([pdf]),
             reason: 'I am the author',
-            contact: 'emailfromp1289@gmail.com',
-            name: 'Name from p12',
-            localSign: 'Location from p12',
-            signatureName: 'Signature',
             ...requestParams.placeholder,
         });
         // Externally end the streams of the created objects.
