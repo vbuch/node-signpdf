@@ -1,4 +1,3 @@
-import SignPdfError from '../../SignPdfError';
 import readRefTable from './readRefTable';
 import findObject from './findObject';
 
