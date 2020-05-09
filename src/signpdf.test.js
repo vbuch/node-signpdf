@@ -203,7 +203,6 @@ describe('Test signing', () => {
           signatureLength: p12Buffer.length
         })
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' })
-        fs.writeFileSync(`${__dirname}/../resources/pdflibPlaceholder.pdf`, pdfBuffer)
         expect(pdfBuffer instanceof Buffer).toBe(true)
         pdfBuffer = fs.readFileSync(`${__dirname}/../resources/pdflibPlaceholder.pdf`)
         infoSignature = {
@@ -218,7 +217,6 @@ describe('Test signing', () => {
           signatureLength: p12Buffer.length
         })
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer, { passphrase: 'node-signpdf' })
-        fs.writeFileSync(`${__dirname}/../resources/pdflibPlaceholderTwo.pdf`, pdfBuffer)
         expect(pdfBuffer instanceof Buffer).toBe(true)
     });
     it('signs a ready pdf containing a link', async () => {
