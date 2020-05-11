@@ -10,4 +10,4 @@ exports[`Test signing expects PDF to be Buffer 1`] = `"PDF expected as Buffer."`
 
 exports[`Test signing expects PDF to contain a ByteRange placeholder 1`] = `"Could not find ByteRange placeholder: /ByteRange [0 /********** /********** /**********]"`;
 
-exports[`Test signing expects a reasonably sized placeholder 1`] = `"Signature exceeds placeholder length: 3224 > 4"`;
+exports[`Test signing expects a reasonably sized placeholder 1`] = `"Signature exceeds placeholder length: 3010 > 4"`;
