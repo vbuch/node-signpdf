@@ -68,11 +68,11 @@ export default class PDFObject {
             }
 
             // Encrypt the string when necessary
-            /*if (encryptFn) { //commented due to breaking signature (empty fields) on react native
+            if (encryptFn) { //commented due to breaking signature (empty fields) on react native
                 string = encryptFn(stringBuffer).toString('binary');
             } else {
                 string = stringBuffer.toString('binary');
-            }*/
+            }
 
             // Escape characters as required by the spec
             string = string.replace(escapableRe, c => escapable[c]);
