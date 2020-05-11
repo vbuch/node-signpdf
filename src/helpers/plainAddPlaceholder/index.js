@@ -30,10 +30,10 @@ const isContainBufferRootWithAcroform = (pdf) => {
 const plainAddPlaceholder = ({
     pdfBuffer,
     reason,
-    /*contact = 'emailfromp1289@gmail.com',
+    contact = 'emailfromp1289@gmail.com',
     name = 'Name from p12',
     localSign = 'Location from p12',
-    signatureName = 'Signature',*/
+    signatureName = 'Signature',
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
 }) => {
     let pdf = removeTrailingNewLine(pdfBuffer);
@@ -81,10 +81,10 @@ const plainAddPlaceholder = ({
         pdf: pdfKitMock,
         pdfBuffer,
         reason,
-        /*contact,
+        contact,
         name,
         localSign,
-        signatureName,*/
+        signatureName,
         signatureLength,
     });
 
