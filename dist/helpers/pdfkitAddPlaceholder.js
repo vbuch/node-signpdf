@@ -47,13 +47,16 @@ const pdfkitAddPlaceholder = ({
 
   }); // Check if pdf already contains acroform field
 
-  const regex = new RegExp(/(\d+)\s+0\s+obj\s+<<\s+\/Type\s+\/AcroForm\s+\/SigFlags\s+\d+\s+\/Fields\s+\[(.+)\]/, 'gm');
-  const acroFormMatch = regex.exec(pdfBuffer);
-  const isAcroFormExists = !!acroFormMatch;
+  const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
+  const isAcroFormExists = acroFormPosition !== -1;
   let fieldIds = [];
   let acroFormId;
 
   if (isAcroFormExists) {
+    const endobjPosition = pdfBuffer.lastIndexOf('endobj', acroFormPosition);
+    const content = pdfBuffer.slice(endobjPosition, pdfBuffer.length);
+    const regex = new RegExp(/(\d+)\s+0\s+obj\s+<<\s+\/Type\s+\/AcroForm\s+\/SigFlags\s+\d+\s+\/Fields\s+\[(.+)\]/, 'gm');
+    const acroFormMatch = regex.exec(content);
     const [, signtureIndex, acroFormFields] = acroFormMatch;
     acroFormId = parseInt(signtureIndex);
     fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
