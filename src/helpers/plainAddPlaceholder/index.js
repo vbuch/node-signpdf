@@ -30,9 +30,9 @@ const isContainBufferRootWithAcroform = (pdf) => {
 const plainAddPlaceholder = ({
     pdfBuffer,
     reason,
-    contact = 'emailfromp1289@gmail.com',
-    name = 'Name from p12',
-    localSign = 'Location from p12',
+    contact,
+    name,
+    localSign,
     signatureName = 'Signature',
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
 }) => {
