@@ -34,9 +34,9 @@ const pdfkitAddPlaceholder = ({
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
-        ContactInfo: contactInfo, // eslint-disable-line no-new-wrappers
-        Name: name, // eslint-disable-line no-new-wrappers
-        Location: location, // eslint-disable-line no-new-wrappers
+        ContactInfo: new String(contactInfo), // eslint-disable-line no-new-wrappers
+        Name: new String(name), // eslint-disable-line no-new-wrappers
+        Location: new String(location), // eslint-disable-line no-new-wrappers
     });
 
     // Check if pdf already contains acroform field
