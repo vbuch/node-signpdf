@@ -168,6 +168,7 @@ describe('Test signing', () => {
         signedPdfBuffer = plainAddPlaceholder({
             pdfBuffer: signedPdfBuffer,
             reason: 'second',
+            location: 'test location',
             signatureLength: 1592,
         });
         signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
@@ -181,6 +182,7 @@ describe('Test signing', () => {
         pdfBuffer = plainAddPlaceholder({
             pdfBuffer,
             reason: 'I have reviewed it.',
+            location: 'some city',
             signatureLength: 1612,
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
@@ -270,5 +272,16 @@ describe('Test signing', () => {
         } finally {
             forge.pkcs12.pkcs12FromAsn1 = originalPkcs12FromAsn1;
         }
+    });
+    it('error when final key inside trailer dictionary is /Root', async () => {
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/w3dummy-different-trailer.pdf`);
+        pdfBuffer = plainAddPlaceholder({
+            pdfBuffer,
+            reason: 'I have reviewed it.',
+            signatureLength: 1612,
+        });
+        const trailer = pdfBuffer.slice(pdfBuffer.lastIndexOf('trailer')).toString();
+        // the trailer should contain only one startxref
+        expect(trailer.match(/startxref/g).length).toBe(1);
     });
 });
