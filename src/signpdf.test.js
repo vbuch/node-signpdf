@@ -168,6 +168,7 @@ describe('Test signing', () => {
         signedPdfBuffer = plainAddPlaceholder({
             pdfBuffer: signedPdfBuffer,
             reason: 'second',
+            location: 'test location',
             signatureLength: 1592,
         });
         signedPdfBuffer = signer.sign(signedPdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
@@ -181,6 +182,7 @@ describe('Test signing', () => {
         pdfBuffer = plainAddPlaceholder({
             pdfBuffer,
             reason: 'I have reviewed it.',
+            location: 'some city',
             signatureLength: 1612,
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);

@@ -13,6 +13,9 @@ const pdfkitAddPlaceholder = ({
     pdf,
     pdfBuffer,
     reason,
+    contactInfo = 'emailfromp1289@gmail.com',
+    name = 'Name from p12',
+    location = 'Location from p12',
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
 }) => {
@@ -31,9 +34,9 @@ const pdfkitAddPlaceholder = ({
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
         M: new Date(),
-        ContactInfo: new String('emailfromp1289@gmail.com'), // eslint-disable-line no-new-wrappers
-        Name: new String('Name from p12'), // eslint-disable-line no-new-wrappers
-        Location: new String('Location from p12'), // eslint-disable-line no-new-wrappers
+        ContactInfo: new String(contactInfo), // eslint-disable-line no-new-wrappers
+        Name: new String(name), // eslint-disable-line no-new-wrappers
+        Location: new String(location), // eslint-disable-line no-new-wrappers
     });
 
     // Check if pdf already contains acroform field
