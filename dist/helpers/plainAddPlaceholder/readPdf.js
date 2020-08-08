@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _SignPdfError = _interopRequireDefault(require("../../SignPdfError"));
-
 var _readRefTable = _interopRequireDefault(require("./readRefTable"));
 
 var _findObject = _interopRequireDefault(require("./findObject"));
@@ -30,7 +28,13 @@ const readPdf = pdfBuffer => {
   xRefPosition = parseInt(xRefPosition);
   const refTable = (0, _readRefTable.default)(pdfBuffer);
   let rootSlice = trailer.slice(trailer.indexOf('/Root'));
-  rootSlice = rootSlice.slice(0, rootSlice.indexOf('/', 1));
+  let rootIndex = rootSlice.indexOf('/', 1);
+
+  if (rootIndex === -1) {
+    rootIndex = rootSlice.indexOf('>', 1);
+  }
+
+  rootSlice = rootSlice.slice(0, rootIndex);
   const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
 
   const root = (0, _findObject.default)(pdfBuffer, refTable, rootRef).toString();
