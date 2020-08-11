@@ -46,10 +46,28 @@ const pdfkitAddPlaceholder = ({
     let acroFormId;
 
     if (isAcroFormExists) {
-        const pdfSlice = pdfBuffer.slice(acroFormPosition - 12);
+        let acroFormStart = acroFormPosition;
+        // 10 is the distance between "/Type /AcroForm" and AcroFrom ID
+        const charsUntilIdEnd = 10
+        const acroFormIdEnd = acroFormPosition - charsUntilIdEnd;
+        // Let's find AcroForm ID by trying to find the "\n" before the ID
+        // 12 is a enough space to find the "\n" (generally it's 2 or 3, but I'm giving a big space though)
+        const maxAcroFormIdLength = 12
+        let foundAcroFormId = ''
+        for (let index = charsUntilIdEnd + 1; index < charsUntilIdEnd + maxAcroFormIdLength; index++) {
+            let acroFormIdString = pdfBuffer.slice(acroFormPosition - index, acroFormIdEnd).toString()
+  
+            if (acroFormIdString[0] == '\n') {
+                break
+            }
+  
+            foundAcroFormId = acroFormIdString
+            acroFormStart = acroFormPosition - index;
+        }
+  
+        const pdfSlice = pdfBuffer.slice(acroFormStart);
         const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
-        const acroFormFirsRow = acroForm.split('\n')[0];
-        acroFormId = parseInt(acroFormFirsRow.split(' ')[0]);
+        acroFormId = parseInt(foundAcroFormId);
 
         const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
         fieldIds = acroFormFields

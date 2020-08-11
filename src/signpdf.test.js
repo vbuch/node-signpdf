@@ -15,23 +15,32 @@ const createPdf = params => new Promise((resolve) => {
         placeholder: {},
         text: 'node-signpdf',
         addSignaturePlaceholder: true,
+        pages: 1,
         ...params,
     };
 
     const pdf = new PDFDocument({
-        autoFirstPage: true,
+        autoFirstPage: false,
         size: 'A4',
         layout: 'portrait',
         bufferPages: true,
     });
     pdf.info.CreationDate = '';
 
-    // Add some content to the page
-    pdf
-        .fillColor('#333')
-        .fontSize(25)
-        .moveDown()
-        .text(requestParams.text);
+    if (requestParams.pages < 1) {
+        requestParams.pages = 1
+    }
+
+    // Add some content to the page(s)
+    for (let i = 0; i < requestParams.pages; i++) {
+        pdf
+            .addPage()
+            .fillColor('#333')
+            .fontSize(25)
+            .moveDown()
+            .text(requestParams.text)
+            .save();
+    }
 
     // Collect the ouput PDF
     // and, when done, resolve with it stored in a Buffer
@@ -99,6 +108,7 @@ describe('Test signing', () => {
                     signatureLength: 2,
                 },
             });
+
             const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
             signer.sign(pdfBuffer, p12Buffer);
@@ -176,6 +186,33 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
+    it('signs big PDF twice producing big AcroForm ID on the first time', async () => {
+      let pdfBuffer = await createPdf({
+          pages: 100,
+      });
+      const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+
+      pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+      expect(pdfBuffer instanceof Buffer).toBe(true);
+
+      const {signature, signedData} = extractSignature(pdfBuffer);
+      expect(typeof signature === 'string').toBe(true);
+      expect(signedData instanceof Buffer).toBe(true);
+      
+      const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
+      pdfBuffer = plainAddPlaceholder({
+          pdfBuffer: pdfBuffer,
+          reason: 'second',
+          location: 'test location',
+          signatureLength: 1592,
+      });
+      pdfBuffer = signer.sign(pdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
+      expect(pdfBuffer instanceof Buffer).toBe(true);
+      
+      const {signature: secondSignature, signedData: secondSignatureData} = extractSignature(pdfBuffer, 2);
+      expect(typeof secondSignature === 'string').toBe(true);
+      expect(secondSignatureData instanceof Buffer).toBe(true);
+    })
     it('signs a ready pdf containing a link', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/including-a-link.pdf`);
