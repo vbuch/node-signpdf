@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.3.0]
+
+* Allow pdfkitAddPlaceholder to receive custom location, contactInfo, name;
+* Fixed duplicate startxref in some PDFs;
+* Fixed AcroForm ID extraction;
+* Updated dependencies;
+
 ## [1.2.3]
 
 * Fixed the opposite of 1.2.2's fix: adding placeholder failed when there were no previous /Annots.
