@@ -48,6 +48,9 @@ const isContainBufferRootWithAcroform = pdf => {
 const plainAddPlaceholder = ({
   pdfBuffer,
   reason,
+  contactInfo = 'emailfromp1289@gmail.com',
+  name = 'Name from p12',
+  location = 'Location from p12',
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH
 }) => {
   let pdf = (0, _removeTrailingNewLine.default)(pdfBuffer);
@@ -82,6 +85,9 @@ const plainAddPlaceholder = ({
     pdf: pdfKitMock,
     pdfBuffer,
     reason,
+    contactInfo,
+    name,
+    location,
     signatureLength
   });
 
