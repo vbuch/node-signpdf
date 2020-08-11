@@ -18,3 +18,6 @@
 * [andres-blanco](https://github.com/andres-blanco)
 * [therpobinski](https://github.com/therpobinski)
 * [Godoy](https://github.com/Godoy)
+* [mgyugcha](https://github.com/mgyugcha)
+* [ashirman](https://github.com/ashirman)
+* [brunoserrano](https://github.com/brunoserrano)
