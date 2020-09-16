@@ -1,6 +1,6 @@
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
-import {removeTrailingNewLine} from './helpers';
+import {removeTrailingNewLine, findByteRange} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
@@ -39,20 +39,8 @@ export class SignPdf {
         let pdf = removeTrailingNewLine(pdfBuffer);
 
         // Find the ByteRange placeholder.
-        const byteRangePlaceholder = [
-            0,
-            `/${this.byteRangePlaceholder}`,
-            `/${this.byteRangePlaceholder}`,
-            `/${this.byteRangePlaceholder}`,
-        ];
-        const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
+        const { byteRangeString } = findByteRange(pdf);
         const byteRangePos = pdf.indexOf(byteRangeString);
-        if (byteRangePos === -1) {
-            throw new SignPdfError(
-                `Could not find ByteRange placeholder: ${byteRangeString}`,
-                SignPdfError.TYPE_PARSE,
-            );
-        }
 
         // Calculate the actual ByteRange that needs to replace the placeholder.
         const byteRangeEnd = byteRangePos + byteRangeString.length;
