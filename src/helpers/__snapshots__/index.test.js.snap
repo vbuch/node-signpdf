@@ -6,5 +6,6 @@ Array [
   "pdfkitAddPlaceholder",
   "plainAddPlaceholder",
   "removeTrailingNewLine",
+  "findByteRange",
 ]
 `;
