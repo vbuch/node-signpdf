@@ -45,14 +45,10 @@ class SignPdf {
 
     let pdf = (0, _helpers.removeTrailingNewLine)(pdfBuffer); // Find the ByteRange placeholder.
 
-    const byteRangePlaceholder = [0, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`];
-    const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
-    const byteRangePos = pdf.indexOf(byteRangeString);
-
-    if (byteRangePos === -1) {
-      throw new _SignPdfError.default(`Could not find ByteRange placeholder: ${byteRangeString}`, _SignPdfError.default.TYPE_PARSE);
-    } // Calculate the actual ByteRange that needs to replace the placeholder.
-
+    const {
+      byteRangeString
+    } = (0, _helpers.findByteRange)(pdf);
+    const byteRangePos = pdf.indexOf(byteRangeString); // Calculate the actual ByteRange that needs to replace the placeholder.
 
     const byteRangeEnd = byteRangePos + byteRangeString.length;
     const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
