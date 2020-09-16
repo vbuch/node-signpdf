@@ -7,30 +7,33 @@ exports.default = void 0;
 
 var _SignPdfError = _interopRequireDefault(require("../SignPdfError"));
 
+var _const = require("./const");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * Finds the ByteRange within a given PDF Buffer if one exists
+ * Finds ByteRange information within a given PDF Buffer if one exists
  *
  * @param {Buffer} pdf
- * @returns {Object} {byteRangeString: String, byteRange: String[]}
+ * @returns {Object} {byteRangePlaceholder: String, byteRangeStrings: String[], byteRange: String[]}
  */
 const findByteRange = pdf => {
   if (!(pdf instanceof Buffer)) {
     throw new _SignPdfError.default('PDF expected as Buffer.', _SignPdfError.default.TYPE_INPUT);
   }
 
-  const byteRangeMatch = /\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*\]{1}/g.exec(pdf);
+  const byteRangeStrings = pdf.toString().match(/\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*\]{1}/g);
 
-  if (!byteRangeMatch) {
-    throw new _SignPdfError.default('No ByteRangeString found within PDF buffer', _SignPdfError.default.TYPE_PARSE);
+  if (!byteRangeStrings) {
+    throw new _SignPdfError.default('No ByteRangeStrings found within PDF buffer', _SignPdfError.default.TYPE_PARSE);
   }
 
-  const byteRangeString = byteRangeMatch[0];
-  const byteRange = byteRangeString.match(/[^\[\s]*(?:\d|\/\*{10})/g);
+  const byteRangePlaceholder = byteRangeStrings.find(s => s.includes(`/${_const.DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
+  const byteRanges = byteRangeStrings.map(brs => brs.match(/[^\[\s]*(?:\d|\/\*{10})/g));
   return {
-    byteRangeString,
-    byteRange
+    byteRangePlaceholder,
+    byteRangeStrings,
+    byteRanges
   };
 };
 

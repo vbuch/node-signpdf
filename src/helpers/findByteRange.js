@@ -1,10 +1,11 @@
 import SignPdfError from '../SignPdfError';
+import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './const';
 
 /**
- * Finds the ByteRange within a given PDF Buffer if one exists
+ * Finds ByteRange information within a given PDF Buffer if one exists
  *
  * @param {Buffer} pdf
- * @returns {Object} {byteRangeString: String, byteRange: String[]}
+ * @returns {Object} {byteRangePlaceholder: String, byteRangeStrings: String[], byteRange: String[]}
  */
 const findByteRange = (pdf) => {
     if (!(pdf instanceof Buffer)) {
@@ -14,21 +15,22 @@ const findByteRange = (pdf) => {
         );
     }
 
-    const byteRangeMatch = /\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*\]{1}/g.exec(pdf);
+    const byteRangeStrings = pdf.toString().match(/\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*\]{1}/g);
 
-    if (!byteRangeMatch) {
+    if (!byteRangeStrings) {
         throw new SignPdfError(
-            'No ByteRangeString found within PDF buffer',
+            'No ByteRangeStrings found within PDF buffer',
             SignPdfError.TYPE_PARSE,
         );
     }
 
-    const byteRangeString = byteRangeMatch[0];
-    const byteRange = byteRangeString.match(/[^\[\s]*(?:\d|\/\*{10})/g);
+    const byteRangePlaceholder = byteRangeStrings.find(s => s.includes(`/${DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
+    const byteRanges = byteRangeStrings.map(brs => brs.match(/[^\[\s]*(?:\d|\/\*{10})/g));
 
     return {
-      byteRangeString,
-      byteRange
+        byteRangePlaceholder,
+        byteRangeStrings,
+        byteRanges,
     };
 };
 
