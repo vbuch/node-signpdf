@@ -198,7 +198,7 @@ describe('Test signing', () => {
       const {signature, signedData} = extractSignature(pdfBuffer);
       expect(typeof signature === 'string').toBe(true);
       expect(signedData instanceof Buffer).toBe(true);
-      
+
       const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
       pdfBuffer = plainAddPlaceholder({
           pdfBuffer: pdfBuffer,
@@ -208,7 +208,7 @@ describe('Test signing', () => {
       });
       pdfBuffer = signer.sign(pdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
       expect(pdfBuffer instanceof Buffer).toBe(true);
-      
+
       const {signature: secondSignature, signedData: secondSignatureData} = extractSignature(pdfBuffer, 2);
       expect(typeof secondSignature === 'string').toBe(true);
       expect(secondSignatureData instanceof Buffer).toBe(true);
@@ -320,5 +320,17 @@ describe('Test signing', () => {
         const trailer = pdfBuffer.slice(pdfBuffer.lastIndexOf('trailer')).toString();
         // the trailer should contain only one startxref
         expect(trailer.match(/startxref/g).length).toBe(1);
+    });
+    it('expects siging to fail because of no byteRangePlaceholder available to sign', async () => {
+        try {
+            const pdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed.pdf`);
+            const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+
+            signer.sign(pdfBuffer, p12Buffer);
+            expect('here').not.toBe('here');
+        } catch (e) {
+            expect(e instanceof SignPdfError).toBe(true);
+            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
+        }
     });
 });

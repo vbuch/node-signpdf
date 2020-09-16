@@ -8,6 +8,6 @@ exports[`Test signing expects P12 certificate to be Buffer 1`] = `"p12 certifica
 
 exports[`Test signing expects PDF to be Buffer 1`] = `"PDF expected as Buffer."`;
 
-exports[`Test signing expects PDF to contain a ByteRange placeholder 1`] = `"No ByteRangeString found within PDF buffer"`;
+exports[`Test signing expects PDF to contain a ByteRange placeholder 1`] = `"No ByteRangeStrings found within PDF buffer"`;
 
 exports[`Test signing expects a reasonably sized placeholder 1`] = `"Signature exceeds placeholder length: 3224 > 4"`;
