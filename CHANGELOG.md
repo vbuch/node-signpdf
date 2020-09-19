@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.3.2]
+
+* Fixed detection of ByteRange (including when it is a placeholder);
+* Bumped node-forge version;
+
 ## [1.3.0]
 
 * Allow pdfkitAddPlaceholder to receive custom location, contactInfo, name;
