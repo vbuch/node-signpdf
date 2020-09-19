@@ -45,16 +45,17 @@ class SignPdf {
 
     let pdf = (0, _helpers.removeTrailingNewLine)(pdfBuffer); // Find the ByteRange placeholder.
 
-    const byteRangePlaceholder = [0, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`, `/${this.byteRangePlaceholder}`];
-    const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
-    const byteRangePos = pdf.indexOf(byteRangeString);
+    const {
+      byteRangePlaceholder
+    } = (0, _helpers.findByteRange)(pdf);
 
-    if (byteRangePos === -1) {
-      throw new _SignPdfError.default(`Could not find ByteRange placeholder: ${byteRangeString}`, _SignPdfError.default.TYPE_PARSE);
-    } // Calculate the actual ByteRange that needs to replace the placeholder.
+    if (!byteRangePlaceholder) {
+      throw new _SignPdfError.default(`Could not find empty ByteRange placeholder: ${byteRangePlaceholder}`, _SignPdfError.default.TYPE_PARSE);
+    }
 
+    const byteRangePos = pdf.indexOf(byteRangePlaceholder); // Calculate the actual ByteRange that needs to replace the placeholder.
 
-    const byteRangeEnd = byteRangePos + byteRangeString.length;
+    const byteRangeEnd = byteRangePos + byteRangePlaceholder.length;
     const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
     const placeholderPos = pdf.indexOf('<', contentsTagPos);
     const placeholderEnd = pdf.indexOf('>', placeholderPos);
@@ -65,7 +66,7 @@ class SignPdf {
     byteRange[2] = byteRange[1] + placeholderLengthWithBrackets;
     byteRange[3] = pdf.length - byteRange[2];
     let actualByteRange = `/ByteRange [${byteRange.join(' ')}]`;
-    actualByteRange += ' '.repeat(byteRangeString.length - actualByteRange.length); // Replace the /ByteRange placeholder with the actual ByteRange
+    actualByteRange += ' '.repeat(byteRangePlaceholder.length - actualByteRange.length); // Replace the /ByteRange placeholder with the actual ByteRange
 
     pdf = Buffer.concat([pdf.slice(0, byteRangePos), Buffer.from(actualByteRange), pdf.slice(byteRangeEnd)]); // Remove the placeholder signature
 

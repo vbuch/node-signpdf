@@ -1,6 +1,6 @@
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
-import {removeTrailingNewLine} from './helpers';
+import {removeTrailingNewLine, findByteRange} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
@@ -39,23 +39,19 @@ export class SignPdf {
         let pdf = removeTrailingNewLine(pdfBuffer);
 
         // Find the ByteRange placeholder.
-        const byteRangePlaceholder = [
-            0,
-            `/${this.byteRangePlaceholder}`,
-            `/${this.byteRangePlaceholder}`,
-            `/${this.byteRangePlaceholder}`,
-        ];
-        const byteRangeString = `/ByteRange [${byteRangePlaceholder.join(' ')}]`;
-        const byteRangePos = pdf.indexOf(byteRangeString);
-        if (byteRangePos === -1) {
+        const {byteRangePlaceholder} = findByteRange(pdf);
+
+        if (!byteRangePlaceholder) {
             throw new SignPdfError(
-                `Could not find ByteRange placeholder: ${byteRangeString}`,
+                `Could not find empty ByteRange placeholder: ${byteRangePlaceholder}`,
                 SignPdfError.TYPE_PARSE,
             );
         }
 
+        const byteRangePos = pdf.indexOf(byteRangePlaceholder);
+
         // Calculate the actual ByteRange that needs to replace the placeholder.
-        const byteRangeEnd = byteRangePos + byteRangeString.length;
+        const byteRangeEnd = byteRangePos + byteRangePlaceholder.length;
         const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
         const placeholderPos = pdf.indexOf('<', contentsTagPos);
         const placeholderEnd = pdf.indexOf('>', placeholderPos);
@@ -66,7 +62,7 @@ export class SignPdf {
         byteRange[2] = byteRange[1] + placeholderLengthWithBrackets;
         byteRange[3] = pdf.length - byteRange[2];
         let actualByteRange = `/ByteRange [${byteRange.join(' ')}]`;
-        actualByteRange += ' '.repeat(byteRangeString.length - actualByteRange.length);
+        actualByteRange += ' '.repeat(byteRangePlaceholder.length - actualByteRange.length);
 
         // Replace the /ByteRange placeholder with the actual ByteRange
         pdf = Buffer.concat([
