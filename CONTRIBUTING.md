@@ -21,3 +21,4 @@
 * [mgyugcha](https://github.com/mgyugcha)
 * [ashirman](https://github.com/ashirman)
 * [brunoserrano](https://github.com/brunoserrano)
+* [waaronking](https://github.com/waaronking)
