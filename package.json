@@ -63,5 +63,8 @@
         "jest": "^24.5.0",
         "node-forge": "^0.10.0",
         "pdfkit": "^0.10.0"
+    },
+    "dependencies": {
+        "axios": "^0.20.0"
     }
 }

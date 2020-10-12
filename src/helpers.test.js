@@ -63,7 +63,7 @@ describe('Helpers', () => {
         });
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        const signedPdfBuffer = await signer.sign(pdfBuffer, p12Buffer);
         const originalSignature = signer.lastSignature;
 
         const {signature} = extractSignature(signedPdfBuffer);

@@ -1,6 +1,6 @@
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
-import {removeTrailingNewLine, findByteRange} from './helpers';
+import {removeTrailingNewLine, findByteRange, tsa} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
 
@@ -12,7 +12,7 @@ export class SignPdf {
         this.lastSignature = null;
     }
 
-    sign(
+    async sign(
         pdfBuffer,
         p12Buffer,
         additionalOptions = {},
@@ -126,7 +126,7 @@ export class SignPdf {
         }
 
         // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
-        p7.addSigner({
+        const signer = {
             key: privateKey,
             certificate,
             digestAlgorithm: forge.pki.oids.sha256,
@@ -145,13 +145,42 @@ export class SignPdf {
                     value: new Date(),
                 },
             ],
-        });
+        }
+
+        if (options.tsa) {
+            signer.unauthenticatedAttributes = [
+                {
+                    type: forge.pki.oids.timeStampToken, // "1.2.840.113549.1.9.16.2.14"
+                    value: ""
+                }
+            ]
+        }
 
         // Sign in detached mode.
         p7.sign({detached: true});
 
+        // TimeStamp document
+        if (options.tsa) {
+            const signature = p7.signers[0].signature;
+            const token = await tsa({
+                tsaUrl: options.tsa,
+                signature
+            });
+
+            // Replace unauthenticated attribute
+            // TODO: Java BouncyCastle library has method directly for this
+            // it could be nice feature to extends node-forge library
+            p7.signerInfos[0].value[6].value[0].value[1] = forge.asn1.create(
+                forge.asn1.Class.UNIVERSAL,
+                forge.asn1.Type.SET,
+                true,
+                [timestampToken]
+            );
+        }
+
         // Check if the PDF has a good enough placeholder to fit the signature.
         const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
+
         // placeholderLength represents the length of the HEXified symbols but we're
         // checking the actual lengths.
         if ((raw.length * 2) > placeholderLength) {
