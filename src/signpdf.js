@@ -6,6 +6,8 @@ export {default as SignPdfError} from './SignPdfError';
 
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
 
+export * from "./helpers";
+
 export class SignPdf {
     constructor() {
         this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
