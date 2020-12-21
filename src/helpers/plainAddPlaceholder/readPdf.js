@@ -1,6 +1,21 @@
 import readRefTable from './readRefTable';
 import findObject from './findObject';
 
+const getValue = (trailer, key) => {
+    let index = trailer.indexOf(key);
+
+    if (index === -1) {
+        return undefined;
+    }
+
+    const slice = trailer.slice(index);
+    index = slice.indexOf('/', 1);
+    if (index === -1) {
+        index = slice.indexOf('>', 1);
+    }
+    return slice.slice(key.length + 1, index).toString().trim(); // key + at least one space
+};
+
 /**
  * Simplified parsing of a PDF Buffer.
  * Extracts reference table, root info and trailer start.
@@ -20,19 +35,16 @@ const readPdf = (pdfBuffer) => {
     xRefPosition = parseInt(xRefPosition);
     const refTable = readRefTable(pdfBuffer);
 
-    let rootSlice = trailer.slice(trailer.indexOf('/Root'));
-    let rootIndex = rootSlice.indexOf('/', 1);
-    if (rootIndex === -1) {
-        rootIndex = rootSlice.indexOf('>', 1);
-    }
-    rootSlice = rootSlice.slice(0, rootIndex);
-    const rootRef = rootSlice.slice(6).toString().trim(); // /Root + at least one space
+    const rootRef = getValue(trailer, '/Root');
     const root = findObject(pdfBuffer, refTable, rootRef).toString();
+
+    const infoRef = getValue(trailer, '/Info');
 
     return {
         xref: refTable,
         rootRef,
         root,
+        infoRef,
         trailerStart,
         previousXrefs: [],
         xRefPosition,
