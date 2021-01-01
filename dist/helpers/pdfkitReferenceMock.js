@@ -15,7 +15,11 @@ class PDFKitReferenceMock extends _abstract_reference.default {
     this.index = index;
 
     if (typeof additionalData !== 'undefined') {
-      Object.assign(this, additionalData);
+      if (!this.data) {
+        this.data = {};
+      }
+
+      Object.assign(this.data, additionalData);
     }
   }
 

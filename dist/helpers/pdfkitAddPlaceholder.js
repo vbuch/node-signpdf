@@ -50,78 +50,28 @@ const pdfkitAddPlaceholder = ({
 
   }); // Check if pdf already contains acroform field
 
-  const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
-  const isAcroFormExists = acroFormPosition !== -1;
-  let fieldIds = [];
-  let acroFormId;
+  const isAcroFormExists = !!pdf._acroform;
 
-  if (isAcroFormExists) {
-    let acroFormStart = acroFormPosition; // 10 is the distance between "/Type /AcroForm" and AcroFrom ID
-
-    const charsUntilIdEnd = 10;
-    const acroFormIdEnd = acroFormPosition - charsUntilIdEnd; // Let's find AcroForm ID by trying to find the "\n" before the ID
-    // 12 is a enough space to find the "\n" (generally it's 2 or 3, but I'm giving a big space though)
-
-    const maxAcroFormIdLength = 12;
-    let foundAcroFormId = '';
-
-    for (let index = charsUntilIdEnd + 1; index < charsUntilIdEnd + maxAcroFormIdLength; index++) {
-      let acroFormIdString = pdfBuffer.slice(acroFormPosition - index, acroFormIdEnd).toString();
-
-      if (acroFormIdString[0] == '\n') {
-        break;
-      }
-
-      foundAcroFormId = acroFormIdString;
-      acroFormStart = acroFormPosition - index;
-    }
-
-    const pdfSlice = pdfBuffer.slice(acroFormStart);
-    const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
-    acroFormId = parseInt(foundAcroFormId);
-    const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
-    fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
+  if (!isAcroFormExists) {
+    pdf.initForm();
+    pdf._root.data.AcroForm.data.SigFlags = 3;
   }
 
+  const numFields = pdf._root.data.AcroForm.data.Fields.length;
   const signatureName = 'Signature'; // Generate signature annotation widget
 
-  const widget = pdf.ref({
+  pdf.formAnnotation(signatureName + (numFields + 1), null, 0, 0, 0, 0, {
     Type: 'Annot',
     Subtype: 'Widget',
     FT: 'Sig',
     Rect: [0, 0, 0, 0],
     V: signature,
-    T: new String(signatureName + (fieldIds.length + 1)),
-    // eslint-disable-line no-new-wrappers
     F: 4,
     P: pdf.page.dictionary // eslint-disable-line no-underscore-dangle
 
   });
-  pdf.page.dictionary.data.Annots = [widget]; // Include the widget in a page
-
-  let form;
-
-  if (!isAcroFormExists) {
-    // Create a form (with the widget) and link in the _root
-    form = pdf.ref({
-      Type: 'AcroForm',
-      SigFlags: 3,
-      Fields: [...fieldIds, widget]
-    });
-  } else {
-    // Use existing acroform and extend the fields with newly created widgets
-    form = pdf.ref({
-      Type: 'AcroForm',
-      SigFlags: 3,
-      Fields: [...fieldIds, widget]
-    }, acroFormId);
-  }
-
-  pdf._root.data.AcroForm = form;
   return {
-    signature,
-    form,
-    widget
+    signature
   };
   /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
