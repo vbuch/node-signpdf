@@ -44,6 +44,7 @@ const pdfkitAddPlaceholder = ({
 
     if (!isAcroFormExists) {
         pdf.initForm();
+        pdf._root.data.AcroForm.data.SigFlags = 3;
     }
 
     const numFields = pdf._root.data.AcroForm.data.Fields.length;

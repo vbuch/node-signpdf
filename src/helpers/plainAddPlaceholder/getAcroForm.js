@@ -4,6 +4,7 @@ const getAcroForm = (pdfBuffer) => {
     const acroFormPosition = pdfBuffer.lastIndexOf('/Type /AcroForm');
     const isAcroFormExists = acroFormPosition > -1;
     const data = {
+        SigFlags: 3,
         Fields: [],
         DR: {
             Font: {},
