@@ -11,8 +11,8 @@ describe('pdfkitReferenceMock', () => {
         const data = 'DATA';
         const instance = new PDFKitReferenceMock(index, {a: data, b: data});
         expect(instance.index).toBe(index);
-        expect(instance.a).toBe(data);
-        expect(instance.b).toBe(data);
+        expect(instance.data.a).toBe(data);
+        expect(instance.data.b).toBe(data);
     });
     it('can be converted to string', () => {
         const index = 123;
