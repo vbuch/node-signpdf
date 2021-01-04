@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test signing sign method must be implemented 1`] = `"sign not implemented on Signer"`;
