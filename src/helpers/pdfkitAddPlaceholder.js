@@ -11,7 +11,6 @@ import PDFKitReferenceMock from './pdfkitReferenceMock';
  */
 const pdfkitAddPlaceholder = ({
     pdf,
-    pdfBuffer,
     reason,
     contactInfo = 'emailfromp1289@gmail.com',
     name = 'Name from p12',
@@ -40,30 +39,43 @@ const pdfkitAddPlaceholder = ({
     });
 
     // Check if pdf already contains acroform field
-    const isAcroFormExists = !!pdf._acroform;
-
-    if (!isAcroFormExists) {
+    if (!pdf._acroform) {
         pdf.initForm();
-        pdf._root.data.AcroForm.data.SigFlags = 3;
     }
 
-    const numFields = pdf._root.data.AcroForm.data.Fields.length;
+    const form = pdf._root.data.AcroForm;
+    const fieldId = form.data.Fields.length + 1;
+    const signatureName = `Signature${fieldId}`;
 
-    const signatureName = 'Signature';
+    form.data = {
+        Type: 'AcroForm',
+        SigFlags: 3,
+        Fields: form.data.Fields,
+        DR: form.data.DR,
+    };
 
-    // Generate signature annotation widget
-    pdf.formAnnotation(signatureName + (numFields + 1), null, 0, 0, 0, 0, {
+    const widget = pdf.ref({
         Type: 'Annot',
         Subtype: 'Widget',
         FT: 'Sig',
         Rect: [0, 0, 0, 0],
         V: signature,
-        F: 4,
-        P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
+        T: new String(signatureName), // eslint-disable-line no-new-wrappers
+        // F: 4,
+        P: pdf.page.dictionary
     });
+
+    pdf.page.annotations.push(widget); // Include the widget in a page
+    form.data.Fields.push(widget);
+
+    signature.end();
+    widget.end();
+    // form.end() is called by pdfkit itself
 
     return {
         signature,
+        form,
+        widget,
     };
     /* eslint-enable no-underscore-dangle,no-param-reassign */
 };
