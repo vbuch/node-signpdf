@@ -60,9 +60,6 @@ const createPdf = params => new Promise((resolve) => {
             reason: 'I am the author',
             ...requestParams.placeholder,
         });
-        // Externally end the streams of the created objects.
-        // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach(key => refs[key].end());
     }
 
     // Also end the PDFDocument stream.

@@ -20,6 +20,9 @@ class PDFAbstractReference {
     throw new Error('Must be implemented by subclasses');
   }
 
+  end() {// noop
+  }
+
 }
 
 var _default = PDFAbstractReference;
