@@ -47,7 +47,7 @@ Once you have the placeholder, just [[sign the document]](#sign-the-document).
 import signer from 'node-signpdf';
 ...
 const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_PDF_FILE)
+  fs.readFileSync(PATH_TO_PDF_FILE),
   fs.readFileSync(PATH_TO_P12_CERTIFICATE),
 );
 ```
