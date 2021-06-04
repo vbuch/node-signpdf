@@ -3,7 +3,7 @@ import SignPdfError from './SignPdfError';
 import {removeTrailingNewLine, findByteRange} from './helpers';
 
 export {default as SignPdfError} from './SignPdfError';
-export * from "./helpers";
+export * from './helpers';
 
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
 
