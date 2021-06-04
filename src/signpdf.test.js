@@ -172,6 +172,21 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
+    it('signs a ready pdf that does not have metadata', async () => {
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+        let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/no-metadata.pdf`);
+
+        pdfBuffer = plainAddPlaceholder({
+            pdfBuffer,
+            reason: 'I have reviewed it.',
+            signatureLength: 1612,
+        });
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+    });
     it('signs a ready pdf two times', async () => {
         const secondP12Buffer = fs.readFileSync(`${__dirname}/../resources/withpass.p12`);
         let signedPdfBuffer = fs.readFileSync(`${__dirname}/../resources/signed-once.pdf`);

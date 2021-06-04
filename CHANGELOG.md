@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.3.3]
+
+* plainAddPlaceholder: Fixed loss of PDF metadata when adding placeholder;
+* Export helpers from root;
+* Bumped dependencies;
+
 ## [1.3.2]
 
 * Fixed detection of ByteRange (including when it is a placeholder);

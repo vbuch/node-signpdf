@@ -3,6 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var _exportNames = {
+  DEFAULT_BYTE_RANGE_PLACEHOLDER: true,
+  SignPdf: true,
+  SignPdfError: true
+};
 Object.defineProperty(exports, "SignPdfError", {
   enumerable: true,
   get: function () {
@@ -16,6 +21,17 @@ var _nodeForge = _interopRequireDefault(require("node-forge"));
 var _SignPdfError = _interopRequireDefault(require("./SignPdfError"));
 
 var _helpers = require("./helpers");
+
+Object.keys(_helpers).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _helpers[key];
+    }
+  });
+});
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
