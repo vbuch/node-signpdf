@@ -13,6 +13,10 @@ class PDFAbstractReference {
     toString() {
         throw new Error('Must be implemented by subclasses');
     }
+
+    end() {
+        // noop
+    }
 }
 
 export default PDFAbstractReference;

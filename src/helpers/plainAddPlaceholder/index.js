@@ -10,6 +10,7 @@ import getPageRef from './getPageRef';
 import createBufferRootWithAcroform from './createBufferRootWithAcroform';
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import createBufferTrailer from './createBufferTrailer';
+import getAcroForm from './getAcroForm';
 
 const isContainBufferRootWithAcroform = (pdf) => {
     const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
@@ -39,44 +40,47 @@ const plainAddPlaceholder = ({
     const info = readPdf(pdf);
     const pageRef = getPageRef(pdf, info);
     const pageIndex = getIndexFromRef(info.xref, pageRef);
+    const acroForm = getAcroForm(pdfBuffer);
     const addedReferences = new Map();
+    const references = [];
+    const dictionary = new PDFKitReferenceMock(pageIndex, {
+        Annots: [],
+    });
 
     const pdfKitMock = {
-        ref: (input, additionalIndex) => {
+        ref: (data) => {
             info.xref.maxIndex += 1;
-
-            const index = additionalIndex != null ? additionalIndex : info.xref.maxIndex;
-
+            const index = info.xref.maxIndex;
             addedReferences.set(index, pdf.length + 1); // + 1 new line
 
-            pdf = Buffer.concat([
-                pdf,
-                Buffer.from('\n'),
-                Buffer.from(`${index} 0 obj\n`),
-                Buffer.from(PDFObject.convert(input)),
-                Buffer.from('\nendobj\n'),
-            ]);
-            return new PDFKitReferenceMock(info.xref.maxIndex);
+            const ref = new PDFKitReferenceMock(info.xref.maxIndex, data);
+            references.push(ref);
+
+            return ref;
         },
         page: {
-            dictionary: new PDFKitReferenceMock(
-                pageIndex,
-                {
-                    data: {
-                        Annots: [],
-                    },
-                },
-            ),
+            annotations: {push(...args) { dictionary.data.Annots.push(...args); }},
+            dictionary,
         },
         _root: {
-            data: {},
+            data: {
+                AcroForm: acroForm,
+            },
+        },
+        _acroform: acroForm ? {} : undefined,
+        initForm() {
+            this._acroform = {};
+            const form = this.ref({
+                Fields: [],
+                DR: {
+                    Font: {},
+                },
+            });
+            this._root.data.AcroForm = form;
         },
     };
 
-    const {
-        form,
-        widget,
-    } = pdfkitAddPlaceholder({
+    pdfkitAddPlaceholder({
         pdf: pdfKitMock,
         pdfBuffer,
         reason,
@@ -86,20 +90,29 @@ const plainAddPlaceholder = ({
         signatureLength,
     });
 
+    pdf = references.reduce((buffer, ref) => Buffer.concat([
+        buffer,
+        Buffer.from('\n'),
+        Buffer.from(`${ref.index} 0 obj\n`),
+        Buffer.from(PDFObject.convert(ref.data)),
+        Buffer.from('\nendobj\n'),
+    ]), pdf);
+
     if (!isContainBufferRootWithAcroform(pdf)) {
         const rootIndex = getIndexFromRef(info.xref, info.rootRef);
         addedReferences.set(rootIndex, pdf.length + 1);
         pdf = Buffer.concat([
             pdf,
             Buffer.from('\n'),
-            createBufferRootWithAcroform(pdf, info, form),
+            createBufferRootWithAcroform(pdf, info, pdfKitMock._root.data.AcroForm),
         ]);
     }
     addedReferences.set(pageIndex, pdf.length + 1);
     pdf = Buffer.concat([
         pdf,
         Buffer.from('\n'),
-        createBufferPageWithAnnotation(pdf, info, pageRef, widget),
+        // probably a nicer way to get the widget - last field in form?
+        createBufferPageWithAnnotation(pdf, info, pageRef, pdfKitMock._root.data.AcroForm.data.Fields.pop()),
     ]);
 
     pdf = Buffer.concat([
