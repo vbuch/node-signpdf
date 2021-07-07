@@ -1,4 +1,4 @@
-import {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH} from './const';
+import {DEFAULT_BYTE_RANGE_PLACEHOLDER, DEFAULT_SIGNATURE_LENGTH, SUBFILTER_ADOBE_PKCS7_DETACHED} from './const';
 // eslint-disable-next-line import/no-unresolved
 import PDFKitReferenceMock from './pdfkitReferenceMock';
 /**
@@ -18,13 +18,14 @@ const pdfkitAddPlaceholder = ({
     location = 'Location from p12',
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
+    subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
 }) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
         Filter: 'Adobe.PPKLite',
-        SubFilter: 'adbe.pkcs7.detached',
+        SubFilter: subFilter,
         ByteRange: [
             0,
             byteRangePlaceholder,

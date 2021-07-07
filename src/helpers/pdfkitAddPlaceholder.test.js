@@ -72,5 +72,29 @@ describe('pdfkitAddPlaceholder', () => {
         expect(widgetData.ContactInfo).toEqual('emailfromp1289@gmail.com');
         expect(widgetData.Name).toEqual('Name from p12');
         expect(widgetData.Location).toEqual('Location from p12');
+        expect(widgetData.SubFilter).toEqual('adbe.pkcs7.detached');
+    });
+
+    it('allows defining signature SubFilter', () => {
+        const pdf = new PDFDocument({
+            autoFirstPage: true,
+            size: 'A4',
+            layout: 'portrait',
+            bufferPages: true,
+        });
+        pdf.info.CreationDate = '';
+
+        const refs = pdfkitAddPlaceholder({
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+            subFilter: 'ETSI.CAdES.detached',
+        });
+        expect(Object.keys(refs)).toMatchSnapshot();
+        expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
+        expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');
+        const widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
+        expect(widgetData.Reason).toEqual('test reason');
+        expect(widgetData.SubFilter).toEqual('ETSI.CAdES.detached');
     });
 });

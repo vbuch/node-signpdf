@@ -1,7 +1,7 @@
 import PDFObject from '../pdfkit/pdfobject';
 import PDFKitReferenceMock from '../pdfkitReferenceMock';
 import removeTrailingNewLine from '../removeTrailingNewLine';
-import {DEFAULT_SIGNATURE_LENGTH} from '../const';
+import {DEFAULT_SIGNATURE_LENGTH, SUBFILTER_ADOBE_PKCS7_DETACHED} from '../const';
 import pdfkitAddPlaceholder from '../pdfkitAddPlaceholder';
 
 import getIndexFromRef from './getIndexFromRef';
@@ -34,6 +34,7 @@ const plainAddPlaceholder = ({
     name = 'Name from p12',
     location = 'Location from p12',
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
+    subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
 }) => {
     let pdf = removeTrailingNewLine(pdfBuffer);
     const info = readPdf(pdf);
@@ -84,6 +85,7 @@ const plainAddPlaceholder = ({
         name,
         location,
         signatureLength,
+        subFilter,
     });
 
     if (!isContainBufferRootWithAcroform(pdf)) {
