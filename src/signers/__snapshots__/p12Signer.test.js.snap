@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test signing expects P12 certificate to be Buffer 1`] = `"p12 certificate expected as Buffer."`;
+
+exports[`Test signing expects pdf to be Buffer 1`] = `"PDF expected as Buffer."`;

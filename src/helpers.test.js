@@ -3,6 +3,7 @@ import PDFDocument from 'pdfkit';
 import signer from './signpdf';
 import {pdfkitAddPlaceholder, extractSignature} from './helpers';
 import SignPdfError from './SignPdfError';
+import P12Signer from './signers/p12Signer';
 
 /**
  * Creates a Buffer containing a PDF.
@@ -63,7 +64,7 @@ describe('Helpers', () => {
         });
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
-        const signedPdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        const signedPdfBuffer = await signer.sign(pdfBuffer, new P12Signer(p12Buffer));
         const originalSignature = signer.lastSignature;
 
         const {signature} = extractSignature(signedPdfBuffer);

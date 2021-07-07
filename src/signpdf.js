@@ -1,6 +1,6 @@
-import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
 import {removeTrailingNewLine, findByteRange} from './helpers';
+import Signer from './signer';
 
 export {default as SignPdfError} from './SignPdfError';
 export * from './helpers';
@@ -13,26 +13,27 @@ export class SignPdf {
         this.lastSignature = null;
     }
 
-    sign(
+    /**
+     * Sign a PDF buffer with given signer
+     *
+     * @param {Buffer} pdfBuffer
+     * @param {Signer} signer
+     * @returns {Promise<Buffer>}
+     */
+    async sign(
         pdfBuffer,
-        p12Buffer,
-        additionalOptions = {},
+        signer,
     ) {
-        const options = {
-            asn1StrictParsing: false,
-            passphrase: '',
-            ...additionalOptions,
-        };
-
         if (!(pdfBuffer instanceof Buffer)) {
             throw new SignPdfError(
                 'PDF expected as Buffer.',
                 SignPdfError.TYPE_INPUT,
             );
         }
-        if (!(p12Buffer instanceof Buffer)) {
+
+        if (!(signer instanceof Signer)) {
             throw new SignPdfError(
-                'p12 certificate expected as Buffer.',
+                'signer must be a Signer class',
                 SignPdfError.TYPE_INPUT,
             );
         }
@@ -78,81 +79,10 @@ export class SignPdf {
             pdf.slice(byteRange[2], byteRange[2] + byteRange[3]),
         ]);
 
-        // Convert Buffer P12 to a forge implementation.
-        const forgeCert = forge.util.createBuffer(p12Buffer.toString('binary'));
-        const p12Asn1 = forge.asn1.fromDer(forgeCert);
-        const p12 = forge.pkcs12.pkcs12FromAsn1(
-            p12Asn1,
-            options.asn1StrictParsing,
-            options.passphrase,
-        );
-
-        // Extract safe bags by type.
-        // We will need all the certificates and the private key.
-        const certBags = p12.getBags({
-            bagType: forge.pki.oids.certBag,
-        })[forge.pki.oids.certBag];
-        const keyBags = p12.getBags({
-            bagType: forge.pki.oids.pkcs8ShroudedKeyBag,
-        })[forge.pki.oids.pkcs8ShroudedKeyBag];
-
-        const privateKey = keyBags[0].key;
-        // Here comes the actual PKCS#7 signing.
-        const p7 = forge.pkcs7.createSignedData();
-        // Start off by setting the content.
-        p7.content = forge.util.createBuffer(pdf.toString('binary'));
-
-        // Then add all the certificates (-cacerts & -clcerts)
-        // Keep track of the last found client certificate.
-        // This will be the public key that will be bundled in the signature.
-        let certificate;
-        Object.keys(certBags).forEach((i) => {
-            const {publicKey} = certBags[i].cert;
-
-            p7.addCertificate(certBags[i].cert);
-
-            // Try to find the certificate that matches the private key.
-            if (privateKey.n.compareTo(publicKey.n) === 0
-                && privateKey.e.compareTo(publicKey.e) === 0
-            ) {
-                certificate = certBags[i].cert;
-            }
-        });
-
-        if (typeof certificate === 'undefined') {
-            throw new SignPdfError(
-                'Failed to find a certificate that matches the private key.',
-                SignPdfError.TYPE_INPUT,
-            );
-        }
-
-        // Add a sha256 signer. That's what Adobe.PPKLite adbe.pkcs7.detached expects.
-        p7.addSigner({
-            key: privateKey,
-            certificate,
-            digestAlgorithm: forge.pki.oids.sha256,
-            authenticatedAttributes: [
-                {
-                    type: forge.pki.oids.contentType,
-                    value: forge.pki.oids.data,
-                }, {
-                    type: forge.pki.oids.messageDigest,
-                    // value will be auto-populated at signing time
-                }, {
-                    type: forge.pki.oids.signingTime,
-                    // value can also be auto-populated at signing time
-                    // We may also support passing this as an option to sign().
-                    // Would be useful to match the creation time of the document for example.
-                    value: new Date(),
-                },
-            ],
-        });
-
-        // Sign in detached mode.
-        p7.sign({detached: true});
+        // signing
+        const raw = await signer.sign(pdf);
 
         // Check if the PDF has a good enough placeholder to fit the signature.
-        const raw = forge.asn1.toDer(p7.toAsn1()).getBytes();
         // placeholderLength represents the length of the HEXified symbols but we're
         // checking the actual lengths.
         if ((raw.length * 2) > placeholderLength) {

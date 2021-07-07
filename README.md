@@ -45,10 +45,11 @@ Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
 ```javascript
 import signer from 'node-signpdf';
+import P12Signer from 'node-signpdf/dist/signers';
 ...
-const signedPdf = signer.sign(
+const signedPdf = await signer.sign(
   fs.readFileSync(PATH_TO_PDF_FILE),
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
+  new P12Signer(fs.readFileSync(PATH_TO_P12_CERTIFICATE)),
 );
 ```
 
@@ -82,6 +83,23 @@ This package provides two [helpers](https://github.com/vbuch/node-signpdf/blob/m
 ### Generate and apply signature
 
 That's where the Signer kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
+
+### Generate a signature using your own Signer
+
+The `PDFSigner.sign()` method accepts a `Signer` as the second argument, if you need to implement your own signing logic, you can create your own `Signer` subclass and implement the `sign` method (which accepts the pdfBuffer) and sign this yourself.
+
+```javascript
+import signer from 'node-signpdf';
+import Signer from 'node-signpdf/dist/signer';
+...
+class MySigner extends Signer {
+    sign(pdfBuffer) {
+        ...
+        return Buffer.from(...);
+    }
+}
+signer.sign(pdfBuffer, new MySigner());
+```
 
 ## Dependencies
 
