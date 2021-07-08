@@ -1,14 +1,16 @@
 import SignPdfError from '../SignPdfError';
+
 const getSubstringIndex = (str, substring, n) => {
-    var times = 0, index = null;
+    let times = 0; let
+        index = null;
 
     while (times < n && index !== -1) {
-        index = str.indexOf(substring, index+1);
-        times++;
+        index = str.indexOf(substring, index + 1);
+        times += 1;
     }
 
     return index;
-}
+};
 /**
  * Basic implementation of signature extraction.
  *

@@ -32,7 +32,7 @@ const createPdf = params => new Promise((resolve) => {
     }
 
     // Add some content to the page(s)
-    for (let i = 0; i < requestParams.pages; i++) {
+    for (let i = 0; i < requestParams.pages; i += 1) {
         pdf
             .addPage()
             .fillColor('#333')
@@ -224,7 +224,10 @@ describe('Test signing', () => {
         pdfBuffer = signer.sign(pdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
         expect(pdfBuffer instanceof Buffer).toBe(true);
 
-        const {signature: secondSignature, signedData: secondSignatureData} = extractSignature(pdfBuffer, 2);
+        const {
+            signature: secondSignature,
+            signedData: secondSignatureData,
+        } = extractSignature(pdfBuffer, 2);
         expect(typeof secondSignature === 'string').toBe(true);
         expect(secondSignatureData instanceof Buffer).toBe(true);
     });

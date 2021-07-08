@@ -3,9 +3,10 @@ import getIndexFromRef from './getIndexFromRef';
 
 const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
     const pagesDictionary = findObject(pdf, info.xref, pagesRef).toString();
-    
+
     // Extend page dictionary with newly created annotations
-    let annotsStart, annotsEnd, annots;
+    let annotsStart; let annotsEnd; let
+        annots;
     annotsStart = pagesDictionary.indexOf('/Annots');
     if (annotsStart > -1) {
         annotsEnd = pagesDictionary.indexOf(']', annotsStart);
@@ -20,7 +21,7 @@ const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
     const pagesDictionaryIndex = getIndexFromRef(info.xref, pagesRef);
     const widgetValue = widget.toString();
 
-    annots = annots + ' ' + widgetValue + ']'; // add the trailing ] back
+    annots = `${annots} ${widgetValue}]`; // add the trailing ] back
 
     const preAnnots = pagesDictionary.substr(0, annotsStart);
     let postAnnots = '';

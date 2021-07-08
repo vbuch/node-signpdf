@@ -32,6 +32,7 @@
         "test:watch": "./node_modules/.bin/jest --watch",
         "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
+        "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
         "precommit": "npm run lint",
         "prepush": "npm run test"
     },

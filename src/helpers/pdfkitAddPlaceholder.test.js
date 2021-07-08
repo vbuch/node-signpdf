@@ -36,18 +36,18 @@ describe('pdfkitAddPlaceholder', () => {
             pdf,
             pdfBuffer: Buffer.from([pdf]),
             reason: 'test reason',
-            contactInfo :'testemail@test.com',
-            name :'test name',
-            location : 'test Location'
+            contactInfo: 'testemail@test.com',
+            name: 'test name',
+            location: 'test Location',
         });
         expect(Object.keys(refs)).toMatchSnapshot();
         expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
         expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');
-        let widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
-        expect(widgetData['Reason']).toEqual('test reason')
-        expect(widgetData['ContactInfo']).toEqual('testemail@test.com')
-        expect(widgetData['Name']).toEqual('test name')
-        expect(widgetData['Location']).toEqual('test Location')
+        const widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
+        expect(widgetData.Reason).toEqual('test reason');
+        expect(widgetData.ContactInfo).toEqual('testemail@test.com');
+        expect(widgetData.Name).toEqual('test name');
+        expect(widgetData.Location).toEqual('test Location');
     });
 
     it('placeholder contains default values for contactInfo, name, location', () => {
@@ -62,15 +62,15 @@ describe('pdfkitAddPlaceholder', () => {
         const refs = pdfkitAddPlaceholder({
             pdf,
             pdfBuffer: Buffer.from([pdf]),
-            reason: 'test reason'
+            reason: 'test reason',
         });
         expect(Object.keys(refs)).toMatchSnapshot();
         expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
         expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');
-        let widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
-        expect(widgetData['Reason']).toEqual('test reason')
-        expect(widgetData['ContactInfo']).toEqual('emailfromp1289@gmail.com')
-        expect(widgetData['Name']).toEqual('Name from p12')
-        expect(widgetData['Location']).toEqual('Location from p12')
+        const widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
+        expect(widgetData.Reason).toEqual('test reason');
+        expect(widgetData.ContactInfo).toEqual('emailfromp1289@gmail.com');
+        expect(widgetData.Name).toEqual('Name from p12');
+        expect(widgetData.Location).toEqual('Location from p12');
     });
 });

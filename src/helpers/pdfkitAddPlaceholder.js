@@ -48,23 +48,26 @@ const pdfkitAddPlaceholder = ({
     if (isAcroFormExists) {
         let acroFormStart = acroFormPosition;
         // 10 is the distance between "/Type /AcroForm" and AcroFrom ID
-        const charsUntilIdEnd = 10
+        const charsUntilIdEnd = 10;
         const acroFormIdEnd = acroFormPosition - charsUntilIdEnd;
         // Let's find AcroForm ID by trying to find the "\n" before the ID
-        // 12 is a enough space to find the "\n" (generally it's 2 or 3, but I'm giving a big space though)
-        const maxAcroFormIdLength = 12
-        let foundAcroFormId = ''
-        for (let index = charsUntilIdEnd + 1; index < charsUntilIdEnd + maxAcroFormIdLength; index++) {
-            let acroFormIdString = pdfBuffer.slice(acroFormPosition - index, acroFormIdEnd).toString()
-  
-            if (acroFormIdString[0] == '\n') {
-                break
+        // 12 is a enough space to find the "\n"
+        // (generally it's 2 or 3, but I'm giving a big space though)
+        const maxAcroFormIdLength = 12;
+        let foundAcroFormId = '';
+        let index = charsUntilIdEnd + 1;
+        for (index; index < charsUntilIdEnd + maxAcroFormIdLength; index += 1) {
+            const acroFormIdString = pdfBuffer
+                .slice(acroFormPosition - index, acroFormIdEnd).toString();
+
+            if (acroFormIdString[0] === '\n') {
+                break;
             }
-  
-            foundAcroFormId = acroFormIdString
+
+            foundAcroFormId = acroFormIdString;
             acroFormStart = acroFormPosition - index;
         }
-  
+
         const pdfSlice = pdfBuffer.slice(acroFormStart);
         const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
         acroFormId = parseInt(foundAcroFormId);
@@ -72,7 +75,7 @@ const pdfkitAddPlaceholder = ({
         const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
         fieldIds = acroFormFields
             .split(' ')
-            .filter((element, index) => index % 3 === 0)
+            .filter((element, i) => i % 3 === 0)
             .map(fieldId => new PDFKitReferenceMock(fieldId));
     }
     const signatureName = 'Signature';
