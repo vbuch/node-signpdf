@@ -10,12 +10,12 @@ var _SignPdfError = _interopRequireDefault(require("../SignPdfError"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const getSubstringIndex = (str, substring, n) => {
-  var times = 0,
-      index = null;
+  let times = 0;
+  let index = null;
 
   while (times < n && index !== -1) {
     index = str.indexOf(substring, index + 1);
-    times++;
+    times += 1;
   }
 
   return index;

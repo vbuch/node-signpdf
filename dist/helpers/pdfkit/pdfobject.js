@@ -22,7 +22,7 @@ By Devon Govett
 */
 const pad = (str, length) => (Array(length + 1).join('0') + str).slice(-length);
 
-const escapableRe = /[\n\r\t\b\f\(\)\\]/g;
+const escapableRe = /[\n\r\t\b\f()\\]/g;
 const escapable = {
   '\n': '\\n',
   '\r': '\\r',
@@ -34,21 +34,7 @@ const escapable = {
   ')': '\\)'
 }; // Convert little endian UTF-16 to big endian
 
-const swapBytes = buff => {
-  const l = buff.length;
-
-  if (l & 0x01) {
-    throw new Error('Buffer length must be even');
-  } else {
-    for (let i = 0, end = l - 1; i < end; i += 2) {
-      const a = buff[i];
-      buff[i] = buff[i + 1];
-      buff[i + 1] = a;
-    }
-  }
-
-  return buff;
-};
+const swapBytes = buff => buff.swap16();
 
 class PDFObject {
   static convert(object, encryptFn = null) {
@@ -117,27 +103,23 @@ class PDFObject {
 
     if ({}.toString.call(object) === '[object Object]') {
       const out = ['<<'];
-      let streamData;
+      let streamData; // @todo this can probably be refactored into a reduce
 
-      for (const key in object) {
-        if (object.hasOwnProperty(key)) {
-          let val = object[key];
-          let checkedValue = '';
+      Object.entries(object).forEach(([key, val]) => {
+        let checkedValue = '';
 
-          if (val.toString().indexOf('<<') !== -1) {
-            checkedValue = val;
-          } else {
-            checkedValue = PDFObject.convert(val, encryptFn);
-          }
-
-          if (key === 'stream') {
-            streamData = `${key}\n${val}\nendstream`;
-          } else {
-            out.push(`/${key} ${checkedValue}`);
-          }
+        if (val.toString().indexOf('<<') !== -1) {
+          checkedValue = val;
+        } else {
+          checkedValue = PDFObject.convert(val, encryptFn);
         }
-      }
 
+        if (key === 'stream') {
+          streamData = `${key}\n${val}\nendstream`;
+        } else {
+          out.push(`/${key} ${checkedValue}`);
+        }
+      });
       out.push('>>');
 
       if (streamData) {
