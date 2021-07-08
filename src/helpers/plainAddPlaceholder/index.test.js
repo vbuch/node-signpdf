@@ -10,7 +10,7 @@ describe('plainAddPlaceholder', () => {
             reason: 'Because I can',
             location: 'some place',
             name: 'example name',
-            contactInfo: 'emailfromp1289@gmail.com'
+            contactInfo: 'emailfromp1289@gmail.com',
         });
         expect(output).toBeInstanceOf(Buffer);
         expect(output.indexOf('/ByteRange')).not.toBe(-1);

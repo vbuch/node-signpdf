@@ -14,7 +14,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
   const pagesDictionary = (0, _findObject.default)(pdf, info.xref, pagesRef).toString(); // Extend page dictionary with newly created annotations
 
-  let annotsStart, annotsEnd, annots;
+  let annotsStart;
+  let annotsEnd;
+  let annots;
   annotsStart = pagesDictionary.indexOf('/Annots');
 
   if (annotsStart > -1) {
@@ -29,7 +31,7 @@ const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
 
   const pagesDictionaryIndex = (0, _getIndexFromRef.default)(info.xref, pagesRef);
   const widgetValue = widget.toString();
-  annots = annots + ' ' + widgetValue + ']'; // add the trailing ] back
+  annots = `${annots} ${widgetValue}]`; // add the trailing ] back
 
   const preAnnots = pagesDictionary.substr(0, annotsStart);
   let postAnnots = '';

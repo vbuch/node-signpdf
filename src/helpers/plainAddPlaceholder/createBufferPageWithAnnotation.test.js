@@ -1,6 +1,5 @@
 import createBufferPageWithAnnotation from './createBufferPageWithAnnotation';
 import findObject from './findObject';
-import SignPdfError from '../../SignPdfError';
 
 jest.mock('./findObject', () => ({
     __esModule: true,
