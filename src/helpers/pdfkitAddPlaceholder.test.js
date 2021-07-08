@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit';
 import pdfkitAddPlaceholder from './pdfkitAddPlaceholder';
+import {SUBFILTER_ETSI_CADES_DETACHED} from './const';
 
 describe('pdfkitAddPlaceholder', () => {
     it('adds placeholder to PDFKit document', () => {
@@ -88,7 +89,7 @@ describe('pdfkitAddPlaceholder', () => {
             pdf,
             pdfBuffer: Buffer.from([pdf]),
             reason: 'test reason',
-            subFilter: 'ETSI.CAdES.detached',
+            subFilter: SUBFILTER_ETSI_CADES_DETACHED,
         });
         expect(Object.keys(refs)).toMatchSnapshot();
         expect(pdf.page.dictionary.data.Annots).toHaveLength(1);

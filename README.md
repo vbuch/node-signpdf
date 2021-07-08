@@ -79,6 +79,21 @@ This package provides two [helpers](https://github.com/vbuch/node-signpdf/blob/m
 
 **Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still vary between different signing certificates. So every time you sign using the same P12 you will get the same length of the output signature, no matter the length of the signed content. It is safe to find out the actual signature length your certificate produces and use it to properly configure the placeholder length.
 
+#### PAdES compliant signatures
+
+To produce PAdES compliant signatures, the ETSI Signature Dictionary SubFilter value must be `ETSI.CAdES.detached` instead of the standard Adobe value.
+
+This can be declared using the subFilter option argument parsed to `pdfkitAddPlaceholder` and `plainAddPlaceholder`.
+
+```js
+import { SUBFILTER_ETSI_CADES_DETACHED, pdfkitAddPlaceholder } from 'node-signpdf';
+
+const pdfToSign = pdfkitAddPlaceholder({
+  ...,
+  subFilter: SUBFILTER_ETSI_CADES_DETACHED,
+});
+```
+
 ### Generate and apply signature
 
 That's where the Signer kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder. This is best demonstrated in [the tests](https://github.com/vbuch/node-signpdf/blob/master/src/signpdf.test.js#L100).
