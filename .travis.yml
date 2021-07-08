@@ -6,6 +6,7 @@ node_js:
 sudo: false
 install: yarn install
 script:
+  - yarn run lint
   - yarn test
 notifications:
   email:
