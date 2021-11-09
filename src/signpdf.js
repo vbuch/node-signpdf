@@ -136,15 +136,15 @@ export class SignPdf {
                     type: forge.pki.oids.contentType,
                     value: forge.pki.oids.data,
                 }, {
-                    type: forge.pki.oids.messageDigest,
-                    // value will be auto-populated at signing time
-                }, {
                     type: forge.pki.oids.signingTime,
                     // value can also be auto-populated at signing time
                     // We may also support passing this as an option to sign().
                     // Would be useful to match the creation time of the document for example.
                     value: new Date(),
-                },
+                }, {
+                    type: forge.pki.oids.messageDigest,
+                    // value will be auto-populated at signing time
+                }
             ],
         });
 
