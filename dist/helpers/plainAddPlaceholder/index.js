@@ -30,7 +30,7 @@ var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const isContainBufferRootWithAcroform = pdf => {
-  const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+  const bufferRootWithAcroformRefRegex = /\/AcroForm\s+(\d+\s\d+\sR)/g;
   const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
   return match != null && match[1] != null && match[1] !== '';
 };

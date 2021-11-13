@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {Object} info As extracted from readRef()
  */
 function getPagesDictionaryRef(info) {
-  const pagesRefRegex = new RegExp('\\/Pages\\s+(\\d+\\s+\\d+\\s+R)', 'g');
+  const pagesRefRegex = /\/Pages\s+(\d+\s+\d+\s+R)/g;
   const match = pagesRefRegex.exec(info.root);
 
   if (match === null) {
