@@ -83,7 +83,7 @@ This package provides two [helpers](https://github.com/vbuch/node-signpdf/blob/m
 
 To produce PAdES compliant signatures, the ETSI Signature Dictionary SubFilter value must be `ETSI.CAdES.detached` instead of the standard Adobe value.
 
-This can be declared using the subFilter option argument parsed to `pdfkitAddPlaceholder` and `plainAddPlaceholder`.
+This can be declared using the subFilter option argument passed to `pdfkitAddPlaceholder` and `plainAddPlaceholder`.
 
 ```js
 import { SUBFILTER_ETSI_CADES_DETACHED, pdfkitAddPlaceholder } from 'node-signpdf';
