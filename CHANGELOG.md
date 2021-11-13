@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [1.4.0]
+## [1.4.1]
 
 * Added support for overriding signature SubFilter value allowing the creation of PAdES compliant signatures;
 * Added linting to CI;
