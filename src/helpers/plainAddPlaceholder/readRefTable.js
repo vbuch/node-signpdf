@@ -7,7 +7,7 @@ const parseTrailerXref = (prev, curr) => {
     }
 
     const [offset] = curr.split(' ');
-    const prevId = Object.keys(prev).find(id => prev[id] === undefined);
+    const prevId = Object.keys(prev).find((id) => prev[id] === undefined);
 
     return {...prev, [prevId]: parseInt(offset)};
 };
@@ -51,7 +51,7 @@ const getXref = (pdf, position) => {
     let reducer;
 
     if (isContainingPrev) {
-        const pagesRefRegex = new RegExp('Prev (\\d+)', 'g');
+        const pagesRefRegex = /Prev (\d+)/g;
         const match = pagesRefRegex.exec(infos);
         const [, prevPosition] = match;
         prev = prevPosition;
@@ -62,7 +62,7 @@ const getXref = (pdf, position) => {
 
     const xRefContent = objects
         .split('\n')
-        .filter(l => l !== '')
+        .filter((l) => l !== '')
         .reduce(reducer, {});
 
     return {

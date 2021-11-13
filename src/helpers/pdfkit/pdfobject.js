@@ -26,7 +26,7 @@ const escapable = {
 };
 
 // Convert little endian UTF-16 to big endian
-const swapBytes = buff => buff.swap16();
+const swapBytes = (buff) => buff.swap16();
 
 export default class PDFObject {
     static convert(object, encryptFn = null) {
@@ -62,7 +62,7 @@ export default class PDFObject {
             }
 
             // Escape characters as required by the spec
-            string = string.replace(escapableRe, c => escapable[c]);
+            string = string.replace(escapableRe, (c) => escapable[c]);
 
             return `(${string})`;
 
@@ -79,12 +79,12 @@ export default class PDFObject {
                 string = encryptFn(Buffer.from(string, 'ascii')).toString('binary');
 
                 // Escape characters as required by the spec
-                string = string.replace(escapableRe, c => escapable[c]);
+                string = string.replace(escapableRe, (c) => escapable[c]);
             }
 
             return `(${string})`;
         } if (Array.isArray(object)) {
-            const items = object.map(e => PDFObject.convert(e, encryptFn)).join(' ');
+            const items = object.map((e) => PDFObject.convert(e, encryptFn)).join(' ');
             return `[${items}]`;
         } if ({}.toString.call(object) === '[object Object]') {
             const out = ['<<'];

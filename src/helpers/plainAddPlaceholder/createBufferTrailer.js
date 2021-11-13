@@ -6,7 +6,7 @@ const createBufferTrailer = (pdf, info, addedReferences) => {
         const paddedOffset = (`0000000000${offset}`).slice(-10);
         rows[index + 1] = `${index} 1\n${paddedOffset} 00000 n `;
     });
-    rows = rows.filter(row => row !== undefined);
+    rows = rows.filter((row) => row !== undefined);
 
     return Buffer.concat([
         Buffer.from('xref\n'),
