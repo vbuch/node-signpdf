@@ -24,8 +24,8 @@ const findByteRange = (pdf) => {
         );
     }
 
-    const byteRangePlaceholder = byteRangeStrings.find(s => s.includes(`/${DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
-    const byteRanges = byteRangeStrings.map(brs => brs.match(/[^[\s]*(?:\d|\/\*{10})/g));
+    const byteRangePlaceholder = byteRangeStrings.find((s) => s.includes(`/${DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
+    const byteRanges = byteRangeStrings.map((brs) => brs.match(/[^[\s]*(?:\d|\/\*{10})/g));
 
     return {
         byteRangePlaceholder,

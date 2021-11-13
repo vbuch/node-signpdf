@@ -10,7 +10,7 @@ import SignPdfError from './SignPdfError';
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = params => new Promise((resolve) => {
+const createPdf = (params) => new Promise((resolve) => {
     const requestParams = {
         placeholder: {},
         text: 'node-signpdf',
@@ -62,7 +62,7 @@ const createPdf = params => new Promise((resolve) => {
         });
         // Externally end the streams of the created objects.
         // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach(key => refs[key].end());
+        Object.keys(refs).forEach((key) => refs[key].end());
     }
 
     // Also end the PDFDocument stream.

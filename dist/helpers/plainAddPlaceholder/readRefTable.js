@@ -57,7 +57,7 @@ const getXref = (pdf, position) => {
   let reducer;
 
   if (isContainingPrev) {
-    const pagesRefRegex = new RegExp('Prev (\\d+)', 'g');
+    const pagesRefRegex = /Prev (\d+)/g;
     const match = pagesRefRegex.exec(infos);
     const [, prevPosition] = match;
     prev = prevPosition;

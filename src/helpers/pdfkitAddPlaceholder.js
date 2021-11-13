@@ -77,7 +77,7 @@ const pdfkitAddPlaceholder = ({
         fieldIds = acroFormFields
             .split(' ')
             .filter((element, i) => i % 3 === 0)
-            .map(fieldId => new PDFKitReferenceMock(fieldId));
+            .map((fieldId) => new PDFKitReferenceMock(fieldId));
     }
     const signatureName = 'Signature';
 
