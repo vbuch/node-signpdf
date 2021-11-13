@@ -13,34 +13,11 @@ jobs:
 
       - run: yarn
 
+      - run: yarn lint
+
       - run: yarn run jest --coverage
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-
-
-# language: node_js
-# node_js:
-#   - "8"
-#   - "10"
-#   - "node"
-# sudo: false
-# install: yarn install
-# script:
-#   - yarn run lint
-#   - yarn test
-# notifications:
-#   email:
-#     on_success: change
-#     on_failure: change
-
-# jobs:
-#   include:
-#     - stage: Produce Coverage
-#       node_js: node
-#       script: jest --coverage && cat 2/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
