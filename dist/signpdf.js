@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var _exportNames = {
-  DEFAULT_BYTE_RANGE_PLACEHOLDER: true,
   SignPdf: true,
   SignPdfError: true
 };
@@ -14,7 +13,7 @@ Object.defineProperty(exports, "SignPdfError", {
     return _SignPdfError.default;
   }
 });
-exports.default = exports.SignPdf = exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = void 0;
+exports.default = exports.SignPdf = void 0;
 
 var _nodeForge = _interopRequireDefault(require("node-forge"));
 
@@ -33,14 +32,24 @@ Object.keys(_helpers).forEach(function (key) {
   });
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _const = require("./helpers/const");
 
-const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = DEFAULT_BYTE_RANGE_PLACEHOLDER;
+Object.keys(_const).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _const[key];
+    }
+  });
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class SignPdf {
   constructor() {
-    this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
+    this.byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER;
     this.lastSignature = null;
   }
 

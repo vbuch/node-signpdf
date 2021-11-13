@@ -47,7 +47,7 @@ const createPdf = (params = {
     });
     // Externally end the streams of the created objects.
     // PDFKit doesn't know much about them, so it won't .end() them.
-    Object.keys(refs).forEach(key => refs[key].end());
+    Object.keys(refs).forEach((key) => refs[key].end());
 
     // Also end the PDFDocument stream.
     // See pdf.on('end'... on how it is then converted to Buffer.

@@ -22,3 +22,4 @@
 * [ashirman](https://github.com/ashirman)
 * [brunoserrano](https://github.com/brunoserrano)
 * [waaronking](https://github.com/waaronking)
+* [dhensby](https://github.com/dhensby)

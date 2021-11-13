@@ -1,11 +1,12 @@
 import forge from 'node-forge';
 import SignPdfError from './SignPdfError';
 import {removeTrailingNewLine, findByteRange} from './helpers';
+import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './helpers/const';
 
 export {default as SignPdfError} from './SignPdfError';
 export * from './helpers';
 
-export const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
+export * from './helpers/const';
 
 export class SignPdf {
     constructor() {
