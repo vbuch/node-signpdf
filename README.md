@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.com/vbuch/node-signpdf.svg?branch=master)](https://travis-ci.com/vbuch/node-signpdf)
 [![Coverage Status](https://coveralls.io/repos/github/vbuch/node-signpdf/badge.svg?branch=master)](https://coveralls.io/github/vbuch/node-signpdf?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/node-signpdf/badge.svg)](https://snyk.io/test/npm/node-signpdf)
+[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
+![GitHub last commit](https://img.shields.io/github/last-commit/vbuch/node-signpdf?color=red)
 
 Simple signing of PDFs in node.
 
