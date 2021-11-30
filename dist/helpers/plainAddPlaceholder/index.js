@@ -30,7 +30,7 @@ var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const isContainBufferRootWithAcroform = pdf => {
-  const bufferRootWithAcroformRefRegex = new RegExp('\\/AcroForm\\s+(\\d+\\s\\d+\\sR)', 'g');
+  const bufferRootWithAcroformRefRegex = /\/AcroForm\s+(\d+\s\d+\sR)/g;
   const match = bufferRootWithAcroformRefRegex.exec(pdf.toString());
   return match != null && match[1] != null && match[1] !== '';
 };
@@ -51,7 +51,8 @@ const plainAddPlaceholder = ({
   contactInfo = 'emailfromp1289@gmail.com',
   name = 'Name from p12',
   location = 'Location from p12',
-  signatureLength = _const.DEFAULT_SIGNATURE_LENGTH
+  signatureLength = _const.DEFAULT_SIGNATURE_LENGTH,
+  subFilter = _const.SUBFILTER_ADOBE_PKCS7_DETACHED
 }) => {
   let pdf = (0, _removeTrailingNewLine.default)(pdfBuffer);
   const info = (0, _readPdf.default)(pdf);
@@ -88,7 +89,8 @@ const plainAddPlaceholder = ({
     contactInfo,
     name,
     location,
-    signatureLength
+    signatureLength,
+    subFilter
   });
 
   if (!isContainBufferRootWithAcroform(pdf)) {

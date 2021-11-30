@@ -29,14 +29,15 @@ const pdfkitAddPlaceholder = ({
   name = 'Name from p12',
   location = 'Location from p12',
   signatureLength = _const.DEFAULT_SIGNATURE_LENGTH,
-  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER
+  byteRangePlaceholder = _const.DEFAULT_BYTE_RANGE_PLACEHOLDER,
+  subFilter = _const.SUBFILTER_ADOBE_PKCS7_DETACHED
 }) => {
   /* eslint-disable no-underscore-dangle,no-param-reassign */
   // Generate the signature placeholder
   const signature = pdf.ref({
     Type: 'Sig',
     Filter: 'Adobe.PPKLite',
-    SubFilter: 'adbe.pkcs7.detached',
+    SubFilter: subFilter,
     ByteRange: [0, byteRangePlaceholder, byteRangePlaceholder, byteRangePlaceholder],
     Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
     Reason: new String(reason),
@@ -60,15 +61,17 @@ const pdfkitAddPlaceholder = ({
 
     const charsUntilIdEnd = 10;
     const acroFormIdEnd = acroFormPosition - charsUntilIdEnd; // Let's find AcroForm ID by trying to find the "\n" before the ID
-    // 12 is a enough space to find the "\n" (generally it's 2 or 3, but I'm giving a big space though)
+    // 12 is a enough space to find the "\n"
+    // (generally it's 2 or 3, but I'm giving a big space though)
 
     const maxAcroFormIdLength = 12;
     let foundAcroFormId = '';
+    let index = charsUntilIdEnd + 1;
 
-    for (let index = charsUntilIdEnd + 1; index < charsUntilIdEnd + maxAcroFormIdLength; index++) {
-      let acroFormIdString = pdfBuffer.slice(acroFormPosition - index, acroFormIdEnd).toString();
+    for (index; index < charsUntilIdEnd + maxAcroFormIdLength; index += 1) {
+      const acroFormIdString = pdfBuffer.slice(acroFormPosition - index, acroFormIdEnd).toString();
 
-      if (acroFormIdString[0] == '\n') {
+      if (acroFormIdString[0] === '\n') {
         break;
       }
 
@@ -80,7 +83,7 @@ const pdfkitAddPlaceholder = ({
     const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
     acroFormId = parseInt(foundAcroFormId);
     const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
-    fieldIds = acroFormFields.split(' ').filter((element, index) => index % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
+    fieldIds = acroFormFields.split(' ').filter((element, i) => i % 3 === 0).map(fieldId => new _pdfkitReferenceMock.default(fieldId));
   }
 
   const signatureName = 'Signature'; // Generate signature annotation widget

@@ -10,7 +10,7 @@ import SignPdfError from './SignPdfError';
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {Promise<Buffer>}
  */
-const createPdf = params => new Promise((resolve) => {
+const createPdf = (params) => new Promise((resolve) => {
     const requestParams = {
         placeholder: {},
         text: 'node-signpdf',
@@ -32,7 +32,7 @@ const createPdf = params => new Promise((resolve) => {
     }
 
     // Add some content to the page(s)
-    for (let i = 0; i < requestParams.pages; i++) {
+    for (let i = 0; i < requestParams.pages; i += 1) {
         pdf
             .addPage()
             .fillColor('#333')
@@ -62,7 +62,7 @@ const createPdf = params => new Promise((resolve) => {
         });
         // Externally end the streams of the created objects.
         // PDFKit doesn't know much about them, so it won't .end() them.
-        Object.keys(refs).forEach(key => refs[key].end());
+        Object.keys(refs).forEach((key) => refs[key].end());
     }
 
     // Also end the PDFDocument stream.
@@ -224,7 +224,10 @@ describe('Test signing', () => {
         pdfBuffer = signer.sign(pdfBuffer, secondP12Buffer, {passphrase: 'node-signpdf'});
         expect(pdfBuffer instanceof Buffer).toBe(true);
 
-        const {signature: secondSignature, signedData: secondSignatureData} = extractSignature(pdfBuffer, 2);
+        const {
+            signature: secondSignature,
+            signedData: secondSignatureData,
+        } = extractSignature(pdfBuffer, 2);
         expect(typeof secondSignature === 'string').toBe(true);
         expect(secondSignatureData instanceof Buffer).toBe(true);
     });

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.4.1]
+
+* Added support for overriding signature SubFilter value allowing the creation of PAdES compliant signatures;
+* Added linting to CI;
+* Bump dependencies;
+* Removed Travis integration in favor of GitHub Actions;
+
 ## [1.3.3]
 
 * plainAddPlaceholder: Fixed loss of PDF metadata when adding placeholder;

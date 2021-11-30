@@ -15,7 +15,7 @@ const findByteRange = (pdf) => {
         );
     }
 
-    const byteRangeStrings = pdf.toString().match(/\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*\]{1}/g);
+    const byteRangeStrings = pdf.toString().match(/\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*]{1}/g);
 
     if (!byteRangeStrings) {
         throw new SignPdfError(
@@ -24,8 +24,8 @@ const findByteRange = (pdf) => {
         );
     }
 
-    const byteRangePlaceholder = byteRangeStrings.find(s => s.includes(`/${DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
-    const byteRanges = byteRangeStrings.map(brs => brs.match(/[^\[\s]*(?:\d|\/\*{10})/g));
+    const byteRangePlaceholder = byteRangeStrings.find((s) => s.includes(`/${DEFAULT_BYTE_RANGE_PLACEHOLDER}`));
+    const byteRanges = byteRangeStrings.map((brs) => brs.match(/[^[\s]*(?:\d|\/\*{10})/g));
 
     return {
         byteRangePlaceholder,
