@@ -184,7 +184,7 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
-    it.only('signs a ready pdf that does not have metadata', async () => {
+    it('signs a ready pdf that does not have metadata', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/no-metadata.pdf`);
 

@@ -1,4 +1,4 @@
-import SignPdfError from "../../SignPdfError";
+import SignPdfError from '../../SignPdfError';
 
 const parseTrailerXref = (prev, curr) => {
     const isObjectId = curr.split(' ').length === 2;
@@ -17,11 +17,11 @@ const parseTrailerXref = (prev, curr) => {
 const parseRootXref = (prev, l, i) => {
     const element = l.split(' ')[0];
     const isPageObject = parseInt(element) === 0 && element.length > 3;
-    
+
     if (isPageObject) {
         return {...prev, 0: 0};
     }
-    
+
     let [offset] = l.split(' ');
     offset = parseInt(offset);
 
@@ -57,10 +57,10 @@ export const getXref = (pdf, position) => {
             );
         }
     }
-    
+
     refTable = refTable.slice(realPosition + 4); // move ahead with the "xref"
     refTable = refTable.slice(refTable.indexOf('\n') + 1); // move after the next new line
-    
+
     // extract the size
     let size = (/\s*(\d+)/).exec(refTable.toString().split('/Size')[1])[1];
     if (`${parseInt(size)}` !== `${size}`) {
@@ -69,7 +69,7 @@ export const getXref = (pdf, position) => {
             SignPdfError.TYPE_PARSE,
         );
     }
-    size = parseInt(size)
+    size = parseInt(size);
 
     const [objects, infos] = refTable.toString().split('trailer');
 
@@ -91,7 +91,7 @@ export const getXref = (pdf, position) => {
     const lines = objects
         .split('\n')
         .filter((l) => l !== '');
-    
+
     const xRefContent = lines.reduce(reducer, {});
 
     return {
