@@ -33,8 +33,7 @@
         "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
         "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
-        "precommit": "npm run lint",
-        "prepush": "npm run test"
+        "prepare": "husky install"
     },
     "peerDependencies": {
         "node-forge": "^0.10.0"
@@ -56,6 +55,7 @@
         "eslint-import-resolver-babel-module": "^5.3.1",
         "eslint-plugin-import": "^2.25.3",
         "eslint-plugin-jest": "^25.2.4",
+        "husky": "^7.0.4",
         "jest": "^27.3.1",
         "node-forge": "^0.10.0",
         "pdfkit": "^0.10.0"
