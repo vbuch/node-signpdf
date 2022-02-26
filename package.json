@@ -24,7 +24,7 @@
     ],
     "main": "dist/signpdf.js",
     "engines": {
-        "node": ">=8.9"
+        "node": ">=12"
     },
     "scripts": {
         "test:coverage": "./node_modules/.bin/jest --coverage",
