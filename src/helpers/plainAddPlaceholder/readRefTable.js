@@ -1,3 +1,5 @@
+import SignPdfError from "../../SignPdfError";
+
 const parseTrailerXref = (prev, curr) => {
     const isObjectId = curr.split(' ').length === 2;
 
@@ -15,34 +17,60 @@ const parseTrailerXref = (prev, curr) => {
 const parseRootXref = (prev, l, i) => {
     const element = l.split(' ')[0];
     const isPageObject = parseInt(element) === 0 && element.length > 3;
-
+    
     if (isPageObject) {
         return {...prev, 0: 0};
     }
-
+    
     let [offset] = l.split(' ');
     offset = parseInt(offset);
 
     return {...prev, [i - 1]: offset};
 };
 
-const getLastTrailerPosition = (pdf) => {
-    const trailerStart = pdf.lastIndexOf('trailer');
+export const getLastTrailerPosition = (pdf) => {
+    const trailerStart = pdf.lastIndexOf(Buffer.from('trailer', 'utf8'));
     const trailer = pdf.slice(trailerStart, pdf.length - 6);
 
     const xRefPosition = trailer
-        .slice(trailer.lastIndexOf('startxref') + 10)
+        .slice(trailer.lastIndexOf(Buffer.from('startxref', 'utf8')) + 10)
         .toString();
 
     return parseInt(xRefPosition);
 };
 
-const getXref = (pdf, position) => {
-    let refTable = pdf.slice(position);
+export const getXref = (pdf, position) => {
+    let refTable = pdf.slice(position); // slice starting from where xref starts
+    const realPosition = refTable.indexOf(Buffer.from('xref', 'utf8'));
+    if (realPosition === -1) {
+        throw new SignPdfError(
+            `Could not find xref anywhere after ${position}.`,
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    if (realPosition > 0) {
+        const prefix = refTable.slice(0, realPosition);
+        if (prefix.toString().replace(/\s*/g, '') !== '') {
+            throw new SignPdfError(
+                `Expected xref at ${position} but found other content.`,
+                SignPdfError.TYPE_PARSE,
+            );
+        }
+    }
+    
+    refTable = refTable.slice(realPosition + 4); // move ahead with the "xref"
+    refTable = refTable.slice(refTable.indexOf('\n') + 1); // move after the next new line
+    
+    // extract the size
+    let size = (/\s*(\d+)/).exec(refTable.toString().split('/Size')[1])[1];
+    if (`${parseInt(size)}` !== `${size}`) {
+        throw new SignPdfError(
+            `Unexpected size "${size}" found.`,
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    size = parseInt(size)
 
-    refTable = refTable.slice(4);
-    refTable = refTable.slice(refTable.indexOf('\n') + 1);
-    const size = refTable.toString().split('/Size')[1];
     const [objects, infos] = refTable.toString().split('trailer');
 
     const isContainingPrev = infos.split('/Prev')[1] != null;
@@ -60,10 +88,11 @@ const getXref = (pdf, position) => {
         reducer = parseRootXref;
     }
 
-    const xRefContent = objects
+    const lines = objects
         .split('\n')
-        .filter((l) => l !== '')
-        .reduce(reducer, {});
+        .filter((l) => l !== '');
+    
+    const xRefContent = lines.reduce(reducer, {});
 
     return {
         size,
@@ -72,7 +101,7 @@ const getXref = (pdf, position) => {
     };
 };
 
-const getFullXrefTable = (pdf) => {
+export const getFullXrefTable = (pdf) => {
     const lastTrailerPosition = getLastTrailerPosition(pdf);
     const lastXrefTable = getXref(pdf, lastTrailerPosition);
 

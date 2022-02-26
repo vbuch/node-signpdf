@@ -16,13 +16,14 @@ const createPdf = (params) => new Promise((resolve) => {
         text: 'node-signpdf',
         addSignaturePlaceholder: true,
         pages: 1,
+        layout: 'portrait',
         ...params,
     };
 
     const pdf = new PDFDocument({
         autoFirstPage: false,
         size: 'A4',
-        layout: 'portrait',
+        layout: requestParams.layout,
         bufferPages: true,
     });
     pdf.info.CreationDate = '';
@@ -130,6 +131,17 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
+    it('signs a landscape PDF', async () => {
+        let pdfBuffer = await createPdf({layout: 'landscape'});
+        const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
+
+        pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
+        expect(pdfBuffer instanceof Buffer).toBe(true);
+
+        const {signature, signedData} = extractSignature(pdfBuffer);
+        expect(typeof signature === 'string').toBe(true);
+        expect(signedData instanceof Buffer).toBe(true);
+    });
     it('signs detached', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
 
@@ -172,7 +184,7 @@ describe('Test signing', () => {
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
     });
-    it('signs a ready pdf that does not have metadata', async () => {
+    it.only('signs a ready pdf that does not have metadata', async () => {
         const p12Buffer = fs.readFileSync(`${__dirname}/../resources/certificate.p12`);
         let pdfBuffer = fs.readFileSync(`${__dirname}/../resources/no-metadata.pdf`);
 
