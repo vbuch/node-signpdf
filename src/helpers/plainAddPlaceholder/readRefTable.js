@@ -44,7 +44,7 @@ export const getXref = (pdf, position) => {
     const realPosition = refTable.indexOf(Buffer.from('xref', 'utf8'));
     if (realPosition === -1) {
         throw new SignPdfError(
-            `Could not find xref anywhere after ${position}.`,
+            `Could not find xref anywhere at or after ${position}.`,
             SignPdfError.TYPE_PARSE,
         );
     }
@@ -62,14 +62,21 @@ export const getXref = (pdf, position) => {
     refTable = refTable.slice(refTable.indexOf('\n') + 1); // move after the next new line
 
     // extract the size
-    let size = (/\s*(\d+)/).exec(refTable.toString().split('/Size')[1])[1];
-    if (`${parseInt(size)}` !== `${size}`) {
+    let size = refTable.toString().split('/Size')[1];
+    if (!size) {
         throw new SignPdfError(
-            `Unexpected size "${size}" found.`,
+            'Size not found in xref table.',
             SignPdfError.TYPE_PARSE,
         );
     }
-    size = parseInt(size);
+    size = (/\s*(\d+)/).exec(size);
+    if (size === null) {
+        throw new SignPdfError(
+            'Failed to parse size of xref table.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    size = parseInt(size[1]);
 
     const [objects, infos] = refTable.toString().split('trailer');
 
