@@ -1,11 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`getXref Throws an error when next EOF is not found 1`] = `"Expected EOF after xref and trailer but could not find one."`;
+
+exports[`getXref Throws an error when size has unexpected value 1`] = `"Failed to parse size of xref table."`;
+
+exports[`getXref Throws an error when size is not found 1`] = `"Size not found in xref table."`;
+
+exports[`getXref Throws an error when xref is not at its expected position 1`] = `"Expected xref at 2 but found other content."`;
+
+exports[`getXref Throws an error when xref is not found at position 1`] = `"Could not find xref anywhere at or after 0."`;
+
 exports[`readRefTable Expects to merge correctly the refTable of resources 1`] = `
 Object {
   "maxIndex": 19,
-  "maxOffset": 19012,
   "offsets": Map {
-    0 => 0,
     1 => 19012,
     2 => 19,
     3 => 224,
@@ -24,7 +32,6 @@ Object {
     17 => 13264,
     18 => 18742,
     19 => 18860,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
@@ -33,9 +40,7 @@ Object {
 exports[`readRefTable Expects to merge correctly the refTable of resources 2`] = `
 Object {
   "maxIndex": 21,
-  "maxOffset": 25091,
   "offsets": Map {
-    0 => 0,
     1 => 25091,
     2 => 19,
     3 => 224,
@@ -56,7 +61,6 @@ Object {
     19 => 25016,
     20 => 19431,
     21 => 24878,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
@@ -64,10 +68,8 @@ Object {
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 3`] = `
 Object {
-  "maxIndex": 25,
-  "maxOffset": 72070,
+  "maxIndex": 24,
   "offsets": Map {
-    0 => 0,
     1 => 15,
     2 => 4075,
     3 => 265,
@@ -92,7 +94,6 @@ Object {
     22 => 71288,
     23 => 71522,
     24 => 71742,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
@@ -100,10 +101,8 @@ Object {
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 4`] = `
 Object {
-  "maxIndex": 63,
-  "maxOffset": 63939,
+  "maxIndex": 62,
   "offsets": Map {
-    0 => 0,
     1 => 53230,
     2 => 19,
     3 => 1785,
@@ -166,7 +165,6 @@ Object {
     60 => 63251,
     61 => 63625,
     62 => 63939,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
@@ -174,11 +172,9 @@ Object {
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 5`] = `
 Object {
-  "maxIndex": 17,
-  "maxOffset": 16812,
+  "maxIndex": 18,
   "offsets": Map {
-    0 => 0,
-    1 => 11997,
+    1 => 16964,
     2 => 19,
     3 => 224,
     4 => 12330,
@@ -191,10 +187,11 @@ Object {
     11 => 11943,
     12 => 12140,
     13 => 12196,
-    14 => 12429,
+    14 => 16880,
     15 => 12494,
-    -1 => 0,
-    NaN => 16812,
+    16 => 13264,
+    17 => 16694,
+    18 => 16812,
   },
   "startingIndex": 0,
 }
@@ -202,10 +199,8 @@ Object {
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 6`] = `
 Object {
-  "maxIndex": 14,
-  "maxOffset": 4163,
+  "maxIndex": 13,
   "offsets": Map {
-    0 => 0,
     1 => 4163,
     2 => 4098,
     3 => 4077,
@@ -219,7 +214,6 @@ Object {
     11 => 3932,
     12 => 3957,
     13 => 3982,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
@@ -227,10 +221,8 @@ Object {
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 7`] = `
 Object {
-  "maxIndex": 16,
-  "maxOffset": 12494,
+  "maxIndex": 15,
   "offsets": Map {
-    0 => 0,
     1 => 11997,
     2 => 19,
     3 => 224,
@@ -246,7 +238,6 @@ Object {
     13 => 12196,
     14 => 12429,
     15 => 12494,
-    -1 => 0,
   },
   "startingIndex": 0,
 }
