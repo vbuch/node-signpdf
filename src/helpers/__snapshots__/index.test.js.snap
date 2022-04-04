@@ -3,9 +3,9 @@
 exports[`Helpers index Exports expected helpers 1`] = `
 Array [
   "extractSignature",
-  "findByteRange",
   "pdfkitAddPlaceholder",
   "plainAddPlaceholder",
   "removeTrailingNewLine",
+  "findByteRange",
 ]
 `;
