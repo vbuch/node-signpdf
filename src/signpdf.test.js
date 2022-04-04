@@ -191,7 +191,6 @@ describe('Test signing', () => {
             signatureLength: 1612,
         });
         pdfBuffer = signer.sign(pdfBuffer, p12Buffer);
-        // fs.writeFileSync(`./test.${Math.random()}.pdf`, pdfBuffer);
         const {signature, signedData} = extractSignature(pdfBuffer);
         expect(typeof signature === 'string').toBe(true);
         expect(signedData instanceof Buffer).toBe(true);
