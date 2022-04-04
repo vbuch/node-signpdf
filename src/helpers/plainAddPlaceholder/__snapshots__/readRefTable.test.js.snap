@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`getXref Throws an error when next EOF is not found 1`] = `"Expected EOF after xref and trailer but could not find one."`;
+
+exports[`getXref Throws an error when size has unexpected value 1`] = `"Failed to parse size of xref table."`;
+
+exports[`getXref Throws an error when size is not found 1`] = `"Size not found in xref table."`;
+
+exports[`getXref Throws an error when xref is not at its expected position 1`] = `"Expected xref at 2 but found other content."`;
+
+exports[`getXref Throws an error when xref is not found at position 1`] = `"Could not find xref anywhere at or after 0."`;
+
 exports[`readRefTable Expects to merge correctly the refTable of resources 1`] = `
 Object {
   "maxIndex": 19,

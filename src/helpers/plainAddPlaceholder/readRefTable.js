@@ -32,7 +32,7 @@ export const getXref = (pdf, position) => {
     }
 
     const nextEofPosition = refTable.indexOf(Buffer.from('%%EOF', 'utf8'));
-    if (!nextEofPosition === -1) {
+    if (nextEofPosition === -1) {
         throw new SignPdfError(
             'Expected EOF after xref and trailer but could not find one.',
             SignPdfError.TYPE_PARSE,
