@@ -1,4 +1,5 @@
 import SignPdfError from '../../SignPdfError';
+import xrefToRefMap from './xrefToRefMap';
 
 export const getLastTrailerPosition = (pdf) => {
     const trailerStart = pdf.lastIndexOf(Buffer.from('trailer', 'utf8'));
@@ -71,47 +72,7 @@ export const getXref = (pdf, position) => {
         prev = prevPosition;
     }
 
-    const lines = objects
-        .split('\n')
-        .filter((l) => l !== '');
-
-    let previousIndex = 0;
-    let expectedLines = 0;
-    const xRefContent = new Map();
-    lines.forEach((line) => {
-        const split = line.split(' ');
-        if (split.length === 2) {
-            previousIndex = parseInt(split[0]);
-            expectedLines = parseInt(split[1]);
-            return;
-        }
-        if (expectedLines <= 0) {
-            throw new SignPdfError(
-                'Too many lines in xref table.',
-                SignPdfError.TYPE_PARSE,
-            );
-        }
-        expectedLines -= 1;
-        const [offset, , inUse] = split;
-        if (inUse.trim() === 'f') {
-            return;
-        }
-        if (inUse.trim() !== 'n') {
-            throw new SignPdfError(
-                `Unknown in-use flag "${inUse}". Expected "n" or "f".`,
-                SignPdfError.TYPE_PARSE,
-            );
-        }
-        const storeOffset = parseInt(offset);
-        if (Number.isNaN(storeOffset)) {
-            throw new SignPdfError(
-                `Expected integer offset. Got "${offset}".`,
-                SignPdfError.TYPE_PARSE,
-            );
-        }
-        xRefContent.set(previousIndex + 1, storeOffset);
-        previousIndex += 1;
-    });
+    const xRefContent = xrefToRefMap(objects);
 
     return {
         size,
