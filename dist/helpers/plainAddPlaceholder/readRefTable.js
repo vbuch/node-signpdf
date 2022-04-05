@@ -3,76 +3,85 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.getXref = exports.getLastTrailerPosition = exports.getFullXrefTable = exports.default = void 0;
 
-const parseTrailerXref = (prev, curr) => {
-  const isObjectId = curr.split(' ').length === 2;
+var _SignPdfError = _interopRequireDefault(require("../../SignPdfError"));
 
-  if (isObjectId) {
-    const [id] = curr.split(' ');
-    return { ...prev,
-      [id]: undefined
-    };
-  }
+var _xrefToRefMap = _interopRequireDefault(require("./xrefToRefMap"));
 
-  const [offset] = curr.split(' ');
-  const prevId = Object.keys(prev).find(id => prev[id] === undefined);
-  return { ...prev,
-    [prevId]: parseInt(offset)
-  };
-};
-
-const parseRootXref = (prev, l, i) => {
-  const element = l.split(' ')[0];
-  const isPageObject = parseInt(element) === 0 && element.length > 3;
-
-  if (isPageObject) {
-    return { ...prev,
-      0: 0
-    };
-  }
-
-  let [offset] = l.split(' ');
-  offset = parseInt(offset);
-  return { ...prev,
-    [i - 1]: offset
-  };
-};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const getLastTrailerPosition = pdf => {
-  const trailerStart = pdf.lastIndexOf('trailer');
+  const trailerStart = pdf.lastIndexOf(Buffer.from('trailer', 'utf8'));
   const trailer = pdf.slice(trailerStart, pdf.length - 6);
-  const xRefPosition = trailer.slice(trailer.lastIndexOf('startxref') + 10).toString();
+  const xRefPosition = trailer.slice(trailer.lastIndexOf(Buffer.from('startxref', 'utf8')) + 10).toString();
   return parseInt(xRefPosition);
 };
 
+exports.getLastTrailerPosition = getLastTrailerPosition;
+
 const getXref = (pdf, position) => {
-  let refTable = pdf.slice(position);
-  refTable = refTable.slice(4);
-  refTable = refTable.slice(refTable.indexOf('\n') + 1);
-  const size = refTable.toString().split('/Size')[1];
+  let refTable = pdf.slice(position); // slice starting from where xref starts
+
+  const realPosition = refTable.indexOf(Buffer.from('xref', 'utf8'));
+
+  if (realPosition === -1) {
+    throw new _SignPdfError.default(`Could not find xref anywhere at or after ${position}.`, _SignPdfError.default.TYPE_PARSE);
+  }
+
+  if (realPosition > 0) {
+    const prefix = refTable.slice(0, realPosition);
+
+    if (prefix.toString().replace(/\s*/g, '') !== '') {
+      throw new _SignPdfError.default(`Expected xref at ${position} but found other content.`, _SignPdfError.default.TYPE_PARSE);
+    }
+  }
+
+  const nextEofPosition = refTable.indexOf(Buffer.from('%%EOF', 'utf8'));
+
+  if (nextEofPosition === -1) {
+    throw new _SignPdfError.default('Expected EOF after xref and trailer but could not find one.', _SignPdfError.default.TYPE_PARSE);
+  }
+
+  refTable = refTable.slice(0, nextEofPosition);
+  refTable = refTable.slice(realPosition + 4); // move ahead with the "xref"
+
+  refTable = refTable.slice(refTable.indexOf('\n') + 1); // move after the next new line
+  // extract the size
+
+  let size = refTable.toString().split('/Size')[1];
+
+  if (!size) {
+    throw new _SignPdfError.default('Size not found in xref table.', _SignPdfError.default.TYPE_PARSE);
+  }
+
+  size = /^\s*(\d+)/.exec(size);
+
+  if (size === null) {
+    throw new _SignPdfError.default('Failed to parse size of xref table.', _SignPdfError.default.TYPE_PARSE);
+  }
+
+  size = parseInt(size[1]);
   const [objects, infos] = refTable.toString().split('trailer');
   const isContainingPrev = infos.split('/Prev')[1] != null;
   let prev;
-  let reducer;
 
   if (isContainingPrev) {
     const pagesRefRegex = /Prev (\d+)/g;
     const match = pagesRefRegex.exec(infos);
     const [, prevPosition] = match;
     prev = prevPosition;
-    reducer = parseTrailerXref;
-  } else {
-    reducer = parseRootXref;
   }
 
-  const xRefContent = objects.split('\n').filter(l => l !== '').reduce(reducer, {});
+  const xRefContent = (0, _xrefToRefMap.default)(objects);
   return {
     size,
     prev,
     xRefContent
   };
 };
+
+exports.getXref = getXref;
 
 const getFullXrefTable = pdf => {
   const lastTrailerPosition = getLastTrailerPosition(pdf);
@@ -84,9 +93,7 @@ const getFullXrefTable = pdf => {
 
   const pdfWithoutLastTrailer = pdf.slice(0, lastTrailerPosition);
   const partOfXrefTable = getFullXrefTable(pdfWithoutLastTrailer);
-  const mergedXrefTable = { ...partOfXrefTable,
-    ...lastXrefTable.xRefContent
-  };
+  const mergedXrefTable = new Map([...partOfXrefTable, ...lastXrefTable.xRefContent]);
   return mergedXrefTable;
 };
 /**
@@ -95,22 +102,16 @@ const getFullXrefTable = pdf => {
  */
 
 
+exports.getFullXrefTable = getFullXrefTable;
+
 const readRefTable = pdf => {
-  const offsetsMap = new Map();
   const fullXrefTable = getFullXrefTable(pdf);
   const startingIndex = 0;
-  let maxOffset = 0;
-  const maxIndex = parseInt(Object.keys(fullXrefTable).length) - 1;
-  Object.keys(fullXrefTable).forEach(id => {
-    const offset = parseInt(fullXrefTable[id]);
-    maxOffset = Math.max(maxOffset, offset);
-    offsetsMap.set(parseInt(id), offset);
-  });
+  const maxIndex = Math.max(...fullXrefTable.keys());
   return {
-    maxOffset,
     startingIndex,
     maxIndex,
-    offsets: offsetsMap
+    offsets: fullXrefTable
   };
 };
 
