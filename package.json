@@ -1,6 +1,6 @@
 {
     "name": "node-signpdf",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
@@ -24,7 +24,7 @@
     ],
     "main": "dist/signpdf.js",
     "engines": {
-        "node": ">=8.9"
+        "node": ">=12"
     },
     "scripts": {
         "test:coverage": "./node_modules/.bin/jest --coverage",
@@ -33,11 +33,10 @@
         "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
         "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
-        "precommit": "npm run lint",
-        "prepush": "npm run test"
+        "prepare": "husky install"
     },
     "peerDependencies": {
-        "node-forge": "^0.10.0"
+        "node-forge": "^1.2.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -47,7 +46,6 @@
         "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
         "@babel/preset-env": "^7.4.2",
         "assertion-error": "^1.1.0",
-        "babel-eslint": "^10.1.0",
         "babel-jest": "^27.3.1",
         "babel-plugin-module-resolver": "^3.1.1",
         "coveralls": "^3.0.2",
@@ -56,8 +54,9 @@
         "eslint-import-resolver-babel-module": "^5.3.1",
         "eslint-plugin-import": "^2.25.3",
         "eslint-plugin-jest": "^25.2.4",
+        "husky": "^7.0.4",
         "jest": "^27.3.1",
-        "node-forge": "^0.10.0",
+        "node-forge": "^1.2.1",
         "pdfkit": "^0.10.0"
     }
 }

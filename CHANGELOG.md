@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.5.0]
+
+* Reworked reading xref table;
+* Shifted minimum Node from 10 to 12;
+* Added Husky;
+* Upgraded dependencies;
+
 ## [1.4.1]
 
 * Added support for overriding signature SubFilter value allowing the creation of PAdES compliant signatures;

@@ -9,6 +9,12 @@ Object.defineProperty(exports, "extractSignature", {
     return _extractSignature.default;
   }
 });
+Object.defineProperty(exports, "findByteRange", {
+  enumerable: true,
+  get: function () {
+    return _findByteRange.default;
+  }
+});
 Object.defineProperty(exports, "pdfkitAddPlaceholder", {
   enumerable: true,
   get: function () {
@@ -25,12 +31,6 @@ Object.defineProperty(exports, "removeTrailingNewLine", {
   enumerable: true,
   get: function () {
     return _removeTrailingNewLine.default;
-  }
-});
-Object.defineProperty(exports, "findByteRange", {
-  enumerable: true,
-  get: function () {
-    return _findByteRange.default;
   }
 });
 
