@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.ERROR_VERIFY_SIGNATURE = exports.ERROR_TYPE_PARSE = exports.ERROR_TYPE_INPUT = exports.ERROR_TYPE_UNKNOWN = void 0;
+exports.default = exports.ERROR_VERIFY_SIGNATURE = exports.ERROR_TYPE_UNKNOWN = exports.ERROR_TYPE_PARSE = exports.ERROR_TYPE_INPUT = void 0;
 const ERROR_TYPE_UNKNOWN = 1;
 exports.ERROR_TYPE_UNKNOWN = ERROR_TYPE_UNKNOWN;
 const ERROR_TYPE_INPUT = 2;

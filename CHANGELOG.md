@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [next]
+
+* Reworked reading xref table;
+
 ## [1.4.1]
 
 * Added support for overriding signature SubFilter value allowing the creation of PAdES compliant signatures;
