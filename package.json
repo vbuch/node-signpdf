@@ -46,7 +46,6 @@
         "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
         "@babel/preset-env": "^7.4.2",
         "assertion-error": "^1.1.0",
-        "babel-eslint": "^10.1.0",
         "babel-jest": "^27.3.1",
         "babel-plugin-module-resolver": "^3.1.1",
         "coveralls": "^3.0.2",
