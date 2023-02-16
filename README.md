@@ -55,7 +55,7 @@ const signedPdf = signer.sign(
 
 ## Notes
 
-* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eSignature+standards#eSignaturestandards-PAdES%28PDFAdvancedElectronicSignature%29BaselineProfile).
+* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](<https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Standards+and+specifications#Standardsandspecifications-PAdES(PDFAdvancedElectronicSignature)BaselineProfile>).
 * This lib:
   * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document (There are helpers included that can try to add it);
   * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
