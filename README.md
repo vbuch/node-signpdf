@@ -32,13 +32,13 @@ In practice we expect that most people will just read through the code we've wri
 
 ### With pdfkit-created document
 
-You have already created a PDF using foliojs/pdfkit and you want to sign that. Before saving (writing to fs, or just converting to `Buffer`) your file, you need to a add a signature placeholder to it. We have a helper for that. This is demonstrated in [the `signs input PDF` test](./src/signpdf.test.js#L111).
+You have already created a PDF using foliojs/pdfkit and you want to sign that. Before saving (writing to fs, or just converting to `Buffer`) your file, you need to a add a signature placeholder to it. We have a helper for that. This is demonstrated in [the `signs input PDF` test](./src/signpdf.test.js#L125).
 
 Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
 ### With any PDF document
 
-Yes. This is new since version 1.0. We have a helper that can add a signature placeholder in at least the most basic PDFs without depending on pdfkit. You can see how this is done in [the `signs a ready pdf` test](./src/signpdf.test.js#L136).
+Yes. This is new since version 1.0. We have a helper that can add a signature placeholder in at least the most basic PDFs without depending on pdfkit. You can see how this is done in [the `signs a ready pdf` test](./src/signpdf.test.js#L167).
 
 Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
@@ -55,7 +55,7 @@ const signedPdf = signer.sign(
 
 ## Notes
 
-* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eSignature+standards#eSignaturestandards-PAdES%28PDFAdvancedElectronicSignature%29BaselineProfile).
+* The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](<https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Standards+and+specifications#Standardsandspecifications-PAdES(PDFAdvancedElectronicSignature)BaselineProfile>).
 * This lib:
   * requires the [signature placeholder](#append-a-signature-placeholder) to already be in the document (There are helpers included that can try to add it);
   * requires the `Contents` descriptor in the `Sig` be placed after the `ByteRange` one;
