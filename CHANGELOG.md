@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.1]
+
+* Reorder authenticatedAttributes so that EU's verification passes;
+
 ## [1.5.0]
 
 * Reworked reading xref table;
