@@ -23,3 +23,6 @@
 * [brunoserrano](https://github.com/brunoserrano)
 * [waaronking](https://github.com/waaronking)
 * [dhensby](https://github.com/dhensby)
+* [pernikov](https://github.com/pernikov)
+* [timotheeg](https://github.com/timotheeg)
+* [ElTimuro](https://github.com/ElTimuro)
