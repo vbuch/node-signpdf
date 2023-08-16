@@ -23,6 +23,11 @@
         "digital signature"
     ],
     "main": "dist/signpdf.js",
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md"
+    ],
     "engines": {
         "node": ">=12"
     },
