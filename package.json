@@ -35,7 +35,7 @@
         "test:coverage": "./node_modules/.bin/jest --coverage",
         "test": "./node_modules/.bin/jest",
         "test:watch": "./node_modules/.bin/jest --watch",
-        "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
+        "build": "rm -rf ./dist/* & ./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
         "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
         "prepare": "husky install"
@@ -50,6 +50,8 @@
         "@babel/node": "^7.0.0",
         "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
         "@babel/preset-env": "^7.4.2",
+        "@types/node": ">=12.0.0",
+        "@types/node-forge": "^1.2.1",
         "assertion-error": "^1.1.0",
         "babel-jest": "^27.3.1",
         "babel-plugin-module-resolver": "^3.1.1",
@@ -62,6 +64,7 @@
         "husky": "^7.0.4",
         "jest": "^27.3.1",
         "node-forge": "^1.2.1",
-        "pdfkit": "^0.10.0"
+        "pdfkit": "^0.10.0",
+        "typescript": "^5.2.2"
     }
 }
