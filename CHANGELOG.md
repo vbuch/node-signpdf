@@ -1,5 +1,12 @@
 # CHANGELOG
 
+
+## [2.0.0]
+
+* Only publish dist files into npm (see https://bit.ly/46rykd7 on why this requires a major version);
+* Produce and publish .d.ts;
+* Bumped versions of semver and word-wrap;
+
 ## [1.5.0]
 
 * Reworked reading xref table;
