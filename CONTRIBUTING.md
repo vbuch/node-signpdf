@@ -26,3 +26,4 @@
 * [pernikov](https://github.com/pernikov)
 * [timotheeg](https://github.com/timotheeg)
 * [ElTimuro](https://github.com/ElTimuro)
+* [erikn69](https://github.com/erikn69)
