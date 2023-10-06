@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [3.0.0]
+
+* Deprecating `node-signpdf` to be replaced by the `@signpdf` scoped packages;
+* Split the helpers into separate packages `@signpdf/placeholder-pdfkit010` and `@signpdf/placeholder-plain`;
+* placeholder helpers now require `contactInfo`, `location` and `name` which used to be optional;
+* Introduced more types declarations through TS and JSDoc;
+* Introduced examples in `packages/examples`;
+
 ## [2.0.0]
 
 * Only publish dist files into npm (see https://bit.ly/46rykd7 on why this requires a major version);

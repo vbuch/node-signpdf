@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "@signpdf/internal-utils",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbuch/node-signpdf.git"
+  }
+}

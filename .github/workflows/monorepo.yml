@@ -1,0 +1,53 @@
+on:
+  push:
+    branches:
+      - feature/split
+
+name: monorepo
+
+jobs:
+  do-de-stuff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - run: yarn
+      - run: ./node_modules/.bin/lerna run lint
+      - run: ./node_modules/.bin/lerna run test -- --coverage
+      - name: Coveralls (signpdf)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: signpdf
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/signpdf
+          path-to-lcov: packages/signpdf/coverage/lcov.info
+      - name: Coveralls (utils)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: utils
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/utils
+          path-to-lcov: packages/utils/coverage/lcov.info
+      - name: Coveralls (placeholder-pdfkit010)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: placeholder-pdfkit010
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/placeholder-pdfkit010
+          path-to-lcov: packages/placeholder-pdfkit010/coverage/lcov.info
+      - name: Coveralls (placeholder-plain)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: placeholder-plain
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/placeholder-plain
+          path-to-lcov: packages/placeholder-plain/coverage/lcov.info
+      - name: Close Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          parallel-finished: true
+          carryforward: "signpdf,utils,placeholder-pdfkit010,placeholder-plain"

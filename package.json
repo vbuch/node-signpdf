@@ -1,70 +1,26 @@
 {
-    "name": "node-signpdf",
-    "version": "2.0.0",
-    "description": "Simple signing of PDFs in node.",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/vbuch/node-signpdf"
-    },
-    "license": "MIT",
-    "keywords": [
-        "sign",
-        "verify",
-        "pdf",
-        "node",
-        "nodejs",
-        "esign",
-        "adobe",
-        "ppklite",
-        "sign detached",
-        "pkcs7",
-        "pkcs#7",
-        "pades",
-        "digital signature"
-    ],
-    "main": "dist/signpdf.js",
-    "files": [
-        "dist",
-        "LICENSE",
-        "README.md"
-    ],
-    "engines": {
-        "node": ">=12"
-    },
-    "scripts": {
-        "test:coverage": "./node_modules/.bin/jest --coverage",
-        "test": "./node_modules/.bin/jest",
-        "test:watch": "./node_modules/.bin/jest --watch",
-        "build": "rm -rf ./dist/* & ./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
-        "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
-        "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
-        "prepare": "husky install"
-    },
-    "peerDependencies": {
-        "node-forge": "^1.2.1"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.0.0",
-        "@babel/core": "^7.4.0",
-        "@babel/eslint-parser": "^7.16.3",
-        "@babel/node": "^7.0.0",
-        "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
-        "@babel/preset-env": "^7.4.2",
-        "@types/node": ">=12.0.0",
-        "@types/node-forge": "^1.2.1",
-        "assertion-error": "^1.1.0",
-        "babel-jest": "^27.3.1",
-        "babel-plugin-module-resolver": "^3.1.1",
-        "coveralls": "^3.0.2",
-        "eslint": "^8.2.0",
-        "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-import-resolver-babel-module": "^5.3.1",
-        "eslint-plugin-import": "^2.25.3",
-        "eslint-plugin-jest": "^25.2.4",
-        "husky": "^7.0.4",
-        "jest": "^27.3.1",
-        "node-forge": "^1.2.1",
-        "pdfkit": "^0.10.0",
-        "typescript": "^5.2.2"
-    }
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vbuch/node-signpdf"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "build": "lerna run build",
+    "lint": "lerna run lint",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.2",
+    "husky": "^7.0.4",
+    "lerna": "^7.3.0"
+  },
+  "dependencies": {}
 }
