@@ -4,9 +4,11 @@
 
 * Deprecating `node-signpdf` to be replaced by the `@signpdf` scoped packages;
 * Split the helpers into separate packages `@signpdf/placeholder-pdfkit010` and `@signpdf/placeholder-plain`;
+* Decoupled the signing algorythm and the PDF signing process. Now `@signpdf/signpdf` understands PDFs and `@signpdf/signer-p12` understands P12 and `node-forge`;
+* sign() is now async to allow for hooking different signers;
 * placeholder helpers now require `contactInfo`, `location` and `name` which used to be optional;
-* Introduced more types declarations through TS and JSDoc;
 * Introduced examples in `packages/examples`;
+* Introduced more types declarations through TS and JSDoc;
 
 ## [2.0.0]
 

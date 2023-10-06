@@ -58,3 +58,14 @@ Object.keys(_SignPdfError).forEach(function (key) {
     }
   });
 });
+var _Signer = require("./Signer");
+Object.keys(_Signer).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _Signer[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _Signer[key];
+    }
+  });
+});

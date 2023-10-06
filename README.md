@@ -35,12 +35,11 @@ Depending on your usecase you may need different combinations of packages.
 This is the most simple case of them all. You only need the signer. `$ npm i -S @signpdf/signpdf node-forge`. Then have a look at the [with-placeholder.js example](/packages/examples/with-placeholder.js). It should be as simple as:
 
 ```javascript
-import signer from 'node-signpdf';
+import signpdf from '@signpdf/signpdf';
+import { P12Signer } from '@signpdf/signer-p12';
 ...
-const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_PDF_FILE),
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
-);
+const signer = new P12Signer(fs.readFileSync(PATH_TO_P12_CERTIFICATE));
+const signedPdf = await signpdf.sign(fs.readFileSync(PATH_TO_PDF_FILE), signer);
 ```
 
 ### I am generating a PDF with PDFKit
@@ -57,7 +56,13 @@ This seems to be the most common usecase - people work with PDF documents coming
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Fsignpdf.svg)](https://badge.fury.io/js/@signpdf%2Fsignpdf)
 
-With the help of `node-forge` provides the actual cryptographic signing of a well-prepared PDF document. A PDF document is well-prepared if it has a signature placeholder - that is the e-signature aquivallent of the label "Signature:......." in your paper document. If your PDF does not have that, you may want to add one using one of our placeholder helpers (see the other packages).
+Uses a Signer implementation (see the `@signpdf/signer-` packages) that provides cryptographic signing to sign a well-prepared PDF document. A PDF document is well-prepared if it has a signature placeholder - that is the e-signature aquivallent of the label "Signature:......." in your paper document. If your PDF does not have that, you may want to add one using one of our placeholder helpers (see the `@signpdf/placeholder-` packages).
+
+### [signer-p12](./packages/signer-p12)
+
+[![npm version](https://badge.fury.io/js/@signpdf%2Fsigner-p12.svg)](https://badge.fury.io/js/@signpdf%2Fsigner-p12)
+
+With the help of `node-forge` provides the actual cryptographic signing of a Buffer using a P12 certificate bundle in detached mode as required for PDF.
 
 ### [placeholder-pdfkit010](/packages/placeholder-pdfkit010)
 
@@ -113,13 +118,13 @@ const pdfToSign = pdfkitAddPlaceholder({
 
 ### Generate and apply signature
 
-That's where the Signer kicks in. Given a PDF and a P12 certificate a signature is generated in detached mode and is replaced in the placeholder.
+That's where the Signer kicks in. Given a PDF and a signer implementation a signature is generated and replaced in the placeholder.
 
 ```js
-import signer from '@signpdf/signpdf';
+import signpdf from '@signpdf/signpdf';
 
 ...
-const signedPdf = signer.sign(pdfBuffer, certificateBuffer);
+const signedPdf = await signpdf.sign(pdfBuffer, signer);
 ```
 
 ## Dependencies
