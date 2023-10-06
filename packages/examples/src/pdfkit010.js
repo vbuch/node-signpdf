@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var PDFDocument = require('pdfkit');
-var signer = require('@signpdf/signpdf').default;
+var signpdf = require('@signpdf/signpdf').default;
+var P12Signer = require('@signpdf/signer-p12').P12Signer;
 var pdfkitAddPlaceholder = require('@signpdf/placeholder-pdfkit010').pdfkitAddPlaceholder;
 
 function work() {
@@ -58,12 +59,17 @@ function work() {
     // certificate.p12 is the certificate that is going to be used to sign
     var certificatePath = path.join(__dirname, '/../../../resources/certificate.p12');
     var certificateBuffer = fs.readFileSync(certificatePath);
-    pdfReady.then(function (pdfWithPlaceholder) {
-        // Sign and store is all we need to do at that point.
-        var signedPdf = signer.sign(pdfWithPlaceholder, certificateBuffer);
-        var targetPath = path.join(__dirname, '/../output/pdfkit010.pdf');
-        fs.writeFileSync(targetPath, signedPdf);
-    });
+    var signer = new P12Signer(certificateBuffer);
+    
+    // Once the PDF is ready we need to sign it and eventually store it on disc.
+    pdfReady
+        .then(function (pdfWithPlaceholder) {
+            return signpdf.sign(pdfWithPlaceholder, signer);
+        })
+        .then(function (signedPdf) {
+            var targetPath = path.join(__dirname, '/../output/pdfkit010.pdf');
+            fs.writeFileSync(targetPath, signedPdf);
+        });
 
     // Finally end the PDFDocument stream.
     pdf.end();

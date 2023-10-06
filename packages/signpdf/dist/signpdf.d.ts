@@ -8,11 +8,11 @@ export class SignPdf {
     lastSignature: string;
     /**
      * @param {Buffer} pdfBuffer
-     * @param {Buffer} p12Buffer
+     * @param {Signer} signer
      * @param {SignerOptions} additionalOptions
-     * @returns {Buffer}
+     * @returns {Promise<Buffer>}
      */
-    sign(pdfBuffer: Buffer, p12Buffer: Buffer, additionalOptions?: SignerOptions): Buffer;
+    sign(pdfBuffer: Buffer, signer: Signer): Promise<Buffer>;
 }
 declare const _default: SignPdf;
 export default _default;
@@ -20,4 +20,5 @@ export type SignerOptions = {
     passphrase?: string;
     asn1StrictParsing?: boolean;
 };
+import { Signer } from '@signpdf/utils';
 //# sourceMappingURL=signpdf.d.ts.map

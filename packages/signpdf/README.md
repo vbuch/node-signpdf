@@ -7,21 +7,22 @@ The main package from the [@signpdf family](https://github.com/vbuch/node-signpd
 
 ## Usage
 
-`$ npm i -S @signpdf/signpdf node-forge`. Then considering you have a well-prepared PDF that already has a signature placeholder usage should be as simple as:
+`$ npm i -S @signpdf/signpdf node-forge`. Then considering you have a well-prepared PDF that already has a signature placeholder and you have prepared a signer implementation usage should be as simple as:
 
 ```javascript
-import signer from '@signpdf/signpdf';
+import signpdf from '@signpdf/signpdf';
 ...
-const signedPdf = signer.sign(
-  fs.readFileSync(PATH_TO_PDF_FILE),
-  fs.readFileSync(PATH_TO_P12_CERTIFICATE),
-);
+const signedPdf = await signpdf.sign(fs.readFileSync(PATH_TO_PDF_FILE), signer);
 ```
 
 If your PDF does not contain a placeholder, we have helpers:
 
 - [@signpdf/placeholder-pdfkit010](/packages/placeholder-pdfkit010)
 - [@signpdf/placeholder-plain](/packages/placeholder-plain)
+
+We also have a single signer implementation currently:
+
+- [`@signpdf/signer-p12`](/packages/signer-p12)
 
 ## Notes
 

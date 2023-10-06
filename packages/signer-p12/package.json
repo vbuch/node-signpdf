@@ -1,7 +1,7 @@
 {
-    "name": "@signpdf/signpdf",
-    "version": "2.0.0",
-    "description": "Simple signing of PDFs in node.",
+    "name": "@signpdf/signer-p12",
+    "version": "3.0.6",
+    "description": "Sign using a P12 certificate.",
     "repository": {
         "type": "git",
         "url": "https://github.com/vbuch/node-signpdf"
@@ -19,24 +19,30 @@
         "pkcs7",
         "pkcs#7",
         "pades",
+        "P12",
         "digital signature"
     ],
-    "main": "dist/signpdf.js",
+    "main": "dist/P12Signer.js",
+    "types": "dist/P12Signer.d.ts",
     "files": [
         "dist",
         "LICENSE",
         "README.md"
     ],
     "engines": {
-        "node": ">=12"
+        "node": ">=12",
+        "yarn": ">=1.22.18"
     },
     "scripts": {
-        "test": "./node_modules/.bin/jest",
-        "build": "rm -rf ./dist/* & ./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
+        "test": "jest",
+        "build": "rm -rf ./dist/* & babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
         "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
     },
     "dependencies": {
         "@signpdf/utils": "*"
+    },
+    "peerDependencies": {
+        "node-forge": "^1.2.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -47,9 +53,6 @@
         "@babel/preset-env": "^7.4.2",
         "@signpdf/eslint-config": "*",
         "@signpdf/internal-utils": "*",
-        "@signpdf/placeholder-pdfkit010": "2.0.0",
-        "@signpdf/placeholder-plain": "*",
-        "@signpdf/signer-p12": "*",
         "@types/node": ">=12.0.0",
         "@types/node-forge": "^1.2.1",
         "assertion-error": "^1.1.0",
@@ -66,6 +69,5 @@
         "node-forge": "^1.2.1",
         "pdfkit": "~0.10.0",
         "typescript": "^5.2.2"
-    },
-    "gitHead": "cf8d5f40b2e2e513919ba586df03bad4fb87982c"
+    }
 }
