@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "@signpdf/eslint-config",
+  "version": "2.0.0",
+  "description": "",
+  "main": "eslint.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vbuch/node-signpdf.git"
+  }
+}

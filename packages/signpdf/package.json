@@ -1,0 +1,71 @@
+{
+    "name": "@signpdf/signpdf",
+    "version": "2.0.0",
+    "description": "Simple signing of PDFs in node.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vbuch/node-signpdf"
+    },
+    "license": "MIT",
+    "keywords": [
+        "sign",
+        "pdf",
+        "node",
+        "nodejs",
+        "esign",
+        "adobe",
+        "ppklite",
+        "sign detached",
+        "pkcs7",
+        "pkcs#7",
+        "pades",
+        "digital signature"
+    ],
+    "main": "dist/signpdf.js",
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md"
+    ],
+    "engines": {
+        "node": ">=12"
+    },
+    "scripts": {
+        "test": "./node_modules/.bin/jest",
+        "build": "rm -rf ./dist/* & ./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
+        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+    },
+    "dependencies": {
+        "@signpdf/utils": "*"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.0.0",
+        "@babel/core": "^7.4.0",
+        "@babel/eslint-parser": "^7.16.3",
+        "@babel/node": "^7.0.0",
+        "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
+        "@babel/preset-env": "^7.4.2",
+        "@signpdf/eslint-config": "*",
+        "@signpdf/internal-utils": "*",
+        "@signpdf/placeholder-pdfkit010": "2.0.0",
+        "@signpdf/placeholder-plain": "*",
+        "@signpdf/signer-p12": "*",
+        "@types/node": ">=12.0.0",
+        "@types/node-forge": "^1.2.1",
+        "assertion-error": "^1.1.0",
+        "babel-jest": "^27.3.1",
+        "babel-plugin-module-resolver": "^3.1.1",
+        "coveralls": "^3.0.2",
+        "eslint": "^8.50.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-import-resolver-babel-module": "^5.3.1",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-jest": "^25.2.4",
+        "husky": "^7.0.4",
+        "jest": "^27.3.1",
+        "node-forge": "^1.2.1",
+        "pdfkit": "~0.10.0",
+        "typescript": "^5.2.2"
+    },
+    "gitHead": "cf8d5f40b2e2e513919ba586df03bad4fb87982c"
+}

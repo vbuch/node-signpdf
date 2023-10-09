@@ -1,5 +1,5 @@
 # RELEASE CHECKLIST
 
-[ ] yarn build
+[ ] ./node_modules/.bin/lerna run build
 [ ] Update CHANGELOG
-[ ] Update version in package.json
+[ ] ./node_modules/.bin/lerna publish

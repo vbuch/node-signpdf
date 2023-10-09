@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createBufferTrailer creates expected outputs 1`] = `
+"xref
+0 1
+0000000000 65535 f 
+trailer
+<<
+/Size 3
+/Root 1 0 R
+/Info 2 0 R
+/Prev 4220
+>>
+startxref
+4654
+%%EOF"
+`;
+
+exports[`createBufferTrailer creates expected outputs 2`] = `
+"xref
+0 1
+0000000000 65535 f 
+trailer
+<<
+/Size 3
+/Root 1 0 R
+/Prev 4220
+>>
+startxref
+4654
+%%EOF"
+`;
+
+exports[`createBufferTrailer creates expected outputs 3`] = `
+"xref
+0 1
+0000000000 65535 f 
+3 1
+0000004077 00000 n 
+4 1
+0000003812 00000 n 
+trailer
+<<
+/Size 3
+/Root 1 0 R
+/Prev 4220
+>>
+startxref
+4654
+%%EOF"
+`;
