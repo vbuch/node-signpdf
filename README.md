@@ -1,10 +1,10 @@
-# ![node-signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)
+# **node-signpdf is DEPRECATAED**
 
-[![npm version](https://badge.fury.io/js/node-signpdf.svg)](https://badge.fury.io/js/node-signpdf)
-[![Coverage Status](https://coveralls.io/repos/github/vbuch/node-signpdf/badge.svg?branch=master)](https://coveralls.io/github/vbuch/node-signpdf?branch=master)
-[![Known Vulnerabilities](https://snyk.io/test/npm/node-signpdf/badge.svg)](https://snyk.io/test/npm/node-signpdf)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
-![GitHub last commit](https://img.shields.io/github/last-commit/vbuch/node-signpdf?color=red)
+It is being replaced by [@signpdf](https://github.com/vbuch/node-signpdf).
+
+_________________________________
+
+![Deprecated since Oct 2023](https://img.shields.io/badge/deprecated-since_Oct_2023-red) [![Replaced by @signpdf/signpdf](https://img.shields.io/badge/replaced_by-@signpdf/signpdf-green)](https://github.com/vbuch/node-signpdf)
 
 Simple signing of PDFs in node.
 
@@ -25,6 +25,8 @@ Simple signing of PDFs in node.
 The purpose of this package is not as much to be used as a dependendency, although it could. The main purpose is **to demonstrate** the way signing can be achieved **in a piece of readable code** as it can take a lot of hours to figure out.
 
 ## Usage
+
+![Deprecated since Oct 2023](https://img.shields.io/badge/deprecated-since_Oct_2023-red) [![Replaced by @signpdf/signpdf](https://img.shields.io/badge/replaced_by-@signpdf/signpdf-green)](https://github.com/vbuch/node-signpdf)
 
 Install with  `npm i -S node-signpdf node-forge`.
 
@@ -54,6 +56,8 @@ const signedPdf = signer.sign(
 ```
 
 ## Notes
+
+![Deprecated since Oct 2023](https://img.shields.io/badge/deprecated-since_Oct_2023-red) [![Replaced by @signpdf/signpdf](https://img.shields.io/badge/replaced_by-@signpdf/signpdf-green)](https://github.com/vbuch/node-signpdf)
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](<https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Standards+and+specifications#Standardsandspecifications-PAdES(PDFAdvancedElectronicSignature)BaselineProfile>).
 * This lib:
@@ -111,6 +115,4 @@ That's where the Signer kicks in. Given a PDF and a P12 certificate a signature 
 * [node-forge](https://github.com/digitalbazaar/forge) is an awesome package written in pure JavaScript and [supports signing in detached mode](https://github.com/digitalbazaar/forge/pull/605). Many thanks to all the guys who wrote and maintain it.
 * Thanks to the guys of [PDFKit](https://github.com/foliojs/pdfkit) as well. They've made PDF generation incredibly easy.
 
-## [Contributing](CONTRIBUTING.md)
-
-## [Changelog](CHANGELOG.md)
+## `node-signpdf` is ![deprecated since Oct 2023](https://img.shields.io/badge/deprecated-since_Oct_2023-red) and is being [![replaced by @signpdf/signpdf](https://img.shields.io/badge/replaced_by-@signpdf/signpdf-green)](https://github.com/vbuch/node-signpdf)

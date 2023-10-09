@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [3.0.0]
+
+**node-signpdf is DEPRECATAED**
+
+It is being replaced by the `@signpdf` scoped packages which introduces:
+
+* Split the helpers into separate packages `@signpdf/placeholder-pdfkit010` and `@signpdf/placeholder-plain`;
+* Decoupled the signing algorythm and the PDF signing process. Now `@signpdf/signpdf` understands PDFs and `@signpdf/signer-p12` understands P12 and `node-forge`;
+* sign() is now async to allow for hooking different signers;
+* Introduced examples in `packages/examples`;
+* Introduced more types declarations through TS and JSDoc;
+
+It keeps the same [GitHub repo](https://github.com/vbuch/node-signpdf) but is published differently **[in npm](https://www.npmjs.com/search?q=%40signpdf)**.
+
 ## [2.0.0]
 
 * Only publish dist files into npm (see https://bit.ly/46rykd7 on why this requires a major version);

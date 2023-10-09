@@ -1,5 +1,5 @@
 # RELEASE CHECKLIST
 
-[ ] yarn build
-[ ] Update CHANGELOG
-[ ] Update version in package.json
+**node-signpdf is DEPRECATAED**
+
+Further releases will happen in [@signpdf](https://github.com/vbuch/node-signpdf).
