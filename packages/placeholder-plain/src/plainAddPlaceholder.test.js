@@ -28,4 +28,31 @@ describe(plainAddPlaceholder, () => {
         expect(output).toBeInstanceOf(Buffer);
         expect(output.indexOf('/ByteRange', 13350)).toBe(19489);
     });
+
+    it('sets the widget rectange to invisible by default', () => {
+        const input = readTestResource('w3dummy.pdf');
+        const output = plainAddPlaceholder({
+            pdfBuffer: input,
+            reason: 'Because I can',
+            location: 'some place',
+            name: 'example name',
+            contactInfo: 'emailfromp1289@gmail.com',
+        });
+        expect(output).toBeInstanceOf(Buffer);
+        expect(output.indexOf('/Rect [0 0 0 0]')).not.toBe(-1);
+    });
+
+    it('allows defining widget rectange', () => {
+        const input = readTestResource('w3dummy.pdf');
+        const output = plainAddPlaceholder({
+            pdfBuffer: input,
+            reason: 'Because I can',
+            location: 'some place',
+            name: 'example name',
+            contactInfo: 'emailfromp1289@gmail.com',
+            widgetRect: [100, 100, 200, 200],
+        });
+        expect(output).toBeInstanceOf(Buffer);
+        expect(output.indexOf('/Rect [100 100 200 200]')).not.toBe(-1);
+    });
 });
