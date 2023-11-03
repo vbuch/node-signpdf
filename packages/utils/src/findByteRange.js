@@ -15,17 +15,45 @@ export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER)
         );
     }
 
-    const byteRangeStrings = pdf.toString().match(/\/ByteRange\s*\[{1}\s*(?:(?:\d*|\/\*{10})\s+){3}(?:\d+|\/\*{10}){1}\s*]{1}/g);
+    let byteRangePlaceholder;
+    const byteRangeStrings = [];
+    const byteRanges = [];
+    let offset = 0;
+    do {
+        const position = pdf.indexOf('/ByteRange', offset);
+        if (position === -1) {
+            break;
+        }
 
-    if (!byteRangeStrings) {
-        throw new SignPdfError(
-            'No ByteRangeStrings found within PDF buffer',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
+        const rangeStart = pdf.indexOf('[', position);
+        const rangeEnd = pdf.indexOf(']', rangeStart);
 
-    const byteRangePlaceholder = byteRangeStrings.find((s) => s.includes(`/${placeholder}`));
-    const byteRanges = byteRangeStrings.map((brs) => brs.match(/[^[\s]*(?:\d|\/\*{10})/g));
+        const byteRangeString = pdf.slice(position, rangeEnd + 1);
+        byteRangeStrings.push(byteRangeString.toString());
+
+        const range = pdf.subarray(rangeStart + 1, rangeEnd)
+            .toString()
+            .split(' ')
+            .filter((c) => c !== '')
+            .map((c) => c.trim());
+
+        byteRanges.push(range);
+
+        const placeholderName = `/${placeholder}`;
+        if (range[0] === '0' && range[1] === placeholderName && range[2] === placeholderName && range[3] === placeholderName) {
+            if (typeof byteRangePlaceholder !== 'undefined') {
+                throw new SignPdfError(
+                    'Found multiple ByteRange placeholders.',
+                    SignPdfError.TYPE_INPUT,
+                );
+            }
+            byteRangePlaceholder = byteRangeString.toString();
+        }
+
+        offset = rangeEnd;
+
+        // eslint-disable-next-line no-constant-condition
+    } while (true);
 
     return {
         byteRangePlaceholder,
