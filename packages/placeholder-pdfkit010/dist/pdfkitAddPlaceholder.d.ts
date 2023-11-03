@@ -1,4 +1,4 @@
-export function pdfkitAddPlaceholder({ pdf, pdfBuffer, reason, contactInfo, name, location, signatureLength, byteRangePlaceholder, subFilter, }: InputType): ReturnType;
+export function pdfkitAddPlaceholder({ pdf, pdfBuffer, reason, contactInfo, name, location, signatureLength, byteRangePlaceholder, subFilter, widgetRect, }: InputType): ReturnType;
 export type InputType = {
     /**
      * PDFDocument
@@ -12,9 +12,13 @@ export type InputType = {
     signatureLength?: number;
     byteRangePlaceholder?: string;
     /**
-     * One of SUBFILTER_* from
+     * One of SUBFILTER_* from \@signpdf/utils
      */
     subFilter?: string;
+    /**
+     * [x1, y1, x2, y2] widget rectangle
+     */
+    widgetRect?: number[];
 };
 export type ReturnType = {
     signature: any;
