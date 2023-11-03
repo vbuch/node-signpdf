@@ -9,7 +9,7 @@ yarn-error.log*
 
 coverage
 .coveralls.yml
-packages/examples/output
+packages/examples/output/*
 
 node_modules/
 .npm
