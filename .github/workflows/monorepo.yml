@@ -43,6 +43,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-path: packages/placeholder-plain
           path-to-lcov: packages/placeholder-plain/coverage/lcov.info
+      - name: Coveralls (placeholder-pdf-lib)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: placeholder-pdf-lib
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/placeholder-pdf-lib
+          path-to-lcov: packages/placeholder-pdf-lib/coverage/lcov.info
       - name: Close Coveralls
         uses: coverallsapp/github-action@master
         with:
