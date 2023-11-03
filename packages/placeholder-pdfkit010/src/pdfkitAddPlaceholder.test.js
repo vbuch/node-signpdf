@@ -1,4 +1,4 @@
-import {SIG_FLAGS, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
+import {SIG_FLAGS, SUBFILTER_ADOBE_PKCS7_DETACHED, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
 import {createPdfkitDocument} from '@signpdf/internal-utils';
 import {pdfkitAddPlaceholder} from './pdfkitAddPlaceholder';
 import PDFObject from './pdfkit/pdfobject';
@@ -74,10 +74,10 @@ describe(pdfkitAddPlaceholder, () => {
         expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');
         const widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
         expect(PDFObject.convert(widgetData.Reason)).toEqual('(test reason)');
-        expect(PDFObject.convert(widgetData.ContactInfo)).toEqual('(testemail@example.com)');
-        expect(PDFObject.convert(widgetData.Name)).toEqual('(test name)');
-        expect(PDFObject.convert(widgetData.Location)).toEqual('(test Location)');
-        expect(widgetData.SubFilter).toEqual('adbe.pkcs7.detached');
+        expect(PDFObject.convert(widgetData.ContactInfo)).toEqual(`(${defaults.contactInfo})`);
+        expect(PDFObject.convert(widgetData.Name)).toEqual(`(${defaults.name})`);
+        expect(PDFObject.convert(widgetData.Location)).toEqual(`(${defaults.location})`);
+        expect(widgetData.SubFilter).toEqual(SUBFILTER_ADOBE_PKCS7_DETACHED);
     });
 
     it('allows defining signature SubFilter', () => {
@@ -100,7 +100,49 @@ describe(pdfkitAddPlaceholder, () => {
         expect(widget.data.Subtype).toEqual('Widget');
         const widgetData = widget.data.V.data;
         expect(PDFObject.convert(widgetData.Reason)).toEqual('(test reason)');
-        expect(widgetData.SubFilter).toEqual('ETSI.CAdES.detached');
+        expect(widgetData.SubFilter).toEqual(SUBFILTER_ETSI_CADES_DETACHED);
+    });
+
+    it('sets the widget rectange to invisible by default', () => {
+        const {pdf} = createPdfkitDocument();
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+        });
+        expect(Object.keys(refs)).toEqual(expect.arrayContaining([
+            'signature',
+            'form',
+            'widget',
+        ]));
+        expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
+        const widget = pdf.page.dictionary.data.Annots[0];
+        const rect = widget.data.Rect;
+        expect(Array.isArray(rect)).toBe(true);
+        expect(rect).toEqual([0, 0, 0, 0]);
+    });
+
+    it('allows defining widget rectange', () => {
+        const {pdf} = createPdfkitDocument();
+        const widgetRect = [100, 100, 200, 200];
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+            widgetRect,
+        });
+        expect(Object.keys(refs)).toEqual(expect.arrayContaining([
+            'signature',
+            'form',
+            'widget',
+        ]));
+        expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
+        const widget = pdf.page.dictionary.data.Annots[0];
+        const rect = widget.data.Rect;
+        expect(Array.isArray(rect)).toBe(true);
+        expect(rect).toEqual(widgetRect);
     });
 
     it('adds placeholder to PDFKit document when AcroForm is already there', () => {
