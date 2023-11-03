@@ -1,4 +1,4 @@
-export function plainAddPlaceholder({ pdfBuffer, reason, contactInfo, name, location, signatureLength, subFilter, }: InputType): Buffer;
+export function plainAddPlaceholder({ pdfBuffer, reason, contactInfo, name, location, signatureLength, subFilter, widgetRect, }: InputType): Buffer;
 export type InputType = {
     pdfBuffer: Buffer;
     reason: string;
@@ -7,8 +7,12 @@ export type InputType = {
     location: string;
     signatureLength?: number;
     /**
-     * One of SUBFILTER_* from
+     * One of SUBFILTER_* from \@signpdf/utils
      */
     subFilter?: string;
+    /**
+     * [x1, y1, x2, y2] widget rectangle
+     */
+    widgetRect?: number[];
 };
 //# sourceMappingURL=plainAddPlaceholder.d.ts.map

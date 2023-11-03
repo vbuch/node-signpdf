@@ -36,7 +36,8 @@ const getAcroFormRef = slice => {
 * @property {string} name
 * @property {string} location
 * @property {number} [signatureLength]
-* @property {string} [subFilter] One of SUBFILTER_* from @signpdf/utils
+* @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
+* @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
 */
 
 /**
@@ -58,7 +59,8 @@ const plainAddPlaceholder = ({
   name,
   location,
   signatureLength = _utils.DEFAULT_SIGNATURE_LENGTH,
-  subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED
+  subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED,
+  widgetRect = [0, 0, 0, 0]
 }) => {
   let pdf = (0, _utils.removeTrailingNewLine)(pdfBuffer);
   const info = (0, _readPdf.default)(pdf);
@@ -100,7 +102,8 @@ const plainAddPlaceholder = ({
     name,
     location,
     signatureLength,
-    subFilter
+    subFilter,
+    widgetRect
   });
   if (!getAcroFormRef(pdf.toString())) {
     const rootIndex = (0, _getIndexFromRef.default)(info.xref, info.rootRef);

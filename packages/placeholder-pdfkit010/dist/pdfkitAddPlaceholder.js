@@ -18,7 +18,8 @@ var _pdfkitReferenceMock = require("./pdfkitReferenceMock");
 * @property {string} location
 * @property {number} [signatureLength]
 * @property {string} [byteRangePlaceholder]
-* @property {string} [subFilter] One of SUBFILTER_* from @signpdf/utils
+* @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
+* @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
 */
 
 /**
@@ -44,7 +45,8 @@ const pdfkitAddPlaceholder = ({
   location,
   signatureLength = _utils.DEFAULT_SIGNATURE_LENGTH,
   byteRangePlaceholder = _utils.DEFAULT_BYTE_RANGE_PLACEHOLDER,
-  subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED
+  subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED,
+  widgetRect = [0, 0, 0, 0]
 }) => {
   /* eslint-disable no-underscore-dangle,no-param-reassign */
   // Generate the signature placeholder
@@ -105,7 +107,7 @@ const pdfkitAddPlaceholder = ({
     Type: 'Annot',
     Subtype: 'Widget',
     FT: 'Sig',
-    Rect: [0, 0, 0, 0],
+    Rect: widgetRect,
     V: signature,
     T: new String(signatureName + (fieldIds.length + 1)),
     // eslint-disable-line no-new-wrappers

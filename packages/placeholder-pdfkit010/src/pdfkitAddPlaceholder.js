@@ -18,7 +18,8 @@ import {PDFKitReferenceMock} from './pdfkitReferenceMock';
 * @property {string} location
 * @property {number} [signatureLength]
 * @property {string} [byteRangePlaceholder]
-* @property {string} [subFilter] One of SUBFILTER_* from @signpdf/utils
+* @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
+* @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
 */
 
 /**
@@ -45,6 +46,7 @@ export const pdfkitAddPlaceholder = ({
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
+    widgetRect = [0, 0, 0, 0],
 }) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
@@ -114,7 +116,7 @@ export const pdfkitAddPlaceholder = ({
         Type: 'Annot',
         Subtype: 'Widget',
         FT: 'Sig',
-        Rect: [0, 0, 0, 0],
+        Rect: widgetRect,
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
         F: ANNOTATION_FLAGS.PRINT,
