@@ -1,1 +1,1 @@
-{"version":3,"file":"findByteRange.d.ts","sourceRoot":"","sources":["../src/findByteRange.js"],"names":[],"mappings":"AASO,mCAHI,MAAM,6BAwDhB"}
+{"version":3,"file":"findByteRange.d.ts","sourceRoot":"","sources":["../src/findByteRange.js"],"names":[],"mappings":"AAiBO,mCAHI,MAAM,yBACJ,UAAU,CA0DtB;;0BApEY,MAAM,GAAG,SAAS;kCAClB,MAAM,GAAG,SAAS;sBAClB,MAAM,EAAE;eACR,MAAM,EAAE"}
