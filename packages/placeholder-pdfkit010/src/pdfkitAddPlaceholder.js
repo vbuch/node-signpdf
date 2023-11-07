@@ -3,6 +3,7 @@ import {
     DEFAULT_SIGNATURE_LENGTH,
     SIG_FLAGS,
     SUBFILTER_ADOBE_PKCS7_DETACHED,
+    ANNOTATION_FLAGS,
 } from '@signpdf/utils';
 // eslint-disable-next-line import/no-unresolved
 import {PDFKitReferenceMock} from './pdfkitReferenceMock';
@@ -116,7 +117,7 @@ export const pdfkitAddPlaceholder = ({
         Rect: [0, 0, 0, 0],
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
-        F: 4,
+        F: ANNOTATION_FLAGS.PRINT,
         P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
     });
     pdf.page.dictionary.data.Annots = [widget];

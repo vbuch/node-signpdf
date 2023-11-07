@@ -109,7 +109,7 @@ const pdfkitAddPlaceholder = ({
     V: signature,
     T: new String(signatureName + (fieldIds.length + 1)),
     // eslint-disable-line no-new-wrappers
-    F: 4,
+    F: _utils.ANNOTATION_FLAGS.PRINT,
     P: pdf.page.dictionary // eslint-disable-line no-underscore-dangle
   });
 
