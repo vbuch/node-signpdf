@@ -1,6 +1,7 @@
 import {
     DEFAULT_BYTE_RANGE_PLACEHOLDER,
     DEFAULT_SIGNATURE_LENGTH,
+    SIG_FLAGS,
     SUBFILTER_ADOBE_PKCS7_DETACHED,
 } from '@signpdf/utils';
 // eslint-disable-next-line import/no-unresolved
@@ -126,14 +127,14 @@ export const pdfkitAddPlaceholder = ({
         // Create a form (with the widget) and link in the _root
         form = pdf.ref({
             Type: 'AcroForm',
-            SigFlags: 3,
+            SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
             Fields: [...fieldIds, widget],
         });
     } else {
         // Use existing acroform and extend the fields with newly created widgets
         form = pdf.ref({
             Type: 'AcroForm',
-            SigFlags: 3,
+            SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
             Fields: [...fieldIds, widget],
         }, acroFormId);
     }

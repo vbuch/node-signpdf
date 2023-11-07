@@ -120,14 +120,14 @@ const pdfkitAddPlaceholder = ({
     // Create a form (with the widget) and link in the _root
     form = pdf.ref({
       Type: 'AcroForm',
-      SigFlags: 3,
+      SigFlags: _utils.SIG_FLAGS.SIGNATURES_EXIST | _utils.SIG_FLAGS.APPEND_ONLY,
       Fields: [...fieldIds, widget]
     });
   } else {
     // Use existing acroform and extend the fields with newly created widgets
     form = pdf.ref({
       Type: 'AcroForm',
-      SigFlags: 3,
+      SigFlags: _utils.SIG_FLAGS.SIGNATURES_EXIST | _utils.SIG_FLAGS.APPEND_ONLY,
       Fields: [...fieldIds, widget]
     }, acroFormId);
   }

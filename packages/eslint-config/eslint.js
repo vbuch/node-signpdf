@@ -33,6 +33,7 @@ module.exports = {
         "class-methods-use-this": "off",
         "jest/no-conditional-expect": "off",
         "import/prefer-default-export": "off",
+        "no-bitwise": "off",
         "jest/valid-title": ["error", {"ignoreTypeOfDescribeName": true}]
     },
     settings: {

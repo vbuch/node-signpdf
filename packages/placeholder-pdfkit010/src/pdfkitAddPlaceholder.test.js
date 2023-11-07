@@ -1,4 +1,4 @@
-import {SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
+import {SIG_FLAGS, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
 import {createPdfkitDocument} from '@signpdf/internal-utils';
 import {pdfkitAddPlaceholder} from './pdfkitAddPlaceholder';
 import PDFObject from './pdfkit/pdfobject';
@@ -107,7 +107,7 @@ describe(pdfkitAddPlaceholder, () => {
         const {pdf} = createPdfkitDocument();
         const form = pdf.ref({
             Type: 'AcroForm',
-            SigFlags: 3,
+            SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
             Fields: [],
         });
         // eslint-disable-next-line no-underscore-dangle
