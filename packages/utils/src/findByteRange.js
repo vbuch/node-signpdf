@@ -2,10 +2,18 @@ import {SignPdfError} from './SignPdfError';
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER} from './const';
 
 /**
+* @typedef {object} OutputType
+* @property {string | undefined} byteRangePlaceholder
+* @property {number | undefined} byteRangePlaceholderPosition
+* @property {string[]} byteRangeStrings
+* @property {string[]} byteRange
+*/
+
+/**
  * Finds ByteRange information within a given PDF Buffer if one exists
  *
  * @param {Buffer} pdf
- * @returns {Object} {byteRangePlaceholder: String, byteRangeStrings: String[], byteRange: String[]}
+ * @returns {OutputType}
  */
 export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER) => {
     if (!(pdf instanceof Buffer)) {
@@ -16,6 +24,7 @@ export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER)
     }
 
     let byteRangePlaceholder;
+    let byteRangePlaceholderPosition;
     const byteRangeStrings = [];
     const byteRanges = [];
     let offset = 0;
@@ -28,7 +37,7 @@ export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER)
         const rangeStart = pdf.indexOf('[', position);
         const rangeEnd = pdf.indexOf(']', rangeStart);
 
-        const byteRangeString = pdf.slice(position, rangeEnd + 1);
+        const byteRangeString = pdf.subarray(position, rangeEnd + 1);
         byteRangeStrings.push(byteRangeString.toString());
 
         const range = pdf.subarray(rangeStart + 1, rangeEnd)
@@ -48,6 +57,7 @@ export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER)
                 );
             }
             byteRangePlaceholder = byteRangeString.toString();
+            byteRangePlaceholderPosition = position;
         }
 
         offset = rangeEnd;
@@ -57,6 +67,7 @@ export const findByteRange = (pdf, placeholder = DEFAULT_BYTE_RANGE_PLACEHOLDER)
 
     return {
         byteRangePlaceholder,
+        byteRangePlaceholderPosition,
         byteRangeStrings,
         byteRanges,
     };
