@@ -44,19 +44,17 @@ export class SignPdf {
         let pdf = removeTrailingNewLine(pdfBuffer);
 
         // Find the ByteRange placeholder.
-        const {byteRangePlaceholder} = findByteRange(pdf);
+        const {byteRangePlaceholder, byteRangePlaceholderPosition} = findByteRange(pdf);
 
         if (!byteRangePlaceholder) {
             throw new SignPdfError(
-                `Could not find empty ByteRange placeholder: ${byteRangePlaceholder}`,
+                'No ByteRangeStrings found within PDF buffer.',
                 SignPdfError.TYPE_PARSE,
             );
         }
 
-        const byteRangePos = pdf.indexOf(byteRangePlaceholder);
-
         // Calculate the actual ByteRange that needs to replace the placeholder.
-        const byteRangeEnd = byteRangePos + byteRangePlaceholder.length;
+        const byteRangeEnd = byteRangePlaceholderPosition + byteRangePlaceholder.length;
         const contentsTagPos = pdf.indexOf('/Contents ', byteRangeEnd);
         const placeholderPos = pdf.indexOf('<', contentsTagPos);
         const placeholderEnd = pdf.indexOf('>', placeholderPos);
@@ -71,7 +69,7 @@ export class SignPdf {
 
         // Replace the /ByteRange placeholder with the actual ByteRange
         pdf = Buffer.concat([
-            pdf.slice(0, byteRangePos),
+            pdf.slice(0, byteRangePlaceholderPosition),
             Buffer.from(actualByteRange),
             pdf.slice(byteRangeEnd),
         ]);
