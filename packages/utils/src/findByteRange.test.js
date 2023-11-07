@@ -15,9 +15,14 @@ describe(findByteRange, () => {
     it('expects no byteRangePlaceholder but byteRangeStrings when PDF is already signed', async () => {
         const pdfBuffer = readTestResource('signed.pdf');
 
-        const {byteRangePlaceholder, byteRangeStrings} = findByteRange(pdfBuffer);
+        const {
+            byteRangePlaceholder,
+            byteRangePlaceholderPosition,
+            byteRangeStrings,
+        } = findByteRange(pdfBuffer);
 
         expect(byteRangePlaceholder).toBe(undefined);
+        expect(byteRangePlaceholderPosition).toBe(undefined);
         expect(byteRangeStrings[0]).toBe('/ByteRange [0 153 3379 1275]');
     });
     it('throws an error when multiple placeholder ranges are found', async () => {
@@ -43,9 +48,10 @@ describe(findByteRange, () => {
             /ByteRange   [ 0 /AAA /AAA /AAA ]
         `);
 
-        const {byteRangePlaceholder, byteRangeStrings} = findByteRange(pdfBuffer, 'AAA');
+        const {byteRangePlaceholder, byteRangePlaceholderPosition, byteRangeStrings} = findByteRange(pdfBuffer, 'AAA');
 
         expect(byteRangePlaceholder).toBe('/ByteRange   [ 0 /AAA /AAA /AAA ]');
+        expect(byteRangePlaceholderPosition).toBe(206);
         expect(byteRangeStrings).toEqual(expect.arrayContaining([
             '/ByteRange [0 153 3379 1275]',
             '/ByteRange [0 /********** /********** /**********]',
