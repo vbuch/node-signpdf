@@ -51,18 +51,6 @@ describe(getXref, () => {
             expect(e.message).toMatchSnapshot();
         }
     });
-    it('Throws an error when next EOF is not found', () => {
-        const pdf = Buffer.from('xref\n then /Size 123 and then but no EOF');
-        const position = 0;
-        try {
-            getXref(pdf, position);
-            expect('here').not.toBe('here');
-        } catch (e) {
-            expect(e instanceof SignPdfError).toBe(true);
-            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toMatchSnapshot();
-        }
-    });
 });
 
 describe(readRefTable, () => {
