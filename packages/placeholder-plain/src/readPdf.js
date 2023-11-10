@@ -1,25 +1,6 @@
 import readRefTable from './readRefTable';
 import findObject from './findObject';
-
-/**
- * @param {Buffer} trailer
- * @param {string} key
- * @returns {string}
- */
-export const getValue = (trailer, key) => {
-    let index = trailer.indexOf(key);
-
-    if (index === -1) {
-        return undefined;
-    }
-
-    const slice = trailer.slice(index);
-    index = slice.indexOf('/', 1);
-    if (index === -1) {
-        index = slice.indexOf('>', 1);
-    }
-    return slice.slice(key.length + 1, index).toString().trim(); // key + at least one space
-};
+import {getValue} from './getValue';
 
 /**
  * @typedef {object} ReadPdfReturnType

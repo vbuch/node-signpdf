@@ -1,4 +1,4 @@
-import {getValue} from './readPdf';
+import {getValue} from './getValue';
 
 describe(getValue, () => {
     it('matches snapshots', () => {
