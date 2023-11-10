@@ -4,9 +4,12 @@
 
 * [utils] Added SIG_FLAGS and ANNOTATION_FLAGS to improve readability;
 * [utils] Reworked findByteRange to match in more cases where it was incompatible so far (it didn't allow optional spaces in the array).
-* [pdfkit010] Uses SIG_FLAGS and ANNOTATION_FLAGS instead of magic numbers;
+* [placeholder-pdfkit010] Uses SIG_FLAGS and ANNOTATION_FLAGS instead of magic numbers;
+* [placeholder-pdfkit010] Allow passing in widgetRect to override the default [0, 0, 0, 0] one;
+* [placeholder-plain] Allow passing in widgetRect to override the default [0, 0, 0, 0] one;
 * [signpdf] Use the BR position findByteRange provides to spare a search for it;
-* Bumped version of axios
+* [examples] Introduce [an example that provides a visible widget](packages/examples/src/pdfkit010-with-visual.js) (implemented with pdfkit);
+* Bumped version of axios;
 
 ## [3.0.0]
 
