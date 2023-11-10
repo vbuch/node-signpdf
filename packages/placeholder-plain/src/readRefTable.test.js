@@ -1,11 +1,14 @@
 import {readTestResource} from '@signpdf/internal-utils';
 import {SignPdfError} from '@signpdf/utils';
-import readRefTable, {getXref} from './readRefTable';
+import readRefTable, {getFullXrefTable, getXref} from './readRefTable';
+
+describe(getFullXrefTable, () => {
+    it('works for #79', () => {
+        expect(getFullXrefTable(readTestResource('issue-79-test.pdf'))).toBeTruthy();
+    });
+});
 
 describe(getXref, () => {
-    it('works for #79', () => {
-        expect(getXref(readTestResource('issue-79-test.pdf'))).toBeTruthy();
-    });
     it('Throws an error when xref is not found at position', () => {
         const pdf = Buffer.from('Not containing an X R E F.');
         const position = 0;

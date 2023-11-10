@@ -1,15 +1,28 @@
 import {SignPdfError} from '@signpdf/utils';
 import xrefToRefMap from './xrefToRefMap';
+import {findObjectAt} from './findObject';
 
-export const getLastTrailerPosition = (pdf) => {
-    const trailerStart = pdf.lastIndexOf(Buffer.from('trailer', 'utf8'));
-    const trailer = pdf.slice(trailerStart, pdf.length - 6);
+/**
+ * @param {Buffer} pdf
+ * @returns {number}
+ */
+export const getLastXrefPosition = (pdf) => {
+    const xRefPosition = pdf
+        .subarray(
+            pdf.lastIndexOf(Buffer.from('startxref', 'utf8')) + 10,
+            pdf.lastIndexOf(Buffer.from('%%EOF', 'utf8')),
+        )
+        .toString()
+        .trim();
 
-    const xRefPosition = trailer
-        .slice(trailer.lastIndexOf(Buffer.from('startxref', 'utf8')) + 10)
-        .toString();
-
-    return parseInt(xRefPosition);
+    const lastXrefPosition = parseInt(xRefPosition);
+    if (`${lastXrefPosition}` !== xRefPosition) {
+        throw new SignPdfError(
+            `Expected an integer startxref position but got ${xRefPosition} instead.`,
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    return lastXrefPosition;
 };
 
 /**
@@ -77,7 +90,9 @@ const readXrefTableAt = (pdfSlice, position) => {
  * @param {number} _position
  * @returns {GetXRefReturnType | null}
  */
-const readXrefStreamAt = (_pdfSlice, _position) => {
+const readXrefStreamAt = (pdfSlice, position) => {
+    const {dictionary: _d, stream: _s} = findObjectAt(pdfSlice, position);
+
     throw new SignPdfError(
         'Cross-Reference Streams not yet implemented.',
         SignPdfError.TYPE_PARSE,
@@ -116,7 +131,7 @@ export const getXref = (pdf, position) => {
  * @returns {GetFullXrefTableReturnType}
  */
 export const getFullXrefTable = (pdf) => {
-    const lastTrailerPosition = getLastTrailerPosition(pdf);
+    const lastTrailerPosition = getLastXrefPosition(pdf);
     const lastXrefTable = getXref(pdf, lastTrailerPosition);
 
     if (lastXrefTable.prev === undefined) {
