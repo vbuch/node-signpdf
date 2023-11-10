@@ -12,35 +12,26 @@ export const getLastTrailerPosition = (pdf) => {
     return parseInt(xRefPosition);
 };
 
-export const getXref = (pdf, position) => {
-    let refTable = pdf.slice(position); // slice starting from where xref starts
+/**
+ * @param {Buffer} pdfSlice
+ * @param {number} position
+ * @returns {GetXRefReturnType | null}
+ */
+const readXrefTableAt = (pdfSlice, position) => {
+    let refTable = pdfSlice.subarray(position); // slice starting from where xref starts
     const realPosition = refTable.indexOf(Buffer.from('xref', 'utf8'));
     if (realPosition === -1) {
-        throw new SignPdfError(
-            `Could not find xref anywhere at or after ${position}.`,
-            SignPdfError.TYPE_PARSE,
-        );
+        return null;
     }
     if (realPosition > 0) {
-        const prefix = refTable.slice(0, realPosition);
+        const prefix = refTable.subarray(0, realPosition);
         if (prefix.toString().replace(/\s*/g, '') !== '') {
-            throw new SignPdfError(
-                `Expected xref at ${position} but found other content.`,
-                SignPdfError.TYPE_PARSE,
-            );
+            return null;
         }
     }
 
-    const nextEofPosition = refTable.indexOf(Buffer.from('%%EOF', 'utf8'));
-    if (nextEofPosition === -1) {
-        throw new SignPdfError(
-            'Expected EOF after xref and trailer but could not find one.',
-            SignPdfError.TYPE_PARSE,
-        );
-    }
-    refTable = refTable.slice(0, nextEofPosition);
-    refTable = refTable.slice(realPosition + 4); // move ahead with the "xref"
-    refTable = refTable.slice(refTable.indexOf('\n') + 1); // move after the next new line
+    // move ahead with the "xref\n"
+    refTable = refTable.subarray(realPosition + 5);
 
     // extract the size
     let size = refTable.toString().split('/Size')[1];
@@ -79,6 +70,41 @@ export const getXref = (pdf, position) => {
         prev,
         xRefContent,
     };
+};
+
+/**
+ * @param {Buffer} _pdfSlice
+ * @param {number} _position
+ * @returns {GetXRefReturnType | null}
+ */
+const readXrefStreamAt = (_pdfSlice, _position) => {
+    throw new SignPdfError(
+        'Cross-Reference Streams not yet implemented.',
+        SignPdfError.TYPE_PARSE,
+    );
+};
+
+/**
+ * @typedef {object} GetXRefReturnType
+ * // TODO
+ */
+
+/**
+ * @param {Buffer} pdf
+ * @param {number} position
+ * @returns {GetXRefReturnType}
+ * @throws {SignPdfError}
+ */
+export const getXref = (pdf, position) => {
+    const table = readXrefTableAt(pdf, position)
+        || readXrefStreamAt(pdf, position);
+    if (!table) {
+        throw new SignPdfError(
+            `Could not find xref anywhere at or after startxref position ${position}.`,
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    return table;
 };
 
 /**

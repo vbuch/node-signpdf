@@ -34,7 +34,15 @@ module.exports = {
         "jest/no-conditional-expect": "off",
         "import/prefer-default-export": "off",
         "no-bitwise": "off",
-        "jest/valid-title": ["error", {"ignoreTypeOfDescribeName": true}]
+        "jest/valid-title": ["error", {"ignoreTypeOfDescribeName": true}],
+        "no-unused-vars": [
+            "error",
+            { 
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_",
+                "caughtErrorsIgnorePattern": "^_"
+            }
+        ]
     },
     settings: {
         "import/resolver": {

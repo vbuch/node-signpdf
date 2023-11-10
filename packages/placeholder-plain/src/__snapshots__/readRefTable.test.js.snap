@@ -4,9 +4,9 @@ exports[`getXref Throws an error when size has unexpected value 1`] = `"Failed t
 
 exports[`getXref Throws an error when size is not found 1`] = `"Size not found in xref table."`;
 
-exports[`getXref Throws an error when xref is not at its expected position 1`] = `"Expected xref at 2 but found other content."`;
+exports[`getXref Throws an error when xref is not at its expected position 1`] = `"Cross-Reference Streams not yet implemented."`;
 
-exports[`getXref Throws an error when xref is not found at position 1`] = `"Could not find xref anywhere at or after 0."`;
+exports[`getXref Throws an error when xref is not found at position 1`] = `"Cross-Reference Streams not yet implemented."`;
 
 exports[`readRefTable Expects to merge correctly the refTable of resources 1`] = `
 Object {
