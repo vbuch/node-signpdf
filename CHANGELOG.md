@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [next]
+
+* [utils] Added SIG_FLAGS and ANNOTATION_FLAGS to improve readability;
+* [pdfkit010] Uses SIG_FLAGS and ANNOTATION_FLAGS instead of magic numbers;
+
 ## [3.0.0]
 
 * Deprecating `node-signpdf` to be replaced by the `@signpdf` scoped packages;
