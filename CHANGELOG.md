@@ -6,6 +6,7 @@
 * [utils] Reworked findByteRange to match in more cases where it was incompatible so far (it didn't allow optional spaces in the array).
 * [pdfkit010] Uses SIG_FLAGS and ANNOTATION_FLAGS instead of magic numbers;
 * [signpdf] Use the BR position findByteRange provides to spare a search for it;
+* Bumped version of axios
 
 ## [3.0.0]
 
