@@ -1,7 +1,4 @@
-on:
-  push:
-    branches:
-      - feature/split
+on: push
 
 name: monorepo
 
