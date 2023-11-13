@@ -1,6 +1,7 @@
 import {SignPdfError} from '@signpdf/utils';
 import xrefToRefMap from './xrefToRefMap';
 import {findObjectAt} from './findObject';
+// import {getValue} from './getValue';
 
 /**
  * @param {Buffer} pdf
@@ -92,6 +93,17 @@ const readXrefTableAt = (pdfSlice, position) => {
  */
 const readXrefStreamAt = (pdfSlice, position) => {
     const {dictionary: _d, stream: _s} = findObjectAt(pdfSlice, position);
+
+    // const parsed = {
+    //     size: getValue(_d, '/Size'),
+    //     root: getValue(_d, '/Root'),
+    //     info: getValue(_d, '/Info'),
+    //     filter: getValue(_d, '/Filter'),
+    //     length: getValue(_d, '/Length'),
+    // };
+
+    // console.log(_d.toString(), parsed);
+    // console.log(zlib.deflateSync(stream));
 
     throw new SignPdfError(
         'Cross-Reference Streams not yet implemented.',
