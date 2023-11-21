@@ -1,7 +1,7 @@
 {
     "name": "@signpdf/placeholder-pdf-lib",
     "version": "3.0.0",
-    "description": "Use pdf-lib ******************* to insert a signature placeholder.",
+    "description": "Use PDF-LIB to insert a signature placeholder.",
     "repository": {
         "type": "git",
         "url": "https://github.com/vbuch/node-signpdf"
@@ -21,8 +21,8 @@
         "pades",
         "digital signature"
     ],
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "dist/pdflibAddPlaceholder.js",
+    "types": "dist/pdflibAddPlaceholder.d.ts",
     "files": [
         "dist",
         "LICENSE",
