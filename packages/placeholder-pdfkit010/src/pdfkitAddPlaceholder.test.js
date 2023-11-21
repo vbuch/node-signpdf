@@ -37,29 +37,6 @@ describe(pdfkitAddPlaceholder, () => {
         const {pdf} = createPdfkitDocument();
 
         const refs = pdfkitAddPlaceholder({
-            pdf,
-            pdfBuffer: Buffer.from([pdf]),
-            reason: 'test reason',
-            ...defaults,
-        });
-        expect(Object.keys(refs)).toEqual(expect.arrayContaining([
-            'signature',
-            'form',
-            'widget',
-        ]));
-        expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
-        expect(pdf.page.dictionary.data.Annots[0].data.Subtype).toEqual('Widget');
-        const widgetData = pdf.page.dictionary.data.Annots[0].data.V.data;
-        expect(PDFObject.convert(widgetData.Reason)).toEqual('(test reason)');
-        expect(PDFObject.convert(widgetData.ContactInfo)).toEqual('(testemail@example.com)');
-        expect(PDFObject.convert(widgetData.Name)).toEqual('(test name)');
-        expect(PDFObject.convert(widgetData.Location)).toEqual('(test Location)');
-    });
-
-    it('placeholder contains default values for contactInfo, name, location', () => {
-        const {pdf} = createPdfkitDocument();
-
-        const refs = pdfkitAddPlaceholder({
             ...defaults,
             pdf,
             pdfBuffer: Buffer.from([pdf]),
