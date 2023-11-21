@@ -1,4 +1,4 @@
-export function getLastTrailerPosition(pdf: any): number;
+export function getLastXRefPosition(pdf: any): number;
 export function getXref(pdf: any, position: any): {
     size: any;
     prev: string;
