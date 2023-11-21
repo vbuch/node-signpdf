@@ -31,7 +31,7 @@ Depending on your usecase you may need different combinations of packages.
 
 ### I am getting PDFs that already have placeholders
 
-This is the most simple case of them all. `$ npm i -S @signpdf/signpdf @signpdf/signer-p12 node-forge`. Then have a look at the [with-placeholder.js example](/packages/examples/with-placeholder.js). It should be as simple as:
+This is the most simple case of them all. `$ npm i -S @signpdf/signpdf @signpdf/signer-p12 node-forge`. Then have a look at the [with-placeholder.js example](/packages/examples/src/with-placeholder.js). It should be as simple as:
 
 ```javascript
 import signpdf from '@signpdf/signpdf';
@@ -43,11 +43,19 @@ const signedPdf = await signpdf.sign(fs.readFileSync(PATH_TO_PDF_FILE), signer);
 
 ### I am generating a PDF with PDFKit
 
-This is how the library was started as we needed to sign a document that we were generating on the fly. You will need `$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdfkit010 @signpdf/signer-p12 node-forge` and a look at the [pdfkit010.js example](/packages/examples/pdfkit010.js).
+This is how the library was started as we needed to sign a document that we were generating on the fly. You will need `$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdfkit010 @signpdf/signer-p12 node-forge` and a look at the [pdfkit010.js example](/packages/examples/src/pdfkit010.js).
 
 ### I have a .pdf file and I want to sign it
 
-This seems to be the most common usecase - people work with PDF documents coming from different sources and they need to digitally sign them. The [placeholder-plain](#placeholder-plain) helper can help here. Start with `$ npm i -S @signpdf/signpdf @signpdf/placeholder-plain @signpdf/signer-p12 node-forge`. Head over to either [the JS example](/packages/examples/javascript.js) or [the TS one](/packages/examples/typescript.ts). And note that the process may look simple on the surface but it is very fragile inside. Should you need some help go stright to [our GitHub Issues](https://github.com/vbuch/node-signpdf/issues?q=is%3Aissue).
+This seems to be the most common usecase - people work with PDF documents coming from different sources and they need to digitally sign them. Both [placeholder helpers](#placeholder-helpers) placeholder-plain and placeholder-pdf-lib can help here.
+
+#### Plain
+
+Start with `$ npm i -S @signpdf/signpdf @signpdf/placeholder-plain @signpdf/signer-p12 node-forge`. Head over to either [the JS example](/packages/examples/src/javascript.js) or [the TS one](/packages/examples/src/typescript.ts). An advantage of working with the plain version would be that in theory it should be quicker and use less memory (not benchmarked). A great disadvantage: it is very fragile relying on strings being poisitioned in a certain way.
+
+#### PDF-LIB
+
+`$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdf-lib pdf-lib @signpdf/signer-p12 node-forge` gets you started. Then comes the [the PDF-LIB example](/packages/examples/src/pdf-lib.js). PDF-LIB provides tremendous PDF API, it is very well documented and well supported.
   
 ## Packages
 
@@ -85,6 +93,12 @@ Works on top of `PDFKit 0.10.0` and given a `PDFDocument` that is in the works (
 
 Uses the process and knowledge from `placeholder-pdfkit010` on how to add e-signature placeholder but implements it with plain string operations (`.indexOf()`, `.replace()`, `.match()`, etc.). Because of the lack of semantics it is rather *fragile*. Additionally it doesn't support streams and only works on PDF version <= 1.3. Regardless of those disadvantages this helper seems to be the most popular among the users of `@signpdf`. When the placeholder is in place `@signpdf/signpdf` can complete the process.
 
+#### [@signpdf/placeholder-pdf-lib](/packages/placeholder-pdf-lib)
+
+[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib)
+
+Works with PDF-LIB and given a loaded `PDFDocument`, adds an e-signature placeholder. When the placeholder is in place `@signpdf/signpdf` can complete the process.
+
 ## Notes
 
 * The process of signing a document is described in the [Digital Signatures in PDF](https://www.adobe.com/devnet-docs/etk_deprecated/tools/DigSig/Acrobat_DigitalSignatures_in_PDF.pdf) document. As Adobe's files are deprecated, [here is the standard as defined by ETSI](<https://ec.europa.eu/digital-building-blocks/wikis/display/DIGITAL/Standards+and+specifications#Standardsandspecifications-PAdES(PDFAdvancedElectronicSignature)BaselineProfile>).
@@ -101,16 +115,15 @@ We have examples of PDFKit generation of documents and we also have some where a
 
 What's needed is a `Sig` element and a `Widget` that is also linked in a `Form`. The form needs to be referenced in the `Root` descriptor of the PDF as well. A (hopefully) [readable sample](/packages/placeholder-pdfkit010/src/pdfkitAddPlaceholder.js) is available in the helpers. Note the `Contents` descriptor of the `Sig` where zeros are placed that will later be replaced with the actual signature.
 
-We provides two helpers for adding the signature placeholder:
+We provides [placeholder helpers](#placeholder-helpers) that do that.
 
-* [`@signpdf/placeholder-pdfkit010`](#placeholder-pdfkit010)
-* [`@signpdf/placeholder-plain`](#placeholder-plain)
+#### Signature length
 
 **Note:** Signing in detached mode makes the signature length independent of the PDF's content length, but it may still vary between different signing certificates. So every time you sign using the same P12 you will get the same length of the output signature, no matter the length of the signed content. It is safe to find out the actual signature length your certificate produces and use it to properly configure the placeholder length.
 
 #### PAdES compliant signatures
 
-To produce PAdES compliant signatures, the ETSI Signature Dictionary SubFilter value must be `ETSI.CAdES.detached` instead of the standard Adobe value. This can be declared using the subFilter option argument passed to `pdfkitAddPlaceholder` and `plainAddPlaceholder`.
+To produce PAdES compliant signatures, the ETSI Signature Dictionary SubFilter value must be `ETSI.CAdES.detached` instead of the standard Adobe value. This can be declared using the `subFilter` option argument passed to placeholder helpers.
 
 ```js
 import { pdfkitAddPlaceholder } from '@signpdf/placeholder-pdfkit010';
