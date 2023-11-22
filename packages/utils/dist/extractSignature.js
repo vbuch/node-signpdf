@@ -4,7 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.extractSignature = void 0;
+var _util = _interopRequireDefault(require("util"));
 var _SignPdfError = require("./SignPdfError");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 const getSubstringIndex = (str, substring, n) => {
   let times = 0;
   let index = null;
@@ -14,16 +16,26 @@ const getSubstringIndex = (str, substring, n) => {
   }
   return index;
 };
+
+/**
+ * @typedef {Object} ExtractSignatureResult
+ * @property {number[]} ByteRange
+ * @property {Buffer} signature
+ * @property {Buffer} signedData
+ */
+
 /**
  * Basic implementation of signature extraction.
  *
- * Really basic. Would work in the simplest of cases where there is only one signature
- * in a document and ByteRange is only used once in it.
+ * Really basic. Would work in the simplest of cases.
  *
  * @param {Buffer} pdf
- * @returns {Object} {ByteRange: Number[], signature: Buffer, signedData: Buffer}
+ * @param {number} signatureCount
+ * @returns {ExtractSignatureResult}
+ *
+ * @deprecated Should be used internally from internal-utils. Will be removed in a major release.
  */
-const extractSignature = (pdf, signatureCount = 1) => {
+const extractSignatureDeprecated = (pdf, signatureCount = 1) => {
   if (!(pdf instanceof Buffer)) {
     throw new _SignPdfError.SignPdfError('PDF expected as Buffer.', _SignPdfError.SignPdfError.TYPE_INPUT);
   }
@@ -52,4 +64,9 @@ const extractSignature = (pdf, signatureCount = 1) => {
     signedData
   };
 };
-exports.extractSignature = extractSignature;
+
+/**
+ * @type {(pdf: Buffer, signatureCount: number) => ExtractSignatureResult}
+ * @deprecated Should be used from internal-utils. Will be removed in a major release.
+ */
+const extractSignature = exports.extractSignature = _util.default.deprecate(extractSignatureDeprecated, 'Should be used internally from internal-utils. Will be removed in a major release.');

@@ -1,3 +1,4 @@
+import nodeUtil from 'util';
 import {SignPdfError} from './SignPdfError';
 
 const getSubstringIndex = (str, substring, n) => {
@@ -11,16 +12,26 @@ const getSubstringIndex = (str, substring, n) => {
 
     return index;
 };
+
+/**
+ * @typedef {Object} ExtractSignatureResult
+ * @property {number[]} ByteRange
+ * @property {Buffer} signature
+ * @property {Buffer} signedData
+ */
+
 /**
  * Basic implementation of signature extraction.
  *
- * Really basic. Would work in the simplest of cases where there is only one signature
- * in a document and ByteRange is only used once in it.
+ * Really basic. Would work in the simplest of cases.
  *
  * @param {Buffer} pdf
- * @returns {Object} {ByteRange: Number[], signature: Buffer, signedData: Buffer}
+ * @param {number} signatureCount
+ * @returns {ExtractSignatureResult}
+ *
+ * @deprecated Should be used internally from internal-utils. Will be removed in a major release.
  */
-export const extractSignature = (pdf, signatureCount = 1) => {
+const extractSignatureDeprecated = (pdf, signatureCount = 1) => {
     if (!(pdf instanceof Buffer)) {
         throw new SignPdfError(
             'PDF expected as Buffer.',
@@ -72,3 +83,9 @@ export const extractSignature = (pdf, signatureCount = 1) => {
         signedData,
     };
 };
+
+/**
+ * @type {(pdf: Buffer, signatureCount: number) => ExtractSignatureResult}
+ * @deprecated Should be used from internal-utils. Will be removed in a major release.
+ */
+export const extractSignature = nodeUtil.deprecate(extractSignatureDeprecated, 'Should be used internally from internal-utils. Will be removed in a major release.');

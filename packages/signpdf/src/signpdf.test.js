@@ -1,12 +1,8 @@
 import {pdfkitAddPlaceholder} from '@signpdf/placeholder-pdfkit010';
 import {plainAddPlaceholder} from '@signpdf/placeholder-plain';
 import {P12Signer} from '@signpdf/signer-p12';
-import {
-    extractSignature,
-    Signer,
-    SignPdfError,
-} from '@signpdf/utils';
-import {readTestResource, createPdfkitDocument} from '@signpdf/internal-utils';
+import {Signer, SignPdfError} from '@signpdf/utils';
+import {readTestResource, createPdfkitDocument, extractSignature} from '@signpdf/internal-utils';
 import signpdf from './signpdf';
 
 /**

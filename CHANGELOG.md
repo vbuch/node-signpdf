@@ -3,7 +3,8 @@
 ## [next]
 
 * [utils] Added SIG_FLAGS and ANNOTATION_FLAGS to improve readability;
-* [utils] Reworked findByteRange to match in more cases where it was incompatible so far (it didn't allow optional spaces in the array).
+* [utils] Reworked findByteRange to match in more cases where it was incompatible so far (it didn't allow optional spaces in the array);
+* [utils] Deprecated extractSignature as it was never public-ready. Copied it in internal-utils to be used in tests. Will remove from `utils` in a next major release;
 * [placeholder-pdfkit010] Uses SIG_FLAGS and ANNOTATION_FLAGS instead of magic numbers;
 * [placeholder-pdfkit010] Allow passing in widgetRect to override the default [0, 0, 0, 0] one;
 * [placeholder-plain] Allow passing in widgetRect to override the default [0, 0, 0, 0] one;

@@ -1,1 +1,1 @@
-{"version":3,"file":"extractSignature.d.ts","sourceRoot":"","sources":["../src/extractSignature.js"],"names":[],"mappings":"AAsBO,sCAHI,MAAM,gCAsDhB"}
+{"version":3,"file":"extractSignature.d.ts","sourceRoot":"","sources":["../src/extractSignature.js"],"names":[],"mappings":"AAsFA;;;GAGG;AACH,qCAHgB,MAAM,kBAAkB,MAAM,KAAK,sBAAsB,CAG4F;;eAzEvJ,MAAM,EAAE;eACR,MAAM;gBACN,MAAM"}
