@@ -9,7 +9,7 @@ Works with `PDF-LIB` and given a PDFDocument that is in the works, adds an e-sig
 
 ## Usage
 
-You will need `$ npm i -S @signpdf/placeholder-pdf-lib pdf-lib @signpdf/signpdf node-forge` and a look at the [pdf-lib.js example](/packages/examples/pdf-lib.js).
+You will need `$ npm i -S @signpdf/placeholder-pdf-lib pdf-lib @signpdf/signpdf node-forge` and a look at the [pdf-lib.js example](/packages/examples/src/pdf-lib.js).
 
 ## Notes
 
