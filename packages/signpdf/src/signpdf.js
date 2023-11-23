@@ -6,6 +6,8 @@ import {
     Signer,
 } from '@signpdf/utils';
 
+export {Signer, SignPdfError};
+
 /**
  * @typedef {object} SignerOptions
  * @prop {string} [passphrase]
