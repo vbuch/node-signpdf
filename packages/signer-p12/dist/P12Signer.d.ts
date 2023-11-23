@@ -14,6 +14,11 @@ export class P12Signer extends Signer {
         asn1StrictParsing: boolean;
     };
     cert: any;
+    /**
+     * @param {Buffer} pdfBuffer
+     * @returns {Buffer}
+     */
+    sign(pdfBuffer: Buffer): Buffer;
 }
 export type SignerOptions = {
     passphrase?: string;
