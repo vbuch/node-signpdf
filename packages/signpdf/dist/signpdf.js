@@ -3,7 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.SignPdf = void 0;
+exports.SignPdf = void 0;
+Object.defineProperty(exports, "SignPdfError", {
+  enumerable: true,
+  get: function () {
+    return _utils.SignPdfError;
+  }
+});
+Object.defineProperty(exports, "Signer", {
+  enumerable: true,
+  get: function () {
+    return _utils.Signer;
+  }
+});
+exports.default = void 0;
 var _utils = require("@signpdf/utils");
 /**
  * @typedef {object} SignerOptions
