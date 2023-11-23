@@ -9,7 +9,7 @@ Works on top of `PDFKit 0.10.0` and given a PDFDocument that is in the works, ad
 
 ## Usage
 
-You will need `$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdfkit010 node-forge` and a look at the [pdfkit010.js example](/packages/examples/pdfkit010.js).
+You will need `$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdfkit010 node-forge` and a look at the [pdfkit010.js example](/packages/examples/src/pdfkit010.js).
 
 ## Notes
 
