@@ -35,6 +35,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-path: packages/placeholder-pdfkit010
           path-to-lcov: packages/placeholder-pdfkit010/coverage/lcov.info
+      - name: Coveralls (placeholder-pdfkit)
+        uses: coverallsapp/github-action@master
+        with:
+          parallel: true
+          flag-name: placeholder-pdfkit
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: packages/placeholder-pdfkit
+          path-to-lcov: packages/placeholder-pdfkit/coverage/lcov.info
       - name: Coveralls (placeholder-plain)
         uses: coverallsapp/github-action@master
         with:
@@ -55,4 +63,4 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           parallel-finished: true
-          carryforward: "signpdf,utils,placeholder-pdfkit010,placeholder-plain"
+          carryforward: "signpdf,utils,placeholder-pdfkit010,placeholder-pdfkit,placeholder-plain"
