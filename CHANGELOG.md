@@ -9,6 +9,7 @@
 * [placeholder-plain] Allow passing in widgetRect to override the default [0, 0, 0, 0] one;
 * [placeholder-pdf-lib] Introduce the package that uses PDF-LIB for adding a placeholder;
 * [signpdf] Use the BR position findByteRange provides to spare a search for it;
+* [signpdf] Reexports the `Signer` base (abstract) class and `SignPdfError`;
 * [examples] Introduce [an example that provides a visible widget](packages/examples/src/pdfkit010-with-visual.js) (implemented with pdfkit);
 * [examples] Introduce [a `placeholder-pdf-lib` example](packages/examples/src/pdf-lib.js);
 * Bumped version of axios;
