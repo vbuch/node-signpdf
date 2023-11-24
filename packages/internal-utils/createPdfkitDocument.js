@@ -1,5 +1,3 @@
-var PDFDocument = require('pdfkit');
-
 /**
  * @typedef {object} ReturnType
  * @prop {Promise<Buffer>} promise
@@ -11,7 +9,7 @@ var PDFDocument = require('pdfkit');
  * Returns a Promise that is resolved with the resulting Buffer of the PDFDocument.
  * @returns {ReturnType}
  */
-module.exports = function (params) {
+module.exports = function (PDFDocument, params = {}) {
     var requestParams = {
         placeholder: {
             contactInfo: 'testemail@example.com',
