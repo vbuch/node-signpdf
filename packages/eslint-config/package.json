@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@signpdf/eslint-config",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "",
   "main": "eslint.js",
   "repository": {

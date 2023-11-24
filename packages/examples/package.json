@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@signpdf/examples",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "",
   "scripts": {
     "js": "node src/javascript.js",
@@ -15,9 +15,9 @@
     "url": "git+https://github.com/vbuch/node-signpdf.git"
   },
   "dependencies": {
-    "@signpdf/placeholder-plain": "^3.0.0",
-    "@signpdf/signer-p12": "^3.0.0",
-    "@signpdf/signpdf": "^3.0.0",
+    "@signpdf/placeholder-plain": "^3.1.0",
+    "@signpdf/signer-p12": "^3.1.0",
+    "@signpdf/signpdf": "^3.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
