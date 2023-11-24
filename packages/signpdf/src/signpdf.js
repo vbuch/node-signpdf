@@ -1,5 +1,4 @@
 import {
-    DEFAULT_BYTE_RANGE_PLACEHOLDER,
     removeTrailingNewLine,
     findByteRange,
     SignPdfError,
@@ -16,7 +15,6 @@ export {Signer, SignPdfError};
 
 export class SignPdf {
     constructor() {
-        this.byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER;
         this.lastSignature = null;
     }
 
