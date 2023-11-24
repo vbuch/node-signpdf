@@ -69,5 +69,6 @@
         "node-forge": "^1.2.1",
         "pdfkit": "~0.10.0",
         "typescript": "^5.2.2"
-    }
+    },
+    "gitHead": "5d5ec00c21e072613acb9776c7c6ac7697314955"
 }
