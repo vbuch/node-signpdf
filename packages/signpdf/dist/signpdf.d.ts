@@ -4,7 +4,6 @@
  * @prop {boolean} [asn1StrictParsing]
  */
 export class SignPdf {
-    byteRangePlaceholder: "**********";
     lastSignature: string;
     /**
      * @param {Buffer} pdfBuffer

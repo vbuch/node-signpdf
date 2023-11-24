@@ -26,7 +26,6 @@ var _utils = require("@signpdf/utils");
 
 class SignPdf {
   constructor() {
-    this.byteRangePlaceholder = _utils.DEFAULT_BYTE_RANGE_PLACEHOLDER;
     this.lastSignature = null;
   }
 
