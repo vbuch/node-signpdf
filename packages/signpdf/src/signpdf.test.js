@@ -7,6 +7,7 @@ import {
     SignPdfError,
 } from '@signpdf/utils';
 import {readTestResource, createPdfkitDocument} from '@signpdf/internal-utils';
+import PDFDocument from 'pdfkit';
 import signpdf from './signpdf';
 
 /**
@@ -20,7 +21,7 @@ const createPdf = (params) => {
         ...params,
     };
 
-    const {pdf, ended} = createPdfkitDocument(params);
+    const {pdf, ended} = createPdfkitDocument(PDFDocument, params);
 
     if (requestParams.addSignaturePlaceholder) {
         // Externally (to PDFKit) add the signature placeholder.

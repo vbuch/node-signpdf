@@ -1,5 +1,6 @@
 import {SIG_FLAGS, SUBFILTER_ADOBE_PKCS7_DETACHED, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
 import {createPdfkitDocument} from '@signpdf/internal-utils';
+import PDFDocument from 'pdfkit';
 import {pdfkitAddPlaceholder} from './pdfkitAddPlaceholder';
 import PDFObject from './pdfkit/pdfobject';
 
@@ -11,7 +12,7 @@ describe(pdfkitAddPlaceholder, () => {
     };
 
     it('adds placeholder to PDFKit document', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
 
         const refs = pdfkitAddPlaceholder({
             ...defaults,
@@ -34,7 +35,7 @@ describe(pdfkitAddPlaceholder, () => {
     });
 
     it('placeholder contains reason, contactInfo, name, location', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
 
         const refs = pdfkitAddPlaceholder({
             ...defaults,
@@ -58,7 +59,7 @@ describe(pdfkitAddPlaceholder, () => {
     });
 
     it('allows defining signature SubFilter', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
 
         const refs = pdfkitAddPlaceholder({
             ...defaults,
@@ -81,7 +82,7 @@ describe(pdfkitAddPlaceholder, () => {
     });
 
     it('sets the widget rectange to invisible by default', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
         const refs = pdfkitAddPlaceholder({
             ...defaults,
             pdf,
@@ -101,7 +102,7 @@ describe(pdfkitAddPlaceholder, () => {
     });
 
     it('allows defining widget rectange', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
         const widgetRect = [100, 100, 200, 200];
         const refs = pdfkitAddPlaceholder({
             ...defaults,
@@ -123,7 +124,7 @@ describe(pdfkitAddPlaceholder, () => {
     });
 
     it('adds placeholder to PDFKit document when AcroForm is already there', () => {
-        const {pdf} = createPdfkitDocument();
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
         const form = pdf.ref({
             Type: 'AcroForm',
             SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
