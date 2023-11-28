@@ -81,6 +81,12 @@ With the help of its [peerDependency `node-forge`](#node-forge) the P12 signer p
 
 A placeholder is the e-signature equivallent of the label "Sign here:......." in your paper document. They are a required part of the process of [Signing PDFs](#signing-pdf-in-simple-steps). Different projects acquire their PDFs differently so we try to support some helpers that know how to add e-signature placeholders.
 
+#### [@signpdf/placeholder-pdfkit](/packages/placeholder-pdfkit)
+
+[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdfkit.svg)](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdfkit)
+
+Works on top of `PDFKit 0.11.0+` and given a `PDFDocument` that is in the works (*not yet ended*), adds an e-signature placeholder. When the placeholder is in place `@signpdf/signpdf` can complete the process.
+
 #### [@signpdf/placeholder-pdfkit010](/packages/placeholder-pdfkit010)
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdfkit010.svg)](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdfkit010)
