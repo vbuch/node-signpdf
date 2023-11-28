@@ -1,4 +1,4 @@
-import {SIG_FLAGS, SUBFILTER_ADOBE_PKCS7_DETACHED, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
+import {SUBFILTER_ADOBE_PKCS7_DETACHED, SUBFILTER_ETSI_CADES_DETACHED} from '@signpdf/utils';
 import {createPdfkitDocument} from '@signpdf/internal-utils';
 import PDFDocument from 'pdfkit';
 import {pdfkitAddPlaceholder} from './pdfkitAddPlaceholder';
@@ -125,13 +125,7 @@ describe(pdfkitAddPlaceholder, () => {
 
     it('adds placeholder to PDFKit document when AcroForm is already there', () => {
         const {pdf} = createPdfkitDocument(PDFDocument, {});
-        const form = pdf.ref({
-            Type: 'AcroForm',
-            SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
-            Fields: [],
-        });
-        // eslint-disable-next-line no-underscore-dangle
-        pdf._root.data.AcroForm = form;
+        pdf.initForm();
 
         const refs = pdfkitAddPlaceholder({
             ...defaults,
