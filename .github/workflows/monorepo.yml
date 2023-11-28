@@ -12,6 +12,7 @@ jobs:
       - run: ./node_modules/.bin/lerna run lint
       - run: ./node_modules/.bin/lerna run test -- --coverage
       - name: Coveralls (signpdf)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -20,6 +21,7 @@ jobs:
           base-path: packages/signpdf
           path-to-lcov: packages/signpdf/coverage/lcov.info
       - name: Coveralls (utils)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -28,6 +30,7 @@ jobs:
           base-path: packages/utils
           path-to-lcov: packages/utils/coverage/lcov.info
       - name: Coveralls (placeholder-pdfkit010)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -36,6 +39,7 @@ jobs:
           base-path: packages/placeholder-pdfkit010
           path-to-lcov: packages/placeholder-pdfkit010/coverage/lcov.info
       - name: Coveralls (placeholder-pdfkit)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -44,6 +48,7 @@ jobs:
           base-path: packages/placeholder-pdfkit
           path-to-lcov: packages/placeholder-pdfkit/coverage/lcov.info
       - name: Coveralls (placeholder-plain)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -52,6 +57,7 @@ jobs:
           base-path: packages/placeholder-plain
           path-to-lcov: packages/placeholder-plain/coverage/lcov.info
       - name: Coveralls (placeholder-pdf-lib)
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel: true
@@ -60,6 +66,7 @@ jobs:
           base-path: packages/placeholder-pdf-lib
           path-to-lcov: packages/placeholder-pdf-lib/coverage/lcov.info
       - name: Close Coveralls
+        if: ${{ !cancelled() }}
         uses: coverallsapp/github-action@master
         with:
           parallel-finished: true
