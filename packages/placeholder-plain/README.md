@@ -1,4 +1,4 @@
-# Placehodler-providing helper using string operations
+# Helper that provides placeholder using string operations
 
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 

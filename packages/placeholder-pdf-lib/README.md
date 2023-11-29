@@ -1,4 +1,4 @@
-# Placehodler providing helper using PDF-LIB
+# Helper that provides placeholder using PDF-LIB
 
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 

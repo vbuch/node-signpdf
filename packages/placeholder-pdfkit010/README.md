@@ -1,4 +1,4 @@
-# Placehodler providing helper using PDFKit 0.10.0
+# Helper that provides placeholder using PDFKit 0.10.0
 
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 
