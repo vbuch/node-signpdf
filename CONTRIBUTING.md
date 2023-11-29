@@ -15,6 +15,7 @@
 - `$ yarn workspace @signpdf/signpdf add node-forge -D` adds a `node-forge` as a dev dependency 
 of `@signpdf/signpdf`
 - `$ yarn workspace @signpdf/signpdf add @signpdf/some-new-subpackage@* -D` adds a `@signpdf/some-new-subpackage` as a dev dependency of `@signpdf/signpdf`. Note the `@*` version specifier.
+- `$ npm publish --access public` is needed the first time a package get published as our packages are scoped and that is private by default. See: https://bit.ly/47ScKPF
 
 ## Contributors
 
