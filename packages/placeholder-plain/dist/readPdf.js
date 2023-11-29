@@ -32,7 +32,6 @@ const getValue = (trailer, key) => {
  * @prop {Buffer} root
  * @prop {string} infoRef
  * @prop {number} trailerStart
- * @prop {*[]} previousXrefs
  * @prop {number} xRefPosition
  */
 
@@ -63,7 +62,6 @@ const readPdf = pdfBuffer => {
     root,
     infoRef,
     trailerStart,
-    previousXrefs: [],
     xRefPosition
   };
 };

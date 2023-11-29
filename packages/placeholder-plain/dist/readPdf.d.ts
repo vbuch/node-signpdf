@@ -6,7 +6,6 @@ export type ReadPdfReturnType = {
     root: Buffer;
     infoRef: string;
     trailerStart: number;
-    previousXrefs: any[];
     xRefPosition: number;
 };
 /**
@@ -16,7 +15,6 @@ export type ReadPdfReturnType = {
  * @prop {Buffer} root
  * @prop {string} infoRef
  * @prop {number} trailerStart
- * @prop {*[]} previousXrefs
  * @prop {number} xRefPosition
  */
 /**

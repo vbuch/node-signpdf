@@ -19,7 +19,6 @@ describe(createBufferTrailer, () => {
             root: '\n/Type /Catalog\n/Pages 1 0 R\n/AcroForm 9 0 R\n',
             infoRef: '2 0 R',
             trailerStart: 4510,
-            previousXrefs: [],
             xRefPosition: 4220,
         };
         const addedReferences = new Map();
