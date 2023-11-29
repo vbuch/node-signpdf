@@ -2,6 +2,10 @@
 
 ## [3.1.0]
 
+* [placeholder-pdfkit] Introduce the package that uses PDFKit > 0.10 for adding a placeholder;
+
+## [3.1.0]
+
 * [utils] Added `SIG_FLAGS` and `ANNOTATION_FLAGS` to improve readability;
 * [utils] Reworked `findByteRange` to match in more cases where it was incompatible so far (it didn't allow optional spaces in the array).
 * [placeholder-pdfkit010] Uses `SIG_FLAGS` and `ANNOTATION_FLAGS` instead of magic numbers;
