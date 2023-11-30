@@ -6,6 +6,36 @@ describe(getFullXrefTable, () => {
     it('works for #79', () => {
         expect(getFullXrefTable(readTestResource('issue-79-test.pdf'))).toBeTruthy();
     });
+    it('skips unreferenced xref tables', () => {
+        const pdf = Buffer.from(`xref
+0 3
+0000000000 65535 f
+0000000123 00000 n
+0000000234 00000 n
+
+xref
+2 1
+0000000555 00000 n
+
+xref
+0 1
+0000000666 00000 n
+
+trailer
+<<
+/Size 3
+/Root 1 0 R
+>>
+startxref
+0
+%%EOF
+`);
+
+        expect(getFullXrefTable(pdf)).toEqual(new Map([
+            [1, 123],
+            [2, 234],
+        ]));
+    });
 });
 
 describe(getXref, () => {

@@ -85,23 +85,18 @@ const xrefStrings = [
 0000673269 00000 n`,
 ];
 
-describe('xrefToRefMap', () => {
+describe(xrefToRefMap, () => {
     it('Predefined xrefs match their snapshots', () => {
         xrefStrings.forEach((xref) => {
             expect(xrefToRefMap(xref)).toMatchSnapshot();
         });
     });
-    it('Throws an error when number of items does not match statement', () => {
-        try {
-            xrefToRefMap(`0 1
+    it('Only reads the stated number of lines', () => {
+        const result = xrefToRefMap(`0 2
 000 000 f
 001 000 n
-002 100 n`);
-            expect('here').not.toBe('here');
-        } catch (e) {
-            expect(e instanceof SignPdfError).toBe(true);
-            expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-        }
+002 100 n`); // the third line is ignored
+        expect(result.size).toBe(1);
     });
     it('Throws an error when unknown in-use flag is uses', () => {
         try {
