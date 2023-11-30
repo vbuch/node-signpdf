@@ -34,6 +34,7 @@ module.exports = {
         "jest/no-conditional-expect": "off",
         "import/prefer-default-export": "off",
         "no-bitwise": "off",
+        "no-continue": "off",
         "jest/valid-title": ["error", {"ignoreTypeOfDescribeName": true}],
         "no-unused-vars": [
             "error",
