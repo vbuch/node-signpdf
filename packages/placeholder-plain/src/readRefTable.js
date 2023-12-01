@@ -1,7 +1,5 @@
 import {SignPdfError} from '@signpdf/utils';
 import xrefToRefMap from './xrefToRefMap';
-import {findObjectAt} from './findObject';
-// import {getValue} from './getValue';
 
 /**
  * @param {Buffer} pdf
@@ -87,31 +85,6 @@ const readXrefTableAt = (pdfSlice, position) => {
 };
 
 /**
- * @param {Buffer} _pdfSlice
- * @param {number} _position
- * @returns {GetXRefReturnType | null}
- */
-const readXrefStreamAt = (pdfSlice, position) => {
-    const {dictionary: _d, stream: _s} = findObjectAt(pdfSlice, position);
-
-    // const parsed = {
-    //     size: getValue(_d, '/Size'),
-    //     root: getValue(_d, '/Root'),
-    //     info: getValue(_d, '/Info'),
-    //     filter: getValue(_d, '/Filter'),
-    //     length: getValue(_d, '/Length'),
-    // };
-
-    // console.log(_d.toString(), parsed);
-    // console.log(zlib.deflateSync(stream));
-
-    throw new SignPdfError(
-        'Cross-Reference Streams not yet implemented.',
-        SignPdfError.TYPE_PARSE,
-    );
-};
-
-/**
  * @typedef {object} GetXRefReturnType
  * // TODO
  */
@@ -123,8 +96,7 @@ const readXrefStreamAt = (pdfSlice, position) => {
  * @throws {SignPdfError}
  */
 export const getXref = (pdf, position) => {
-    const table = readXrefTableAt(pdf, position)
-        || readXrefStreamAt(pdf, position);
+    const table = readXrefTableAt(pdf, position);
     if (!table) {
         throw new SignPdfError(
             `Could not find xref anywhere at or after startxref position ${position}.`,
@@ -140,17 +112,16 @@ export const getXref = (pdf, position) => {
 
 /**
  * @param {Buffer} pdf
+ * @param {number} xRefPosition
  * @returns {GetFullXrefTableReturnType}
  */
-export const getFullXrefTable = (pdf) => {
-    const lastTrailerPosition = getLastXrefPosition(pdf);
-    const lastXrefTable = getXref(pdf, lastTrailerPosition);
+export const getFullXrefTable = (pdf, xRefPosition) => {
+    const lastXrefTable = getXref(pdf, xRefPosition);
 
     if (lastXrefTable.prev === undefined) {
         return lastXrefTable.xRefContent;
     }
-    const pdfWithoutLastTrailer = pdf.slice(0, lastTrailerPosition);
-    const partOfXrefTable = getFullXrefTable(pdfWithoutLastTrailer);
+    const partOfXrefTable = getFullXrefTable(pdf, lastXrefTable.prev);
 
     const mergedXrefTable = new Map([
         ...partOfXrefTable,
@@ -169,10 +140,11 @@ export const getFullXrefTable = (pdf) => {
 
 /**
  * @param {Buffer} pdfBuffer
+ * @param {number} xRefPosition
  * @returns {ReadRefTableReturnType}
  */
-const readRefTable = (pdf) => {
-    const fullXrefTable = getFullXrefTable(pdf);
+const readRefTable = (pdf, xRefPosition) => {
+    const fullXrefTable = getFullXrefTable(pdf, xRefPosition);
     const startingIndex = 0;
     const maxIndex = Math.max(...fullXrefTable.keys());
 

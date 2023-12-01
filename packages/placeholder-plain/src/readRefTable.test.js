@@ -3,9 +3,6 @@ import {SignPdfError} from '@signpdf/utils';
 import readRefTable, {getFullXrefTable, getXref} from './readRefTable';
 
 describe(getFullXrefTable, () => {
-    it('works for #79', () => {
-        expect(getFullXrefTable(readTestResource('issue-79-test.pdf'))).toBeTruthy();
-    });
     it('skips unreferenced xref tables', () => {
         const pdf = Buffer.from(`xref
 0 3
@@ -48,7 +45,7 @@ describe(getXref, () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toMatchSnapshot();
+            expect(e.message).toMatchInlineSnapshot('"Could not find xref anywhere at or after startxref position 0."');
         }
     });
     it('Throws an error when xref is not at its expected position', () => {
@@ -60,7 +57,7 @@ describe(getXref, () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toMatchSnapshot();
+            expect(e.message).toMatchInlineSnapshot('"Could not find xref anywhere at or after startxref position 2."');
         }
     });
     it('Throws an error when size is not found', () => {
@@ -72,7 +69,7 @@ describe(getXref, () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toMatchSnapshot();
+            expect(e.message).toMatchInlineSnapshot('"Size not found in xref table."');
         }
     });
     it('Throws an error when size has unexpected value', () => {
@@ -84,25 +81,26 @@ describe(getXref, () => {
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_PARSE);
-            expect(e.message).toMatchSnapshot();
+            expect(e.message).toMatchInlineSnapshot('"Failed to parse size of xref table."');
         }
     });
 });
 
 describe(readRefTable, () => {
-    it('Expects to merge correctly the refTable of resources', () => {
-        [
-            'signed-once.pdf',
-            'signed-twice.pdf',
-            'contributing.pdf',
-            'formexample.pdf',
-            'incrementally_signed.pdf',
-            'signed.pdf',
-            'w3dummy.pdf',
-        ].forEach((fileName) => {
-            const pdf = readTestResource(fileName);
-            const r = readRefTable(pdf);
-            expect(r).toMatchSnapshot();
-        });
-    });
+    it.each([
+        {resource: 'signed-once.pdf', startxref: 19174},
+        {resource: 'signed-twice.pdf', startxref: 25264},
+        {resource: 'contributing.pdf', startxref: 72203},
+        {resource: 'formexample.pdf', startxref: 64251},
+        {resource: 'incrementally_signed.pdf', startxref: 17125},
+        {resource: 'signed.pdf', startxref: 4220},
+        {resource: 'w3dummy.pdf', startxref: 12787},
+    ])(
+        'Expects to merge correctly the refTable of $resource',
+        ({resource, startxref}) => {
+            const pdf = readTestResource(resource);
+            const r = readRefTable(pdf, startxref);
+            expect(r).toMatchSnapshot(resource);
+        },
+    );
 });

@@ -1,6 +1,6 @@
-import readRefTable from './readRefTable';
-import findObject from './findObject';
-import {getValue} from './getValue';
+import {SignPdfError} from '@signpdf/utils';
+import readRefTable, {getLastXrefPosition} from './readRefTable';
+import findObject, {findObjectAt} from './findObject';
 
 /**
  * @typedef {object} ReadPdfReturnType
@@ -23,26 +23,33 @@ import {getValue} from './getValue';
  */
 const readPdf = (pdfBuffer) => {
     // Extract the trailer dictionary.
-    const trailerStart = pdfBuffer.lastIndexOf('trailer');
-    // The trailer is followed by xref. Then an EOF. EOF's length is 6 characters.
-    const trailer = pdfBuffer.slice(trailerStart, pdfBuffer.length - 6);
+    const xRefPosition = getLastXrefPosition(pdfBuffer);
 
-    let xRefPosition = trailer.slice(trailer.lastIndexOf('startxref') + 10).toString();
+    let refTable;
 
-    xRefPosition = parseInt(xRefPosition);
-    const refTable = readRefTable(pdfBuffer);
-
-    const rootRef = getValue(trailer, '/Root');
+    const trailerObject = findObjectAt(pdfBuffer, xRefPosition);
+    if (trailerObject.stream.indexOf('trailer') !== -1) {
+        // assuming trailer
+        refTable = readRefTable(pdfBuffer, xRefPosition);
+    } else {
+        // assuming stream
+        if (!trailerObject.dictionary.has('/Filter')) {
+            throw new Error('Expected /Filter in trailer with streams.');
+        }
+        throw new SignPdfError(
+            '/Filter is not implemented.',
+            SignPdfError.TYPE_PARSE,
+        );
+    }
+    const rootRef = trailerObject.dictionary.get('/Root');
     const root = findObject(pdfBuffer, refTable, rootRef).toString();
-
-    const infoRef = getValue(trailer, '/Info');
+    const infoRef = trailerObject.dictionary.get('/Info');
 
     return {
         xref: refTable,
         rootRef,
         root,
         infoRef,
-        trailerStart,
         xRefPosition,
     };
 };

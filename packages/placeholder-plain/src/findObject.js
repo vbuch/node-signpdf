@@ -1,4 +1,5 @@
 import getIndexFromRef from './getIndexFromRef';
+import PdfDictionary from './PdfDictionary';
 
 /**
  * @typedef {object} FindObjectAtReturnType
@@ -13,12 +14,12 @@ import getIndexFromRef from './getIndexFromRef';
  */
 export const findObjectAt = (pdf, position) => {
     let slice = pdf.subarray(position);
-    slice = slice.subarray(0, slice.indexOf('endobj', 'utf8') - 1);
-    // ^ Buffer from the start position until the first endobj (included).
+    slice = slice.subarray(slice.indexOf('obj') + 3, slice.indexOf('endobj', 'utf8') - 1);
+    // ^ Buffer from the start position until the first endobj.
 
     const dictionary = slice.subarray(
         slice.indexOf('<<', 'utf8') + 2,
-        slice.indexOf('>>', 'utf8') - 1,
+        slice.lastIndexOf('>>', 'utf8'),
     );
     const stream = slice.subarray(
         slice.indexOf('stream', 'utf8') + 6,
@@ -26,7 +27,7 @@ export const findObjectAt = (pdf, position) => {
     );
 
     return {
-        dictionary,
+        dictionary: new PdfDictionary(dictionary),
         stream,
     };
 };

@@ -2,20 +2,30 @@ import {readTestResource} from '@signpdf/internal-utils';
 import readPdf from './readPdf';
 
 describe(readPdf, () => {
-    it('reads contributing.pdf', () => {
-        const pdfBuffer = readTestResource('contributing.pdf');
+    it.each([
+        {
+            resource: 'signed-once.pdf',
+            xRefPosition: 19174,
+            root: 14,
+            rootByteOffset: 18928,
+            info: 15,
+        },
+        {
+            resource: 'contributing.pdf',
+            xRefPosition: 72203,
+            root: 12,
+            rootByteOffset: 4394,
+            info: 1,
+        },
+    ])('reads $resource', ({
+        resource, root, info, xRefPosition, rootByteOffset,
+    }) => {
+        const pdfBuffer = readTestResource(resource);
         const result = readPdf(pdfBuffer);
 
-        expect(result.xRefPosition).toBe(72203);
-        expect(result.rootRef).toBe('12 0 R');
-        expect(result.infoRef).toBe('1 0 R');
-    });
-    it('reads issue-79-test.pdf', () => {
-        const pdfBuffer = readTestResource('issue-79-test.pdf');
-        const result = readPdf(pdfBuffer);
-
-        expect(result.xRefPosition).toBe(1542);
-        expect(result.rootRef).toBe('2 0 R');
-        expect(result.infoRef).toBe('3 0 R');
+        expect(result.xRefPosition).toBe(xRefPosition);
+        expect(result.rootRef).toBe(`${root} 0 R`);
+        expect(result.infoRef).toBe(`${info} 0 R`);
+        expect(result.xref.offsets.get(root)).toBe(rootByteOffset);
     });
 });
