@@ -7,10 +7,10 @@ const CHARS = {
     FF: 12,
     CR: 13,
     SP: 32,
+    NUMSIGN: 35,
     PERCENT: 37,
     LPAREN: 40,
     RPAREN: 41,
-    NUMSIGN: 43,
     FSLASH: 47,
     LT: 60,
     GT: 62,
@@ -27,6 +27,11 @@ const spaces = [
     CHARS.FF,
     CHARS.CR,
     CHARS.SP,
+];
+
+const newLines = [
+    CHARS.LF,
+    CHARS.CR,
 ];
 
 const terminators = [
@@ -98,12 +103,36 @@ export default class PdfDictionary {
         return index;
     }
 
+    #skipCommentsAt(start) {
+        let index = start;
+        if (this.buffer[index] !== CHARS.NUMSIGN) {
+            return index;
+        }
+
+        while (index < this.buffer.length) {
+            const char = this.buffer[index];
+            index += 1;
+            if (newLines.includes(char)) {
+                return index;
+            }
+        }
+
+        return index;
+    }
+
+    #skipSpacesAndCommentsAt(start) {
+        let index = this.#skipSpacesAt(start);
+        index = this.#skipCommentsAt(index);
+        index = this.#skipSpacesAt(index);
+        return index;
+    }
+
     /**
      * @param {number} start
      */
     #parseNameAt(start) {
         let current = '';
-        let index = this.#skipSpacesAt(start);
+        let index = start;
         while (index < this.buffer.length) {
             const char = this.buffer[index];
             if (current === '') {
@@ -127,6 +156,14 @@ export default class PdfDictionary {
             index += 1;
         }
 
+        if (index === this.buffer.length) {
+            // reached the end
+            return {
+                value: current,
+                lastIndex: index,
+            };
+        }
+
         return {
             value: undefined,
             lastIndex: index,
@@ -135,7 +172,7 @@ export default class PdfDictionary {
 
     #parseValueAt(start) {
         let current = '';
-        let index = this.#skipSpacesAt(start);
+        let index = start;
 
         const parsedName = this.#parseNameAt(index);
         if (parsedName.value !== undefined) {
@@ -159,12 +196,14 @@ export default class PdfDictionary {
                             SignPdfError.TYPE_PARSE,
                         );
                     }
+                    if (stack.length === 0) {
+                        current += Buffer.from([char]).toString();
+                        return {
+                            lastIndex: index,
+                            value: current,
+                        };
+                    }
                 }
-            } else if (char === CHARS.NUMSIGN) {
-                const lineEnd = this.buffer.indexOf(CHARS.LF, index);
-                current += this.buffer.subarray(index, lineEnd).toString();
-                index = lineEnd + 1;
-                continue;
             } else if (char === CHARS.FSLASH) {
                 return {
                     lastIndex: index - 1,
@@ -198,17 +237,9 @@ export default class PdfDictionary {
         let value = '';
 
         while (index < this.buffer.length) {
+            index = this.#skipSpacesAndCommentsAt(index);
             const parsedKey = this.#parseNameAt(index);
-            console.debug({
-                parsedKey,
-                rest: this.buffer.subarray(parsedKey.lastIndex + 1).toString(),
-            });
             if (parsedKey.value === undefined) {
-                console.debug({
-                    full: this.buffer.toString(),
-                    read: this.buffer.subarray(0, parsedKey.lastIndex).toString(),
-                    resultSoFar: result,
-                });
                 throw new SignPdfError(
                     'Failed to parse key in dictionary.',
                     SignPdfError.TYPE_PARSE,
@@ -217,6 +248,7 @@ export default class PdfDictionary {
             index = parsedKey.lastIndex + 1;
             key = parsedKey.value;
 
+            index = this.#skipSpacesAndCommentsAt(index);
             const parsedValue = this.#parseValueAt(index);
             index = parsedValue.lastIndex + 1;
             value = parsedValue.value;
