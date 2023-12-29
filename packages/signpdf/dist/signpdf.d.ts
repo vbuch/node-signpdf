@@ -6,12 +6,12 @@
 export class SignPdf {
     lastSignature: string;
     /**
-     * @param {Buffer} pdfBuffer
+     * @param {Buffer | Uint8Array | string} pdfBuffer
      * @param {Signer} signer
-     * @param {SignerOptions} additionalOptions
+     * @param {Date | undefined} signingTime
      * @returns {Promise<Buffer>}
      */
-    sign(pdfBuffer: Buffer, signer: Signer): Promise<Buffer>;
+    sign(pdfBuffer: Buffer | Uint8Array | string, signer: Signer, signingTime?: Date | undefined): Promise<Buffer>;
 }
 declare const _default: SignPdf;
 export default _default;

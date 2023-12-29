@@ -14,6 +14,17 @@ Object.keys(_const).forEach(function (key) {
     }
   });
 });
+var _convertBuffer = require("./convertBuffer");
+Object.keys(_convertBuffer).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _convertBuffer[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _convertBuffer[key];
+    }
+  });
+});
 var _extractSignature = require("./extractSignature");
 Object.keys(_extractSignature).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;

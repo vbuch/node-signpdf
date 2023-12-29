@@ -5,10 +5,10 @@
  */
 export class P12Signer extends Signer {
     /**
-     * @param {Buffer} p12Buffer
+     * @param {Buffer | Uint8Array | string} p12Buffer
      * @param {SignerOptions} additionalOptions
      */
-    constructor(p12Buffer: Buffer, additionalOptions?: SignerOptions);
+    constructor(p12Buffer: Buffer | Uint8Array | string, additionalOptions?: SignerOptions);
     options: {
         passphrase: string;
         asn1StrictParsing: boolean;
@@ -16,9 +16,10 @@ export class P12Signer extends Signer {
     cert: any;
     /**
      * @param {Buffer} pdfBuffer
+     * @param {Date | undefined} signingTime
      * @returns {Buffer}
      */
-    sign(pdfBuffer: Buffer): Buffer;
+    sign(pdfBuffer: Buffer, signingTime?: Date | undefined): Buffer;
 }
 export type SignerOptions = {
     passphrase?: string;

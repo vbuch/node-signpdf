@@ -20,19 +20,17 @@ function work() {
         // Add a placeholder for a signature.
         pdflibAddPlaceholder({
             pdfDoc: pdfDoc,
-            reason: 'The user is decalaring consent through JavaScript.',
+            reason: 'The user is declaring consent through JavaScript.',
             contactInfo: 'signpdf@example.com',
             name: 'John Doe',
             location: 'Free Text Str., Free World',
         });
 
-        // Convert the PDF-LIB PDFDocument to Buffer
-        pdfDoc.save({useObjectStreams: false}).then(function (pdfBytes) {
-            var pdfWithPlaceholder = Buffer.from(pdfBytes);
-
+        // Get the modified PDFDocument bytes
+        pdfDoc.save().then(function (pdfWithPlaceholderBytes) {
             // And finally sign the document.
             signpdf
-                .sign(pdfWithPlaceholder, signer)
+                .sign(pdfWithPlaceholderBytes, signer)
                 .then(function (signedPdf) {
                     // signedPdf is a Buffer of an electronically signed PDF. Store it.
                     var targetPath = path.join(__dirname, '/../output/pdf-lib.pdf');

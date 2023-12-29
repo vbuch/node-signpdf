@@ -1,8 +1,9 @@
 export class Signer {
     /**
      * @param {Buffer} pdfBuffer
-     * @returns {Promise<Buffer> | Buffer}
+     * @param {Date | undefined} signingTime
+     * @returns {Promise<Buffer>}
      */
-    sign(pdfBuffer: Buffer): Promise<Buffer> | Buffer;
+    sign(pdfBuffer: Buffer, signingTime?: Date | undefined): Promise<Buffer>;
 }
 //# sourceMappingURL=Signer.d.ts.map
