@@ -7,12 +7,12 @@ describe(P12Signer, () => {
     it('expects P12 certificate to be Buffer', () => {
         try {
             // eslint-disable-next-line no-new
-            new P12Signer('non-buffer');
+            new P12Signer(['non-buffer']);
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-            expect(e.message).toMatchInlineSnapshot('"p12 certificate expected as Buffer."');
+            expect(e.message).toMatchInlineSnapshot('"p12 certificate expected as Buffer, Uint8Array or base64-encoded string."');
         }
     });
     it('expects pdf to be Buffer', async () => {
@@ -90,7 +90,7 @@ describe(P12Signer, () => {
         const signer = new P12Signer(p12Buffer, {passphrase: 'Wrong passphrase'});
 
         try {
-            signer.sign(Buffer.from(''));
+            await signer.sign(Buffer.from(''));
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof Error).toBe(true);
@@ -101,7 +101,7 @@ describe(P12Signer, () => {
         const p12Buffer = readTestResource('withpass.p12');
         const signer = new P12Signer(p12Buffer, {passphrase: 'node-signpdf'});
 
-        const signature = await signer.sign(Buffer.from(''), signer);
+        const signature = await signer.sign(Buffer.from(''));
         expect(signature instanceof Buffer).toBe(true);
     });
 });

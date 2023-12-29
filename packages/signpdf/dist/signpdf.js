@@ -30,19 +30,16 @@ class SignPdf {
   }
 
   /**
-   * @param {Buffer} pdfBuffer
+   * @param {Buffer | Uint8Array | string} pdfBuffer
    * @param {Signer} signer
-   * @param {SignerOptions} additionalOptions
+   * @param {Date | undefined} signingTime
    * @returns {Promise<Buffer>}
    */
-  async sign(pdfBuffer, signer) {
-    if (!(pdfBuffer instanceof Buffer)) {
-      throw new _utils.SignPdfError('PDF expected as Buffer.', _utils.SignPdfError.TYPE_INPUT);
-    }
+  async sign(pdfBuffer, signer, signingTime = undefined) {
     if (!(signer instanceof _utils.Signer)) {
       throw new _utils.SignPdfError('Signer implementation expected.', _utils.SignPdfError.TYPE_INPUT);
     }
-    let pdf = (0, _utils.removeTrailingNewLine)(pdfBuffer);
+    let pdf = (0, _utils.removeTrailingNewLine)((0, _utils.convertBuffer)(pdfBuffer, 'PDF'));
 
     // Find the ByteRange placeholder.
     const {
@@ -72,7 +69,7 @@ class SignPdf {
 
     // Remove the placeholder signature
     pdf = Buffer.concat([pdf.slice(0, byteRange[1]), pdf.slice(byteRange[2], byteRange[2] + byteRange[3])]);
-    const raw = await signer.sign(pdf);
+    const raw = await signer.sign(pdf, signingTime);
 
     // Check if the PDF has a good enough placeholder to fit the signature.
     // placeholderLength represents the length of the HEXified symbols but we're

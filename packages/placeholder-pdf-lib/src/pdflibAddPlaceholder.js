@@ -4,9 +4,10 @@ import {
     DEFAULT_SIGNATURE_LENGTH,
     SIG_FLAGS,
     SUBFILTER_ADOBE_PKCS7_DETACHED,
+    SignPdfError,
 } from '@signpdf/utils';
 import {
-    PDFArray, PDFDict, PDFHexString, PDFName, PDFNumber, PDFString,
+    PDFArray, PDFDict, PDFHexString, PDFName, PDFNumber, PDFInvalidObject, PDFString,
 } from 'pdf-lib';
 
 /**
@@ -16,14 +17,17 @@ import {
 /**
 * @typedef {object} InputType
 * @property {PDFDocument} pdfDoc
+* @property {PDFPage} pdfPage
 * @property {string} reason
 * @property {string} contactInfo
 * @property {string} name
 * @property {string} location
+* @property {Date} [signingTime]
 * @property {number} [signatureLength]
 * @property {string} [byteRangePlaceholder]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
 * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
+* @property {string} [appName] Name of the application generating the signature
 */
 
 /**
@@ -35,21 +39,31 @@ import {
  * @returns {void}
  */
 export const pdflibAddPlaceholder = ({
-    pdfDoc,
+    pdfDoc = undefined,
+    pdfPage = undefined,
     reason,
     contactInfo,
     name,
     location,
+    signingTime = undefined,
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
     widgetRect = [0, 0, 0, 0],
+    appName = undefined,
 }) => {
-    const page = pdfDoc.getPage(0);
+    if (pdfDoc === undefined && pdfPage === undefined) {
+        throw new SignPdfError(
+            'PDFDoc or PDFPage must be set.',
+            SignPdfError.TYPE_INPUT,
+        );
+    }
+    const doc = pdfDoc ?? pdfPage.doc;
+    const page = pdfPage ?? doc.getPages()[0];
 
     // Create a placeholder where the the last 3 parameters of the
     // actual range will be replaced when signing is done.
-    const byteRange = PDFArray.withContext(pdfDoc.context);
+    const byteRange = PDFArray.withContext(doc.context);
     byteRange.push(PDFNumber.of(0));
     byteRange.push(PDFName.of(byteRangePlaceholder));
     byteRange.push(PDFName.of(byteRangePlaceholder));
@@ -59,24 +73,38 @@ export const pdflibAddPlaceholder = ({
     const placeholder = PDFHexString.of(String.fromCharCode(0).repeat(signatureLength));
 
     // Create a signature dictionary to be referenced in the signature widget.
-    const signatureDict = pdfDoc.context.obj({
+    const appBuild = appName ? {App: {Name: appName}} : {};
+    const signatureDict = doc.context.obj({
         Type: 'Sig',
         Filter: 'Adobe.PPKLite',
         SubFilter: subFilter,
         ByteRange: byteRange,
         Contents: placeholder,
         Reason: PDFString.of(reason),
-        M: PDFString.fromDate(new Date()),
+        M: PDFString.fromDate(signingTime ?? new Date()),
         ContactInfo: PDFString.of(contactInfo),
         Name: PDFString.of(name),
         Location: PDFString.of(location),
-    }, pdfDoc.index);
-    const signatureDictRef = pdfDoc.context.register(signatureDict);
+        Prop_Build: {
+            Filter: {Name: 'Adobe.PPKLite'},
+            ...appBuild,
+        },
+    });
+    // Register signatureDict as a PDFInvalidObject to prevent PDFLib from serializing it
+    // in an object stream.
+    const signatureBuffer = new Uint8Array(signatureDict.sizeInBytes());
+    signatureDict.copyBytesInto(signatureBuffer, 0);
+    const signatureObj = PDFInvalidObject.of(signatureBuffer);
+    const signatureDictRef = doc.context.register(signatureObj);
 
     // Create the signature widget
-    const rect = PDFArray.withContext(pdfDoc.context);
+    const rect = PDFArray.withContext(doc.context);
     widgetRect.forEach((c) => rect.push(PDFNumber.of(c)));
-    const widgetDict = pdfDoc.context.obj({
+    const apStream = doc.context.formXObject([], {
+        BBox: widgetRect,
+        Resources: {}, // Necessary to avoid Acrobat bug (see https://stackoverflow.com/a/73011571)
+    });
+    const widgetDict = doc.context.obj({
         Type: 'Annot',
         Subtype: 'Widget',
         FT: 'Sig',
@@ -85,24 +113,25 @@ export const pdflibAddPlaceholder = ({
         T: PDFString.of('Signature1'),
         F: ANNOTATION_FLAGS.PRINT,
         P: page.ref,
-    }, pdfDoc.index);
-    const widgetDictRef = pdfDoc.context.register(widgetDict);
+        AP: {N: doc.context.register(apStream)}, // Required for PDF/A compliance
+    });
+    const widgetDictRef = doc.context.register(widgetDict);
 
-    // Annotate the widget on the first page
+    // Annotate the widget on the given page
     let annotations = page.node.lookupMaybe(PDFName.of('Annots'), PDFArray);
     if (typeof annotations === 'undefined') {
-        annotations = pdfDoc.context.obj([]);
+        annotations = doc.context.obj([]);
     }
     annotations.push(widgetDictRef);
     page.node.set(PDFName.of('Annots'), annotations);
 
     // Add an AcroForm or update the existing one
-    let acroForm = pdfDoc.catalog.lookupMaybe(PDFName.of('AcroForm'), PDFDict);
+    let acroForm = doc.catalog.lookupMaybe(PDFName.of('AcroForm'), PDFDict);
     if (typeof acroForm === 'undefined') {
         // Need to create a new AcroForm
-        acroForm = pdfDoc.context.obj({Fields: []});
-        const acroFormRef = pdfDoc.context.register(acroForm);
-        pdfDoc.catalog.set(PDFName.of('AcroForm'), acroFormRef);
+        acroForm = doc.context.obj({Fields: []});
+        const acroFormRef = doc.context.register(acroForm);
+        doc.catalog.set(PDFName.of('AcroForm'), acroFormRef);
     }
 
     /**

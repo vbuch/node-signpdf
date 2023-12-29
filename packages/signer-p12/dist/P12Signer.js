@@ -15,27 +15,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 class P12Signer extends _utils.Signer {
   /**
-   * @param {Buffer} p12Buffer
+   * @param {Buffer | Uint8Array | string} p12Buffer
    * @param {SignerOptions} additionalOptions
    */
   constructor(p12Buffer, additionalOptions = {}) {
     super();
-    if (!(p12Buffer instanceof Buffer)) {
-      throw new _utils.SignPdfError('p12 certificate expected as Buffer.', _utils.SignPdfError.TYPE_INPUT);
-    }
+    const buffer = (0, _utils.convertBuffer)(p12Buffer, 'p12 certificate');
     this.options = {
       asn1StrictParsing: false,
       passphrase: '',
       ...additionalOptions
     };
-    this.cert = _nodeForge.default.util.createBuffer(p12Buffer.toString('binary'));
+    this.cert = _nodeForge.default.util.createBuffer(buffer.toString('binary'));
   }
 
   /**
    * @param {Buffer} pdfBuffer
+   * @param {Date | undefined} signingTime
    * @returns {Buffer}
    */
-  sign(pdfBuffer) {
+  async sign(pdfBuffer, signingTime = undefined) {
     if (!(pdfBuffer instanceof Buffer)) {
       throw new _utils.SignPdfError('PDF expected as Buffer.', _utils.SignPdfError.TYPE_INPUT);
     }
@@ -91,9 +90,7 @@ class P12Signer extends _utils.Signer {
       }, {
         type: _nodeForge.default.pki.oids.signingTime,
         // value can also be auto-populated at signing time
-        // We may also support passing this as an option to sign().
-        // Would be useful to match the creation time of the document for example.
-        value: new Date()
+        value: signingTime !== null && signingTime !== void 0 ? signingTime : new Date()
       }, {
         type: _nodeForge.default.pki.oids.messageDigest
         // value will be auto-populated at signing time

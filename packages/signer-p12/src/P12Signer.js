@@ -1,5 +1,5 @@
 import forge from 'node-forge';
-import {SignPdfError, Signer} from '@signpdf/utils';
+import {convertBuffer, SignPdfError, Signer} from '@signpdf/utils';
 
 /**
  * @typedef {object} SignerOptions
@@ -9,32 +9,28 @@ import {SignPdfError, Signer} from '@signpdf/utils';
 
 export class P12Signer extends Signer {
     /**
-     * @param {Buffer} p12Buffer
+     * @param {Buffer | Uint8Array | string} p12Buffer
      * @param {SignerOptions} additionalOptions
      */
     constructor(p12Buffer, additionalOptions = {}) {
         super();
 
-        if (!(p12Buffer instanceof Buffer)) {
-            throw new SignPdfError(
-                'p12 certificate expected as Buffer.',
-                SignPdfError.TYPE_INPUT,
-            );
-        }
+        const buffer = convertBuffer(p12Buffer, 'p12 certificate');
 
         this.options = {
             asn1StrictParsing: false,
             passphrase: '',
             ...additionalOptions,
         };
-        this.cert = forge.util.createBuffer(p12Buffer.toString('binary'));
+        this.cert = forge.util.createBuffer(buffer.toString('binary'));
     }
 
     /**
      * @param {Buffer} pdfBuffer
+     * @param {Date | undefined} signingTime
      * @returns {Buffer}
      */
-    sign(pdfBuffer) {
+    async sign(pdfBuffer, signingTime = undefined) {
         if (!(pdfBuffer instanceof Buffer)) {
             throw new SignPdfError(
                 'PDF expected as Buffer.',
@@ -104,9 +100,7 @@ export class P12Signer extends Signer {
                 }, {
                     type: forge.pki.oids.signingTime,
                     // value can also be auto-populated at signing time
-                    // We may also support passing this as an option to sign().
-                    // Would be useful to match the creation time of the document for example.
-                    value: new Date(),
+                    value: signingTime ?? new Date(),
                 }, {
                     type: forge.pki.oids.messageDigest,
                     // value will be auto-populated at signing time

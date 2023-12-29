@@ -49,12 +49,12 @@ const createPdf = (params) => {
 describe('Test signing', () => {
     it('expects PDF to be Buffer', async () => {
         try {
-            await signpdf.sign('non-buffer', Buffer.from(''));
+            await signpdf.sign(['non-buffer'], new P12Signer(Buffer.from('')));
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
             expect(e.type).toBe(SignPdfError.TYPE_INPUT);
-            expect(e.message).toMatchInlineSnapshot('"PDF expected as Buffer."');
+            expect(e.message).toMatchInlineSnapshot('"PDF expected as Buffer, Uint8Array or base64-encoded string."');
         }
     });
     it('expects P12 signer to be Buffer', async () => {

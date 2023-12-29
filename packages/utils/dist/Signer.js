@@ -10,9 +10,10 @@ var _SignPdfError = require("./SignPdfError");
 class Signer {
   /**
    * @param {Buffer} pdfBuffer
-   * @returns {Promise<Buffer> | Buffer}
+   * @param {Date | undefined} signingTime
+   * @returns {Promise<Buffer>}
    */
-  sign(pdfBuffer) {
+  async sign(pdfBuffer, signingTime = undefined) {
     throw new _SignPdfError.SignPdfError(`sign() is not implemented on ${this.constructor.name}`, _SignPdfError.SignPdfError.TYPE_INPUT);
   }
 }
