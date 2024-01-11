@@ -18,6 +18,7 @@ import {
 * @property {string} [byteRangePlaceholder]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
 * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
+* @property {string} [appName] Name of the application generating the signature
 */
 
 /**
@@ -45,6 +46,7 @@ export const pdfkitAddPlaceholder = ({
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
     widgetRect = [0, 0, 0, 0],
+    appName = undefined,
 }) => {
     /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
@@ -64,6 +66,12 @@ export const pdfkitAddPlaceholder = ({
         ContactInfo: new String(contactInfo), // eslint-disable-line no-new-wrappers
         Name: new String(name), // eslint-disable-line no-new-wrappers
         Location: new String(location), // eslint-disable-line no-new-wrappers
+        Prop_Build: {
+            Filter: {Name: 'Adobe.PPKLite'},
+            ...(
+                appName ? {App: {Name: appName}} : {}
+            ),
+        },
     });
 
     if (!pdf._acroform) {
