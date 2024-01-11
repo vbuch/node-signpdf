@@ -55,4 +55,20 @@ describe(plainAddPlaceholder, () => {
         expect(output).toBeInstanceOf(Buffer);
         expect(output.indexOf('/Rect [100 100 200 200]')).not.toBe(-1);
     });
+
+    it('sets the Prop_Build dictionary for the signature', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const output = plainAddPlaceholder({
+            pdfBuffer: input,
+            reason: 'Because I can',
+            location: 'some place',
+            name: 'example name',
+            contactInfo: 'emailfromp1289@gmail.com',
+            widgetRect: [100, 100, 200, 200],
+            appName: 'app-name-signpdf',
+        });
+        expect(output).toBeInstanceOf(Buffer);
+        expect(output.indexOf('/Name /Adobe.PPKLite')).not.toBe(-1);
+        expect(output.indexOf('/Name /app-name-signpdf')).not.toBe(-1);
+    });
 });

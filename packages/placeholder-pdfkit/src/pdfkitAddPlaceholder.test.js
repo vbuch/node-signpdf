@@ -146,4 +146,28 @@ describe(pdfkitAddPlaceholder, () => {
             '**********',
         ]);
     });
+
+    it('sets the Prop_Build dictionary for the signature', async () => {
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
+        const widgetRect = [100, 100, 200, 200];
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+            widgetRect,
+            appName: 'signpdf',
+        });
+        expect(Object.keys(refs)).toEqual(expect.arrayContaining([
+            'signature',
+            'form',
+            'widget',
+        ]));
+        expect(pdf.page.dictionary.data.Annots).toHaveLength(1);
+        const widget = pdf.page.dictionary.data.Annots[0];
+        const propBuild = widget.data.V.data.Prop_Build;
+
+        expect(propBuild.Filter.Name).toEqual('Adobe.PPKLite');
+        expect(propBuild.App.Name).toEqual('signpdf');
+    });
 });
