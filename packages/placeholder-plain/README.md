@@ -9,7 +9,7 @@ Implements adding e-signature placeholder with plain string operations (.indexOf
 
 ## Usage
 
-Start with `$ npm i -S @signpdf/signpdf @signpdf/placeholder-plain node-forge`. Head over to either [the JS example](/packages/examples/javascript.js) or [the TS one](/packages/examples/typescript.ts). 
+Start with `$ npm i -S @signpdf/signpdf @signpdf/placeholder-plain node-forge`. Head over to either [the JS example](/packages/examples/src/javascript.js) or [the TS one](/packages/examples/src/typescript.ts). 
 
 ## Issues
 
