@@ -12,6 +12,9 @@
 * [placeholder-pdf-lib] Includes an `AP` appearance stream for PDF/A compliance;
 * [placeholder-pdf-lib] Adds `Prop_Build` to describe the signing application;
 * [placeholder-pdf-lib] Does not require `{useObjectStreams: false}`;
+* [placeholder-pdfkit] Accepts `signingTime`;
+* [placeholder-pdfkit010] Accepts `signingTime`;
+* [placeholder-plain] Accepts `signingTime`;
 * Bumped version of follow-redirects;
 
 ## [3.1.0]
