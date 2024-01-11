@@ -1,4 +1,4 @@
-export function pdfkitAddPlaceholder({ pdf, reason, contactInfo, name, location, signatureLength, byteRangePlaceholder, subFilter, widgetRect, }: InputType): ReturnType;
+export function pdfkitAddPlaceholder({ pdf, reason, contactInfo, name, location, signingTime, signatureLength, byteRangePlaceholder, subFilter, widgetRect, appName, }: InputType): ReturnType;
 export type InputType = {
     /**
      * PDFDocument
@@ -9,6 +9,7 @@ export type InputType = {
     contactInfo: string;
     name: string;
     location: string;
+    signingTime?: Date;
     signatureLength?: number;
     byteRangePlaceholder?: string;
     /**
@@ -19,6 +20,10 @@ export type InputType = {
      * [x1, y1, x2, y2] widget rectangle
      */
     widgetRect?: number[];
+    /**
+     * Name of the application generating the signature
+     */
+    appName?: string;
 };
 export type ReturnType = {
     signature: any;
