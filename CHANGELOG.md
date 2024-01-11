@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [3.2.0]
+
+* [utils] Introduced `convertBuffer()` to allow inputs as `Buffer`, `Uint8Array` or `string`;
+* [utils] The `Signer` abstract class accepts an optional `signingTime`.
+* [signpdf] Accepts `Buffer`, `Uint8Array` or `string` as input;
+* [signer-p12] Accepts `Buffer`, `Uint8Array` or `string` as input;
+* [signer-p12] Respects `signingTime` as abstracted in `Signer`;
+* [placeholder-pdf-lib] Accepts either a `PDFDoc` or a `PDFPage` to allow adding the placeholder to a specific page rather than always the first one;
+* [placeholder-pdf-lib] Accepts `signingTime`;
+* [placeholder-pdf-lib] Includes an `AP` appearance stream for PDF/A compliance;
+* [placeholder-pdf-lib] Adds `Prop_Build` to describe the signing application;
+* [placeholder-pdf-lib] Does not require `{useObjectStreams: false}`;
+* Bumped version of follow-redirects;
+
 ## [3.1.0]
 
 * [placeholder-pdfkit] Introduce the package that uses PDFKit > 0.10 for adding a placeholder;
