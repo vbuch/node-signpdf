@@ -38,6 +38,7 @@ const getAcroFormRef = (slice) => {
 * @property {string} contactInfo
 * @property {string} name
 * @property {string} location
+* @property {Date} [signingTime]
 * @property {number} [signatureLength]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
 * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
@@ -61,6 +62,7 @@ export const plainAddPlaceholder = ({
     contactInfo,
     name,
     location,
+    signingTime = undefined,
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
     widgetRect = [0, 0, 0, 0],
@@ -118,6 +120,7 @@ export const plainAddPlaceholder = ({
         contactInfo,
         name,
         location,
+        signingTime,
         signatureLength,
         subFilter,
         widgetRect,

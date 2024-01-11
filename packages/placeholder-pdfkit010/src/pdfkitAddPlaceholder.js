@@ -16,6 +16,7 @@ import {PDFKitReferenceMock} from './pdfkitReferenceMock';
 * @property {string} contactInfo
 * @property {string} name
 * @property {string} location
+* @property {Date} [signingTime]
 * @property {number} [signatureLength]
 * @property {string} [byteRangePlaceholder]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
@@ -43,6 +44,7 @@ export const pdfkitAddPlaceholder = ({
     contactInfo,
     name,
     location,
+    signingTime = undefined,
     signatureLength = DEFAULT_SIGNATURE_LENGTH,
     byteRangePlaceholder = DEFAULT_BYTE_RANGE_PLACEHOLDER,
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
@@ -62,7 +64,7 @@ export const pdfkitAddPlaceholder = ({
         ],
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
         Reason: new String(reason), // eslint-disable-line no-new-wrappers
-        M: new Date(),
+        M: signingTime ?? new Date(),
         ContactInfo: new String(contactInfo), // eslint-disable-line no-new-wrappers
         Name: new String(name), // eslint-disable-line no-new-wrappers
         Location: new String(location), // eslint-disable-line no-new-wrappers
