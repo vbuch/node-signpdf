@@ -13,10 +13,12 @@ var _utils = require("@signpdf/utils");
 * @property {string} contactInfo
 * @property {string} name
 * @property {string} location
+* @property {Date} [signingTime]
 * @property {number} [signatureLength]
 * @property {string} [byteRangePlaceholder]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
 * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
+* @property {string} [appName] Name of the application generating the signature
 */
 
 /**
@@ -39,10 +41,12 @@ const pdfkitAddPlaceholder = ({
   contactInfo,
   name,
   location,
+  signingTime = undefined,
   signatureLength = _utils.DEFAULT_SIGNATURE_LENGTH,
   byteRangePlaceholder = _utils.DEFAULT_BYTE_RANGE_PLACEHOLDER,
   subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED,
-  widgetRect = [0, 0, 0, 0]
+  widgetRect = [0, 0, 0, 0],
+  appName = undefined
 }) => {
   /* eslint-disable no-underscore-dangle,no-param-reassign */
   // Generate the signature placeholder
@@ -54,14 +58,24 @@ const pdfkitAddPlaceholder = ({
     Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
     Reason: new String(reason),
     // eslint-disable-line no-new-wrappers
-    M: new Date(),
+    M: signingTime !== null && signingTime !== void 0 ? signingTime : new Date(),
     ContactInfo: new String(contactInfo),
     // eslint-disable-line no-new-wrappers
     Name: new String(name),
     // eslint-disable-line no-new-wrappers
-    Location: new String(location) // eslint-disable-line no-new-wrappers
+    Location: new String(location),
+    // eslint-disable-line no-new-wrappers
+    Prop_Build: {
+      Filter: {
+        Name: 'Adobe.PPKLite'
+      },
+      ...(appName ? {
+        App: {
+          Name: appName
+        }
+      } : {})
+    }
   });
-
   if (!pdf._acroform) {
     pdf.initForm();
   }
