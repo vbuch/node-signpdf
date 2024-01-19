@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import {SignPdfError} from './SignPdfError';
 
-export class Signer {
+export class ISigner {
     /**
      * @param {Buffer} pdfBuffer
      * @param {Date | undefined} signingTime

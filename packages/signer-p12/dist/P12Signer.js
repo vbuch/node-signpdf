@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @prop {boolean} [asn1StrictParsing]
  */
 
-class P12Signer extends _utils.Signer {
+class P12Signer extends _utils.ISigner {
   /**
    * @param {Buffer | Uint8Array | string} p12Buffer
    * @param {SignerOptions} additionalOptions

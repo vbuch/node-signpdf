@@ -3,17 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "ISigner", {
+  enumerable: true,
+  get: function () {
+    return _utils.ISigner;
+  }
+});
 exports.SignPdf = void 0;
 Object.defineProperty(exports, "SignPdfError", {
   enumerable: true,
   get: function () {
     return _utils.SignPdfError;
-  }
-});
-Object.defineProperty(exports, "Signer", {
-  enumerable: true,
-  get: function () {
-    return _utils.Signer;
   }
 });
 exports.default = void 0;
@@ -31,12 +31,12 @@ class SignPdf {
 
   /**
    * @param {Buffer | Uint8Array | string} pdfBuffer
-   * @param {Signer} signer
+   * @param {ISigner} signer
    * @param {Date | undefined} signingTime
    * @returns {Promise<Buffer>}
    */
   async sign(pdfBuffer, signer, signingTime = undefined) {
-    if (!(signer instanceof _utils.Signer)) {
+    if (!(signer instanceof _utils.ISigner)) {
       throw new _utils.SignPdfError('Signer implementation expected.', _utils.SignPdfError.TYPE_INPUT);
     }
     let pdf = (0, _utils.removeTrailingNewLine)((0, _utils.convertBuffer)(pdfBuffer, 'PDF'));
