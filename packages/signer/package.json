@@ -1,0 +1,74 @@
+{
+    "name": "@signpdf/signer",
+    "version": "3.2.0",
+    "description": "Signer base implementations.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vbuch/node-signpdf"
+    },
+    "license": "MIT",
+    "keywords": [
+        "sign",
+        "pdf",
+        "node",
+        "nodejs",
+        "esign",
+        "adobe",
+        "ppklite",
+        "sign detached",
+        "pkcs7",
+        "pkcs#7",
+        "pades",
+        "digital signature"
+    ],
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md"
+    ],
+    "engines": {
+        "node": ">=12",
+        "yarn": ">=1.22.18"
+    },
+    "scripts": {
+        "test": "jest",
+        "build": "rm -rf ./dist/* & babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
+        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+    },
+    "dependencies": {
+        "@signpdf/utils": "^3.2.0"
+    },
+    "peerDependencies": {
+        "asn1js": "^3.0.5",
+        "pkijs": "^3.0.15"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.0.0",
+        "@babel/core": "^7.4.0",
+        "@babel/eslint-parser": "^7.16.3",
+        "@babel/node": "^7.0.0",
+        "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
+        "@babel/preset-env": "^7.4.2",
+        "@signpdf/eslint-config": "^3.2.0",
+        "@signpdf/internal-utils": "^3.0.0",
+        "@types/node": ">=12.0.0",
+        "assertion-error": "^1.1.0",
+        "babel-jest": "^27.3.1",
+        "babel-plugin-module-resolver": "^3.1.1",
+        "coveralls": "^3.0.2",
+        "eslint": "^8.50.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-import-resolver-babel-module": "^5.3.1",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-jest": "^25.2.4",
+        "husky": "^7.0.4",
+        "jest": "^27.3.1",
+        "asn1js": "^3.0.5",
+        "pkijs": "^3.0.15",
+        "pdfkit": "~0.10.0",
+        "typescript": "^5.2.2"
+    },
+    "gitHead": "5d5ec00c21e072613acb9776c7c6ac7697314955"
+}
