@@ -39,3 +39,4 @@ of `@signpdf/signpdf`
 * [ElTimuro](https://github.com/ElTimuro)
 * [erikn69](https://github.com/erikn69)
 * [dcbr](https://github.com/dcbr)
+* [AviramBaranes](https://github.com/AviramBaranes)

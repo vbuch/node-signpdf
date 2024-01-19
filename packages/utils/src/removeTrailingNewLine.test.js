@@ -36,4 +36,9 @@ describe(removeTrailingNewLine, () => {
         const result = removeTrailingNewLine(source);
         expect(result.toString()).toEqual('something with a new line\r\n%%EOF');
     });
+    it('removes a trailing new line with only carriage return', () => {
+        const source = Buffer.from('something with a new line\r%%EOF\r');
+        const result = removeTrailingNewLine(source);
+        expect(result.toString()).toEqual('something with a new line\r%%EOF');
+    });
 });

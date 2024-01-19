@@ -3,7 +3,8 @@
 ## [3.2.0]
 
 * [utils] Introduced `convertBuffer()` to allow inputs as `Buffer`, `Uint8Array` or `string`;
-* [utils] The `Signer` abstract class accepts an optional `signingTime`.
+* [utils] The `Signer` abstract class accepts an optional `signingTime`;
+* [utils] `removeTrailingNewLine` would works for files with `\r`, `\n` or `\r\n`;
 
 * [signpdf] Accepts `Buffer`, `Uint8Array` or `string` as input;
 

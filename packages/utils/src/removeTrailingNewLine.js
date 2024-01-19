@@ -1,9 +1,15 @@
 import {SignPdfError} from './SignPdfError';
 
+/**
+ * Removes a trailing character if it is the one passed as the second parameter.
+ * @param {Buffer} pdf
+ * @param {string} character
+ * @returns {Buffer}
+ */
 const sliceLastChar = (pdf, character) => {
-    const lastChar = pdf.slice(pdf.length - 1).toString();
+    const lastChar = pdf.subarray(pdf.length - 1).toString();
     if (lastChar === character) {
-        return pdf.slice(0, pdf.length - 1);
+        return pdf.subarray(0, pdf.length - 1);
     }
 
     return pdf;
@@ -28,7 +34,7 @@ export const removeTrailingNewLine = (pdf) => {
     output = sliceLastChar(output, '\n');
     output = sliceLastChar(output, '\r');
 
-    const lastLine = output.slice(output.length - 6).toString();
+    const lastLine = output.subarray(output.length - 6).toString();
     if (lastLine !== '\n%%EOF' && lastLine !== '\r%%EOF') {
         throw new SignPdfError(
             'A PDF file must end with an EOF line.',
