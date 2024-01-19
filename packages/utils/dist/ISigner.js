@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Signer = void 0;
+exports.ISigner = void 0;
 var _SignPdfError = require("./SignPdfError");
 /* eslint-disable no-unused-vars */
 
-class Signer {
+class ISigner {
   /**
    * @param {Buffer} pdfBuffer
    * @param {Date | undefined} signingTime
@@ -17,4 +17,4 @@ class Signer {
     throw new _SignPdfError.SignPdfError(`sign() is not implemented on ${this.constructor.name}`, _SignPdfError.SignPdfError.TYPE_INPUT);
   }
 }
-exports.Signer = Signer;
+exports.ISigner = ISigner;
