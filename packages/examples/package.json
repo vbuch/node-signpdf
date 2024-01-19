@@ -18,6 +18,7 @@
     "@signpdf/placeholder-plain": "^3.2.0",
     "@signpdf/signer-p12": "^3.2.0",
     "@signpdf/signpdf": "^3.2.0",
+    "@signpdf/signer": "^3.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
