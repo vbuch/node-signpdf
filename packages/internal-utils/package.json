@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@signpdf/internal-utils",
-  "version": "3.2.0",
+  "version": "3.2.3",
   "description": "",
   "main": "index.js",
   "repository": {
