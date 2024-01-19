@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/placeholder-plain",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "description": "Try to add a signature placeholder to a PDF using plain string modifications.",
     "repository": {
         "type": "git",
@@ -36,8 +36,8 @@
         "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
     },
     "dependencies": {
-        "@signpdf/placeholder-pdfkit010": "^3.1.0",
-        "@signpdf/utils": "^3.1.0"
+        "@signpdf/placeholder-pdfkit010": "^3.2.0",
+        "@signpdf/utils": "^3.2.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -46,7 +46,7 @@
         "@babel/node": "^7.0.0",
         "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
         "@babel/preset-env": "^7.4.2",
-        "@signpdf/internal-utils": "^3.0.0",
+        "@signpdf/internal-utils": "^3.2.0",
         "@types/node": ">=12.0.0",
         "@types/node-forge": "^1.2.1",
         "assertion-error": "^1.1.0",
