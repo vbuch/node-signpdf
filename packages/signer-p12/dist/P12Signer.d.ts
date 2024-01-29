@@ -14,12 +14,6 @@ export class P12Signer extends Signer {
         asn1StrictParsing: boolean;
     };
     cert: any;
-    /**
-     * @param {Buffer} pdfBuffer
-     * @param {Date | undefined} signingTime
-     * @returns {Buffer}
-     */
-    sign(pdfBuffer: Buffer, signingTime?: Date | undefined): Buffer;
 }
 export type SignerOptions = {
     passphrase?: string;

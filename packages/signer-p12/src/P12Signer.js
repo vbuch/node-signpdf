@@ -28,7 +28,7 @@ export class P12Signer extends Signer {
     /**
      * @param {Buffer} pdfBuffer
      * @param {Date | undefined} signingTime
-     * @returns {Buffer}
+     * @returns {Promise<Buffer>}
      */
     async sign(pdfBuffer, signingTime = undefined) {
         if (!(pdfBuffer instanceof Buffer)) {
