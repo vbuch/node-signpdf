@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.2.1]
+
+* [signer-p12] Fixed JSDoc on the sign() method.
+
 ## [3.2.0]
 
 * [utils] Introduced `convertBuffer()` to allow inputs as `Buffer`, `Uint8Array` or `string`;

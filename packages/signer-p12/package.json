@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/signer-p12",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "description": "Sign using a P12 certificate.",
     "repository": {
         "type": "git",
