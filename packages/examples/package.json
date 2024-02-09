@@ -5,8 +5,9 @@
   "description": "",
   "scripts": {
     "js": "node src/javascript.js",
-    "ts": "ts-node src/typescript.ts"
-  },
+    "ts": "ts-node src/typescript.ts",
+    "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+},
   "engines": {
     "node": ">=12"
   },

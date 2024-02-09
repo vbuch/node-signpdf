@@ -7,21 +7,22 @@ var createCertificate = require('./utils').createCertificate;
 
 // Signer implementation using the WebCrypto API
 class CryptoSigner extends Signer {
-    // 'SHA-256', 'SHA-384' or 'SHA-512' are supported by webcrypto
-    supportedHashAlgorithms = ['SHA-256', 'SHA-384', 'SHA-512'];
-
-    // 'RSASSA-PKCS1-v1_5', 'RSA-PSS' or 'ECDSA' are supported by webcrypto
-    supportedSignAlgorithms = ['RSASSA-PKCS1-v1_5', 'RSA-PSS', 'ECDSA'];
 
     constructor(signAlgorithm = 'RSA-PSS', hashAlgorithm = 'SHA-512') {
         super();
 
+        // 'SHA-256', 'SHA-384' or 'SHA-512' are supported by webcrypto
+        var supportedHashAlgorithms = ['SHA-256', 'SHA-384', 'SHA-512'];
+    
+        // 'RSASSA-PKCS1-v1_5', 'RSA-PSS' or 'ECDSA' are supported by webcrypto
+        var supportedSignAlgorithms = ['RSASSA-PKCS1-v1_5', 'RSA-PSS', 'ECDSA'];
+
         // Verify and set signature and hash algorithms
-        if (!this.supportedSignAlgorithms.includes(signAlgorithm)) {
+        if (!supportedSignAlgorithms.includes(signAlgorithm)) {
             throw new Error(`Signature algorithm ${signAlgorithm} is not supported by WebCrypto.`);
         }
         this.signAlgorithm = signAlgorithm;
-        if (!this.supportedHashAlgorithms.includes(hashAlgorithm)) {
+        if (!supportedHashAlgorithms.includes(hashAlgorithm)) {
             throw new Error(`Hash algorithm ${hashAlgorithm} is not supported by WebCrypto.`);
         }
         this.hashAlgorithm = hashAlgorithm;
