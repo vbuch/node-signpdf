@@ -82,22 +82,22 @@ export const getXref = (pdf, position) => {
 };
 
 /**
- * @typedef {Map<*, *>} GetFullXrefTableReturnType
+ * @typedef {Map<number, number>} FullXrefTable
  */
 
 /**
  * @param {Buffer} pdf
- * @returns {GetFullXrefTableReturnType}
+ * @param {number} xRefPosition
+ * @returns {FullXrefTable}
  */
-export const getFullXrefTable = (pdf) => {
-    const lastTrailerPosition = getLastTrailerPosition(pdf);
-    const lastXrefTable = getXref(pdf, lastTrailerPosition);
+const getFullXref = (pdf, xRefPosition) => {
+    const lastXrefTable = getXref(pdf, xRefPosition);
 
     if (lastXrefTable.prev === undefined) {
         return lastXrefTable.xRefContent;
     }
-    const pdfWithoutLastTrailer = pdf.slice(0, lastTrailerPosition);
-    const partOfXrefTable = getFullXrefTable(pdfWithoutLastTrailer);
+
+    const partOfXrefTable = getFullXref(pdf, lastXrefTable.prev);
 
     const mergedXrefTable = new Map([
         ...partOfXrefTable,
@@ -108,10 +108,19 @@ export const getFullXrefTable = (pdf) => {
 };
 
 /**
+ * @param {Buffer} pdf
+ * @returns {FullXrefTable}
+ */
+export const getFullXrefTable = (pdf) => {
+    const lastTrailerPosition = getLastTrailerPosition(pdf);
+    return getFullXref(pdf, lastTrailerPosition);
+};
+
+/**
  * @typedef {object} ReadRefTableReturnType
  * @prop {number} startingIndex
  * @prop {number} maxIndex
- * @prop {GetFullXrefTableReturnType} offsets
+ * @prop {FullXrefTable} offsets
  */
 
 /**
