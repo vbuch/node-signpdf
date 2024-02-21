@@ -75,6 +75,7 @@ describe(readRefTable, () => {
             'incrementally_signed.pdf',
             'signed.pdf',
             'w3dummy.pdf',
+            'issue-209-reason-includes-trailer-word.pdf',
         ].forEach((fileName) => {
             const pdf = readTestResource(fileName);
             const r = readRefTable(pdf);
