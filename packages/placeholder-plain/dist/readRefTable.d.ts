@@ -2,21 +2,21 @@ export function getLastTrailerPosition(pdf: any): number;
 export function getXref(pdf: any, position: any): {
     size: any;
     prev: string;
-    xRefContent: Map<any, any>;
+    xRefContent: Map<number, number>;
 };
-export function getFullXrefTable(pdf: Buffer): GetFullXrefTableReturnType;
+export function getFullXrefTable(pdf: Buffer): FullXrefTable;
 export default readRefTable;
-export type GetFullXrefTableReturnType = Map<any, any>;
+export type FullXrefTable = Map<number, number>;
 export type ReadRefTableReturnType = {
     startingIndex: number;
     maxIndex: number;
-    offsets: GetFullXrefTableReturnType;
+    offsets: FullXrefTable;
 };
 /**
  * @typedef {object} ReadRefTableReturnType
  * @prop {number} startingIndex
  * @prop {number} maxIndex
- * @prop {GetFullXrefTableReturnType} offsets
+ * @prop {FullXrefTable} offsets
  */
 /**
  * @param {Buffer} pdfBuffer
