@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [next]
+
+* [placeholder-plain] Fix ability to add a placeholder to a file that contains the "trailer" keyword in plain text.
+
 ## [3.2.1]
 
 * [signer-p12] Fixed JSDoc on the sign() method.
