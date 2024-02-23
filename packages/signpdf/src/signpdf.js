@@ -2,11 +2,11 @@ import {
     convertBuffer,
     removeTrailingNewLine,
     findByteRange,
-    ISigner,
     SignPdfError,
+    Signer,
 } from '@signpdf/utils';
 
-export {ISigner, SignPdfError};
+export {Signer, SignPdfError};
 
 /**
  * @typedef {object} SignerOptions
@@ -21,7 +21,7 @@ export class SignPdf {
 
     /**
      * @param {Buffer | Uint8Array | string} pdfBuffer
-     * @param {ISigner} signer
+     * @param {Signer} signer
      * @param {Date | undefined} signingTime
      * @returns {Promise<Buffer>}
      */
@@ -30,7 +30,7 @@ export class SignPdf {
         signer,
         signingTime = undefined,
     ) {
-        if (!(signer instanceof ISigner)) {
+        if (!(signer instanceof Signer)) {
             throw new SignPdfError(
                 'Signer implementation expected.',
                 SignPdfError.TYPE_INPUT,

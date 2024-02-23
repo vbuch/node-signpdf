@@ -3,7 +3,7 @@
  * @prop {string} [passphrase]
  * @prop {boolean} [asn1StrictParsing]
  */
-export class P12Signer extends ISigner {
+export class P12Signer extends Signer {
     /**
      * @param {Buffer | Uint8Array | string} p12Buffer
      * @param {SignerOptions} additionalOptions
@@ -19,5 +19,5 @@ export type SignerOptions = {
     passphrase?: string;
     asn1StrictParsing?: boolean;
 };
-import { ISigner } from '@signpdf/utils';
+import { Signer } from '@signpdf/utils';
 //# sourceMappingURL=P12Signer.d.ts.map

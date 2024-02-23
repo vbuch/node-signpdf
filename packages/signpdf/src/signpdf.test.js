@@ -3,7 +3,7 @@ import {plainAddPlaceholder} from '@signpdf/placeholder-plain';
 import {P12Signer} from '@signpdf/signer-p12';
 import {
     extractSignature,
-    ISigner,
+    Signer,
     SignPdfError,
 } from '@signpdf/utils';
 import {readTestResource, createPdfkitDocument} from '@signpdf/internal-utils';
@@ -78,7 +78,7 @@ describe('Test signing', () => {
     });
     it('expects PDF to contain a ByteRange placeholder', async () => {
         try {
-            await signpdf.sign(Buffer.from('No BR placeholder\n%%EOF'), new ISigner());
+            await signpdf.sign(Buffer.from('No BR placeholder\n%%EOF'), new Signer());
             expect('here').not.toBe('here');
         } catch (e) {
             expect(e instanceof SignPdfError).toBe(true);
