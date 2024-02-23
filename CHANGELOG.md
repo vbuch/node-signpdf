@@ -4,7 +4,7 @@
 
 * [examples] Run linting on examples;
 * [placeholder-plain] Fix ability to add a placeholder to a file that contains the "trailer" keyword in plain text;
-* Bumped version of ip.
+* Bumped version of ip, punycode and sshpk.
 
 ## [3.2.2]
 
