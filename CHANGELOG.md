@@ -3,7 +3,8 @@
 ## [3.2.3]
 
 * [examples] Run linting on examples;
-* [placeholder-plain] Fix ability to add a placeholder to a file that contains the "trailer" keyword in plain text.
+* [placeholder-plain] Fix ability to add a placeholder to a file that contains the "trailer" keyword in plain text;
+* Bumped version of ip.
 
 ## [3.2.2]
 
