@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var plainAddPlaceholder = require('@signpdf/placeholder-plain').plainAddPlaceholder
+var plainAddPlaceholder = require('@signpdf/placeholder-plain').plainAddPlaceholder;
 var signpdf = require('@signpdf/signpdf').default;
 var P12Signer = require('@signpdf/signer-p12').P12Signer;
 

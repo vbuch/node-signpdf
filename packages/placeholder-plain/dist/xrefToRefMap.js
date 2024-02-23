@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _utils = require("@signpdf/utils");
+/**
+ * @param {string} xrefString
+ * @returns {Map<number, number>}
+ */
 const xrefToRefMap = xrefString => {
   const lines = xrefString.split('\n').filter(l => l !== '');
   let index = 0;

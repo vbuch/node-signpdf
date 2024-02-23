@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [3.2.3]
+
+* [examples] Run linting on examples;
+* [placeholder-plain] Fix ability to add a placeholder to a file that contains the "trailer" keyword in plain text;
+* Bumped version of ip, punycode and sshpk.
+
+## [3.2.2]
+
+* Zero-change version. Lerna versioning was messed up with `lerna publish from-package`.
+
 ## [3.2.1]
 
 * [signer-p12] Fixed JSDoc on the sign() method.

@@ -1,5 +1,9 @@
 import {SignPdfError} from '@signpdf/utils';
 
+/**
+ * @param {string} xrefString
+ * @returns {Map<number, number>}
+ */
 const xrefToRefMap = (xrefString) => {
     const lines = xrefString.split('\n').filter((l) => l !== '');
 

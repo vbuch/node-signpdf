@@ -12,7 +12,7 @@ function work() {
         size: 'A4',
         layout: 'portrait',
         bufferPages: true,
-    });;
+    });
     pdf.info.CreationDate = '';
 
     // At the end we want to convert the PDFKit to a string/Buffer and store it in a file.
@@ -74,6 +74,6 @@ function work() {
     // Finally end the PDFDocument stream.
     pdf.end();
     // This has just triggered the `pdfReady` Promise to be resolved.
-};
+}
 
 work();

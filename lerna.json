@@ -1,5 +1,11 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "version": "3.2.2",
-  "npmClient": "yarn"
+  "version": "3.2.3",
+  "npmClient": "yarn",
+  "ignoreChanges": [
+    "*.md",
+    "**/*.md",
+    "**/CHANGELOG.md",
+    "**/node_modules/**"
+  ]
 }
