@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@signpdf/examples",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "",
   "scripts": {
     "js": "node src/javascript.js",
@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@signpdf/placeholder-plain": "^3.2.0",
-    "@signpdf/signer-p12": "^3.2.1",
-    "@signpdf/signpdf": "^3.2.1",
+    "@signpdf/signer-p12": "^3.2.2",
+    "@signpdf/signpdf": "^3.2.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
