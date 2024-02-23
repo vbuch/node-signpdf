@@ -11,14 +11,14 @@ var createCertificate = require('./utils').createCertificate;
 // WebCrypto signing can also be implemented more easily by subclassing the Signer abstract
 // class directly, as is done in the `webcrypto.js` example script.
 class CryptoSigner extends ExternalSigner {
-    // 'SHA-256', 'SHA-384' or 'SHA-512' are supported by webcrypto
-    supportedHashAlgorithms = ['SHA-256', 'SHA-384', 'SHA-512'];
-
-    // 'RSASSA-PKCS1-v1_5', 'RSA-PSS' or 'ECDSA' are supported by webcrypto
-    supportedSignAlgorithms = ['RSASSA-PKCS1-v1_5', 'RSA-PSS', 'ECDSA'];
-
     constructor(signAlgorithm = 'ECDSA', hashAlgorithm = 'SHA-512') {
         super();
+
+        // 'SHA-256', 'SHA-384' or 'SHA-512' are supported by webcrypto
+        this.supportedHashAlgorithms = ['SHA-256', 'SHA-384', 'SHA-512'];
+
+        // 'RSASSA-PKCS1-v1_5', 'RSA-PSS' or 'ECDSA' are supported by webcrypto
+        this.supportedSignAlgorithms = ['RSASSA-PKCS1-v1_5', 'RSA-PSS', 'ECDSA'];
 
         // Verify and set signature and hash algorithms
         if (!this.supportedSignAlgorithms.includes(signAlgorithm)) {
