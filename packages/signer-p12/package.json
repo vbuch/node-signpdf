@@ -22,6 +22,12 @@
         "P12",
         "digital signature"
     ],
+    "funding": [
+      {
+        "type": "individual",
+        "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+      }
+    ],
     "main": "dist/P12Signer.js",
     "types": "dist/P12Signer.d.ts",
     "files": [

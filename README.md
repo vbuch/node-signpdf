@@ -3,7 +3,6 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/node-signpdf/badge.svg)](https://snyk.io/test/npm/node-signpdf)
 ![Coverage as reported by Coveralls](https://img.shields.io/coverallsCoverage/github/vbuch/node-signpdf)
 ![GitHub last commit](https://img.shields.io/github/last-commit/vbuch/node-signpdf?color=red)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
 
 Formerly known as [`node-signpdf`](https://www.npmjs.com/package/node-signpdf) `@signpdf` is a family of packages trying to make signing of PDFs simple in Node.js.
 

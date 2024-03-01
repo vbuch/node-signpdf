@@ -3,7 +3,6 @@
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Fsigner-p12.svg)](https://badge.fury.io/js/@signpdf%2Fsigner-p12)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
 
 Uses `node-forge` to create a detached signature of a given `Buffer` using a PKCS#12 certificate bundle.
 

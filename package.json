@@ -7,6 +7,12 @@
     "type": "git",
     "url": "https://github.com/vbuch/node-signpdf"
   },
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+    }
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=12"

@@ -21,6 +21,12 @@
         "pades",
         "digital signature"
     ],
+    "funding": [
+      {
+        "type": "individual",
+        "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+      }
+    ],
     "main": "dist/signpdf.js",
     "files": [
         "dist",
