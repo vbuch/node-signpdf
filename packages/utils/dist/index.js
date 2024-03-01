@@ -47,6 +47,17 @@ Object.keys(_findByteRange).forEach(function (key) {
     }
   });
 });
+var _ISigner = require("./ISigner");
+Object.keys(_ISigner).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _ISigner[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _ISigner[key];
+    }
+  });
+});
 var _removeTrailingNewLine = require("./removeTrailingNewLine");
 Object.keys(_removeTrailingNewLine).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -66,17 +77,6 @@ Object.keys(_SignPdfError).forEach(function (key) {
     enumerable: true,
     get: function () {
       return _SignPdfError[key];
-    }
-  });
-});
-var _Signer = require("./Signer");
-Object.keys(_Signer).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _Signer[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _Signer[key];
     }
   });
 });

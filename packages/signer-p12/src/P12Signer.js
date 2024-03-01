@@ -1,5 +1,5 @@
 import forge from 'node-forge';
-import {convertBuffer, SignPdfError, Signer} from '@signpdf/utils';
+import {convertBuffer, SignPdfError, ISigner} from '@signpdf/utils';
 
 /**
  * @typedef {object} SignerOptions
@@ -7,7 +7,7 @@ import {convertBuffer, SignPdfError, Signer} from '@signpdf/utils';
  * @prop {boolean} [asn1StrictParsing]
  */
 
-export class P12Signer extends Signer {
+export class P12Signer extends ISigner {
     /**
      * @param {Buffer | Uint8Array | string} p12Buffer
      * @param {SignerOptions} additionalOptions

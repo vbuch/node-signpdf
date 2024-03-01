@@ -1,7 +1,7 @@
 {
-    "name": "@signpdf/placeholder-pdfkit",
+    "name": "@signpdf/signer",
     "version": "3.2.3",
-    "description": "Use foliojs/PDFKit 0.11+ to insert a signature placeholder.",
+    "description": "Signer base implementations.",
     "repository": {
         "type": "git",
         "url": "https://github.com/vbuch/node-signpdf"
@@ -20,12 +20,6 @@
         "pkcs#7",
         "pades",
         "digital signature"
-    ],
-    "funding": [
-      {
-        "type": "individual",
-        "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
-      }
     ],
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -47,7 +41,8 @@
         "@signpdf/utils": "^3.2.3"
     },
     "peerDependencies": {
-        "pdfkit": "^0.11.0"
+        "asn1js": "^3.0.5",
+        "pkijs": "^3.0.15"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -59,7 +54,6 @@
         "@signpdf/eslint-config": "^3.2.3",
         "@signpdf/internal-utils": "^3.2.3",
         "@types/node": ">=12.0.0",
-        "@types/node-forge": "^1.2.1",
         "assertion-error": "^1.1.0",
         "babel-jest": "^27.3.1",
         "babel-plugin-module-resolver": "^3.1.1",
@@ -71,8 +65,10 @@
         "eslint-plugin-jest": "^25.2.4",
         "husky": "^7.0.4",
         "jest": "^27.3.1",
-        "node-forge": "^1.2.1",
-        "pdfkit": "^0.11.0",
+        "asn1js": "^3.0.5",
+        "pkijs": "^3.0.15",
+        "pdfkit": "~0.10.0",
         "typescript": "^5.2.2"
-    }
+    },
+    "gitHead": "5d5ec00c21e072613acb9776c7c6ac7697314955"
 }

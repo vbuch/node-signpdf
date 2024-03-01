@@ -68,7 +68,7 @@ This is the main package, the integrating one, the one that wraps everything up.
 
 ### Signers
 
-Signers are small libraries that `@signpdf/signpdf` will call with a PDF and they will know how to provide an e-signature in return. Their output is then fed as the signature in the resulting document.
+Signers are small libraries that `@signpdf/signpdf` will call with a PDF and they will know how to provide an e-signature in return. Their output is then fed as the signature in the resulting document. Example implementations of the abstract `Signer` base class are provided in the [WebCrypto](./packages/examples/src/webcrypto.js) and [WebCrypto-External](./packages/examples/src/webcrypto-external.js) examples, both leveraging the `WebCrypto` API.
 
 #### [@signpdf/signer-p12](./packages/signer-p12)
 

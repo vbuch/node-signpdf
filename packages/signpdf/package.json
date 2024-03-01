@@ -52,7 +52,7 @@
         "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
         "@babel/preset-env": "^7.4.2",
         "@signpdf/eslint-config": "^3.2.3",
-        "@signpdf/internal-utils": "^3.2.0",
+        "@signpdf/internal-utils": "^3.2.3",
         "@signpdf/placeholder-pdfkit010": "^3.2.3",
         "@signpdf/placeholder-plain": "^3.2.3",
         "@signpdf/signer-p12": "^3.2.3",
