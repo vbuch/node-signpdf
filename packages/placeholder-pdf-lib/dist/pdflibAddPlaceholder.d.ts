@@ -1,9 +1,9 @@
 export function pdflibAddPlaceholder({ pdfDoc, pdfPage, reason, contactInfo, name, location, signingTime, signatureLength, byteRangePlaceholder, subFilter, widgetRect, appName, }: InputType): void;
 export type PDFDocument = import('pdf-lib').PDFDocument;
 export type PDFPage = import('pdf-lib').PDFPage;
-export type InputType = {
-    pdfDoc: PDFDocument;
-    pdfPage: PDFPage;
+export type CommonInputType = {
+    pdfDoc?: PDFDocument;
+    pdfPage?: PDFPage;
     reason: string;
     contactInfo: string;
     name: string;
@@ -24,4 +24,11 @@ export type InputType = {
      */
     appName?: string;
 };
+export type DocInputType = {
+    pdfDoc: PDFDocument;
+};
+export type PageInputType = {
+    pdfPage: PDFPage;
+};
+export type InputType = CommonInputType & (DocInputType | PageInputType);
 //# sourceMappingURL=pdflibAddPlaceholder.d.ts.map
