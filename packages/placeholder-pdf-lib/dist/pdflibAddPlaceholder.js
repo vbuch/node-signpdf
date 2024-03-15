@@ -11,20 +11,24 @@ var _pdfLib = require("pdf-lib");
  */
 
 /**
-* @typedef {object} InputType
-* @property {PDFDocument} pdfDoc
-* @property {PDFPage} pdfPage
-* @property {string} reason
-* @property {string} contactInfo
-* @property {string} name
-* @property {string} location
-* @property {Date} [signingTime]
-* @property {number} [signatureLength]
-* @property {string} [byteRangePlaceholder]
-* @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
-* @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
-* @property {string} [appName] Name of the application generating the signature
-*/
+ * @typedef {import('pdf-lib').PDFPage} PDFPage
+ */
+
+/**
+ * @typedef {object} InputType
+ * @property {PDFDocument} pdfDoc
+ * @property {PDFPage} pdfPage
+ * @property {string} reason
+ * @property {string} contactInfo
+ * @property {string} name
+ * @property {string} location
+ * @property {Date} [signingTime]
+ * @property {number} [signatureLength]
+ * @property {string} [byteRangePlaceholder]
+ * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
+ * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
+ * @property {string} [appName] Name of the application generating the signature
+ */
 
 /**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.

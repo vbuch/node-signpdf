@@ -1,5 +1,6 @@
 export function pdflibAddPlaceholder({ pdfDoc, pdfPage, reason, contactInfo, name, location, signingTime, signatureLength, byteRangePlaceholder, subFilter, widgetRect, appName, }: InputType): void;
 export type PDFDocument = import('pdf-lib').PDFDocument;
+export type PDFPage = import('pdf-lib').PDFPage;
 export type InputType = {
     pdfDoc: PDFDocument;
     pdfPage: PDFPage;
