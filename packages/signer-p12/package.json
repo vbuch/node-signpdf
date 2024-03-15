@@ -23,10 +23,10 @@
         "digital signature"
     ],
     "funding": [
-      {
-        "type": "individual",
-        "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
-      }
+        {
+            "type": "individual",
+            "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+        }
     ],
     "main": "dist/P12Signer.js",
     "types": "dist/P12Signer.d.ts",
@@ -41,8 +41,14 @@
     },
     "scripts": {
         "test": "jest",
-        "build": "rm -rf ./dist/* & babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
-        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+        "build": "yarn build:clean && yarn build:compile && yarn build:types",
+        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
+
+        "build:clean": "rm -rf ./dist/*",
+        "build:compile": "babel ./src -d ./dist --ignore \"**/*.test.js\"",
+        "build:types": "yarn build:types:compile && yarn build:types:verify",
+        "build:types:compile": "tsc",
+        "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
         "@signpdf/utils": "^3.2.3"
@@ -74,6 +80,7 @@
         "jest": "^27.3.1",
         "node-forge": "^1.2.1",
         "pdfkit": "~0.10.0",
+        "tsd": "^0.30.7",
         "typescript": "^5.2.2"
     },
     "gitHead": "5d5ec00c21e072613acb9776c7c6ac7697314955"
