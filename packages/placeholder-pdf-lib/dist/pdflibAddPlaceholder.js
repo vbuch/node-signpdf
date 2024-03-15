@@ -15,9 +15,9 @@ var _pdfLib = require("pdf-lib");
  */
 
 /**
- * @typedef {object} InputType
- * @property {PDFDocument} pdfDoc
- * @property {PDFPage} pdfPage
+ * @typedef {object} CommonInputType
+ * @property {PDFDocument} [pdfDoc]
+ * @property {PDFPage} [pdfPage]
  * @property {string} reason
  * @property {string} contactInfo
  * @property {string} name
@@ -29,6 +29,20 @@ var _pdfLib = require("pdf-lib");
  * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
  * @property {string} [appName] Name of the application generating the signature
  */
+
+/**
+* @typedef {object} DocInputType
+* @property {PDFDocument} pdfDoc
+*/
+
+/**
+* @typedef {object} PageInputType
+* @property {PDFPage} pdfPage
+*/
+
+/**
+* @typedef {CommonInputType & (DocInputType | PageInputType)} InputType
+*/
 
 /**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.
