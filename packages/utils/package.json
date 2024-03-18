@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/utils",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "Utilities for the @signpdf packages.",
   "repository": {
     "type": "git",
@@ -20,6 +20,12 @@
     "pkcs#7",
     "pades",
     "digital signature"
+  ],
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+    }
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

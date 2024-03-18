@@ -3,7 +3,6 @@
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Futils.svg)](https://badge.fury.io/js/@signpdf%2Futils)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
 
 ## Usage
 

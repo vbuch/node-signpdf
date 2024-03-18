@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/placeholder-plain",
-    "version": "3.2.3",
+    "version": "3.2.4",
     "description": "Try to add a signature placeholder to a PDF using plain string modifications.",
     "repository": {
         "type": "git",
@@ -21,7 +21,14 @@
         "pades",
         "digital signature"
     ],
+    "funding": [
+        {
+            "type": "individual",
+            "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+        }
+    ],
     "main": "dist/plainAddPlaceholder.js",
+    "types": "dist/plainAddPlaceholder.d.ts",
     "files": [
         "dist",
         "LICENSE",
@@ -32,12 +39,17 @@
     },
     "scripts": {
         "test": "./node_modules/.bin/jest",
-        "build": "rm -rf ./dist/* & ./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
-        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+        "build": "yarn build:clean && yarn build:compile && yarn build:types",
+        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
+        "build:clean": "rm -rf ./dist/*",
+        "build:compile": "babel ./src -d ./dist --ignore \"**/*.test.js\"",
+        "build:types": "yarn build:types:compile && yarn build:types:verify",
+        "build:types:compile": "tsc",
+        "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
-        "@signpdf/placeholder-pdfkit010": "^3.2.3",
-        "@signpdf/utils": "^3.2.3"
+        "@signpdf/placeholder-pdfkit010": "^3.2.4",
+        "@signpdf/utils": "^3.2.4"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -62,6 +74,7 @@
         "jest": "^27.3.1",
         "node-forge": "^1.2.1",
         "pdfkit": "~0.10.0",
+        "tsd": "^0.30.7",
         "typescript": "^5.2.2"
     },
     "gitHead": "5d5ec00c21e072613acb9776c7c6ac7697314955"

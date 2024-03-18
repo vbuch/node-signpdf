@@ -1,7 +1,6 @@
 # [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](/)
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Fsignpdf.svg)](https://badge.fury.io/js/@signpdf%2Fsignpdf)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
 
 The main package from the [@signpdf family](/) that tries to make signing of PDFs simple in Node.js.
 

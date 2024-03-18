@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/placeholder-pdf-lib",
-    "version": "3.2.3",
+    "version": "3.2.4",
     "description": "Use PDF-LIB to insert a signature placeholder.",
     "repository": {
         "type": "git",
@@ -21,6 +21,12 @@
         "pades",
         "digital signature"
     ],
+    "funding": [
+        {
+            "type": "individual",
+            "url": "https://buymeacoffee.com/vbuch?utm_source=npm-funding-signpdf"
+        }
+    ],
     "main": "dist/pdflibAddPlaceholder.js",
     "types": "dist/pdflibAddPlaceholder.d.ts",
     "files": [
@@ -34,11 +40,16 @@
     },
     "scripts": {
         "test": "jest",
-        "build": "rm -rf ./dist/* & babel ./src -d ./dist --ignore \"**/*.test.js\" & tsc",
-        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
+        "build": "yarn build:clean && yarn build:compile && yarn build:types",
+        "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
+        "build:clean": "rm -rf ./dist/*",
+        "build:compile": "babel ./src -d ./dist --ignore \"**/*.test.js\"",
+        "build:types": "yarn build:types:compile && yarn build:types:verify",
+        "build:types:compile": "tsc",
+        "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
-        "@signpdf/utils": "^3.2.3"
+        "@signpdf/utils": "^3.2.4"
     },
     "peerDependencies": {
         "pdf-lib": "^1.17.1"
@@ -67,6 +78,7 @@
         "jest": "^27.3.1",
         "node-forge": "^1.2.1",
         "pdf-lib": "^1.17.1",
+        "tsd": "^0.30.7",
         "typescript": "^5.2.2"
     },
     "gitHead": "56f621c5b6b240f363927cdab47ec8e0bb9fa180"

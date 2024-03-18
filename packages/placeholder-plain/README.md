@@ -3,7 +3,6 @@
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 
 [![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-plain.svg)](https://badge.fury.io/js/@signpdf%2Fplaceholder-plain)
-[![Donate to this project using Buy Me A Coffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg)](https://buymeacoffee.com/vbuch)
 
 Implements adding e-signature placeholder with plain string operations (.indexOf(), .replace(), .match(), etc.). Because of the lack of semantics it is rather *fragile*. Additionally it doesn't support streams and only works on PDF version <= 1.3. Regardless of those disadvantages this flow seems to be **the most popular among the users of @signpdf**.
 
