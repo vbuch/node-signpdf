@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/signer-p12",
-    "version": "3.2.3",
+    "version": "3.2.4",
     "description": "Sign using a P12 certificate.",
     "repository": {
         "type": "git",
@@ -43,7 +43,6 @@
         "test": "jest",
         "build": "yarn build:clean && yarn build:compile && yarn build:types",
         "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
-
         "build:clean": "rm -rf ./dist/*",
         "build:compile": "babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:types": "yarn build:types:compile && yarn build:types:verify",
@@ -51,7 +50,7 @@
         "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
-        "@signpdf/utils": "^3.2.3"
+        "@signpdf/utils": "^3.2.4"
     },
     "peerDependencies": {
         "node-forge": "^1.2.1"

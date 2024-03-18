@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/signpdf",
-    "version": "3.2.3",
+    "version": "3.2.4",
     "description": "Simple signing of PDFs in node.",
     "repository": {
         "type": "git",
@@ -41,7 +41,6 @@
         "test": "./node_modules/.bin/jest",
         "build": "yarn build:clean && yarn build:compile && yarn build:types",
         "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
-
         "build:clean": "rm -rf ./dist/*",
         "build:compile": "babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:types": "yarn build:types:compile && yarn build:types:verify",
@@ -49,7 +48,7 @@
         "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
-        "@signpdf/utils": "^3.2.3"
+        "@signpdf/utils": "^3.2.4"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -60,9 +59,9 @@
         "@babel/preset-env": "^7.4.2",
         "@signpdf/eslint-config": "^3.2.3",
         "@signpdf/internal-utils": "^3.2.0",
-        "@signpdf/placeholder-pdfkit010": "^3.2.3",
-        "@signpdf/placeholder-plain": "^3.2.3",
-        "@signpdf/signer-p12": "^3.2.3",
+        "@signpdf/placeholder-pdfkit010": "^3.2.4",
+        "@signpdf/placeholder-plain": "^3.2.4",
+        "@signpdf/signer-p12": "^3.2.4",
         "@types/node": ">=12.0.0",
         "@types/node-forge": "^1.2.1",
         "assertion-error": "^1.1.0",
