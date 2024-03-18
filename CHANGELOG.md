@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [3.2.4]
+
+* [placeholder-pdf-lib] Fix typing for `pdf-lib`'s `PDFPage`.
+* [placeholder-pdf-lib] Correctly noted that either `pdfDoc` or `pdfPage` is required, not both.
+* Introduced `tsd` to verify the types that we generate.
+
 ## [3.2.3]
 
 * [examples] Run linting on examples;
