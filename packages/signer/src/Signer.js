@@ -237,12 +237,12 @@ export class Signer extends ISigner {
 
         // Append the unsigned attributes, if there are any
         const unsignedAttrs = await this.obtainUnsignedAttributes(signerInfo.signature.getValue());
-        if (unsignedAttrs.length > 0) {
-            signerInfo.unsignedAttrs = new pkijs.SignedAndUnsignedAttributes({
-                type: 1,
-                attributes: unsignedAttrs,
-            });
-        }
+        // if (unsignedAttrs.length > 0) {
+        //     signerInfo.unsignedAttrs = new pkijs.SignedAndUnsignedAttributes({
+        //         type: 1,
+        //         attributes: unsignedAttrs,
+        //     });
+        // }
 
         // Create final result
         const cmsContentWrap = new pkijs.ContentInfo({
