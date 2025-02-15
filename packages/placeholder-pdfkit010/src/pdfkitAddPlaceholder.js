@@ -113,7 +113,7 @@ export const pdfkitAddPlaceholder = ({
         const acroForm = pdfSlice.slice(0, pdfSlice.indexOf('endobj')).toString();
         acroFormId = parseInt(pdf._root.data.AcroForm.toString());
 
-        const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
+        const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']')).trim();
         fieldIds = acroFormFields
             .split(' ')
             .filter((element, i) => i % 3 === 0)

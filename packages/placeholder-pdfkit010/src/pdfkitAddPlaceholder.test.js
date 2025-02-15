@@ -177,4 +177,37 @@ describe(pdfkitAddPlaceholder, () => {
         expect(propBuild.Filter.Name).toEqual('Adobe.PPKLite');
         expect(propBuild.App.Name).toEqual('signpdf');
     });
+
+    it('parses field ids with wrapping spaces', () => {
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
+        const fakeAcroFormStr = `
+99 0 obj
+<<
+/Type /AcroForm
+/SigFlags 3
+/Fields [   12 0 R 13 0 R  ]
+>>
+endobj`;
+        const fakeBuffer = Buffer.from(fakeAcroFormStr);
+        const existingForm = pdf.ref({
+            Type: 'AcroForm',
+            SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
+            Fields: [],
+        });
+
+        /* eslint-disable no-underscore-dangle */
+        pdf._root.data.AcroForm = existingForm;
+
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: fakeBuffer,
+            reason: 'test reason',
+        });
+
+        const acroFormFields = refs.form.data.Fields;
+        expect(acroFormFields).toHaveLength(3);
+        expect(acroFormFields[0].index).toBe('12');
+        expect(acroFormFields[1].index).toBe('13');
+    });
 });
