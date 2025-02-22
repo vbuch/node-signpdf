@@ -185,7 +185,7 @@ describe(pdfkitAddPlaceholder, () => {
 <<
 /Type /AcroForm
 /SigFlags 3
-/Fields [   12 0 R 13 0 R  ]
+/Fields [   12 0 R     13 0   R  ]
 >>
 endobj`;
         const fakeBuffer = Buffer.from(fakeAcroFormStr);
