@@ -167,6 +167,10 @@ export const pdflibAddPlaceholder = ({
         sigFlags.asNumber() | SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
     );
     acroForm.set(PDFName.of('SigFlags'), updatedFlags);
-    const fields = acroForm.get(PDFName.of('Fields'));
+    let fields = acroForm.get(PDFName.of('Fields'));
+    if (!(fields instanceof PDFArray)) {
+        fields = doc.context.obj([]);
+        acroForm.set(PDFName.of('Fields'), fields);
+    }
     fields.push(widgetDictRef);
 };

@@ -344,4 +344,43 @@ describe(pdflibAddPlaceholder, () => {
             PDFName.of(DEFAULT_BYTE_RANGE_PLACEHOLDER).asString(),
         ]);
     });
+    it('creates a new AcroForm Fields array when missing', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input);
+
+        const acroForm = pdfDoc.context.obj({});
+        const acroFormRef = pdfDoc.context.register(acroForm);
+        pdfDoc.catalog.set(PDFName.of('AcroForm'), acroFormRef);
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+        });
+
+        const finalAcroForm = pdfDoc.catalog.lookup(PDFName.of('AcroForm'), PDFDict);
+        const fields = finalAcroForm.lookup(PDFName.of('Fields'), PDFArray);
+
+        expect(fields).toBeInstanceOf(PDFArray);
+        expect(fields.size()).toBe(1);
+    });
+
+    it('replaces invalid AcroForm Fields with a new PDFArray', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input);
+
+        const acroForm = pdfDoc.context.obj({Fields: pdfDoc.context.obj({Invalid: true})});
+        const acroFormRef = pdfDoc.context.register(acroForm);
+        pdfDoc.catalog.set(PDFName.of('AcroForm'), acroFormRef);
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+        });
+
+        const finalAcroForm = pdfDoc.catalog.lookup(PDFName.of('AcroForm'), PDFDict);
+        const fields = finalAcroForm.lookup(PDFName.of('Fields'), PDFArray);
+
+        expect(fields).toBeInstanceOf(PDFArray);
+        expect(fields.size()).toBe(1);
+    });
 });
