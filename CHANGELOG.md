@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## [3.2.6]
+
+- [placeholder-pdf-lib] Fix AcroForm `/Fields` handling
+
 ## [3.2.5]
 
-- [placeholder-pdfkit010] Fixed an issue with parsing /Fields with surrounding spaces.
+- [placeholder-pdfkit010] Fixed an issue with parsing `/Fields with` surrounding spaces.
 - Bumped version of follow-redirects, ejs, braces, ws, cross-spawn, micromatch, axios
 
 ## [3.2.4]
