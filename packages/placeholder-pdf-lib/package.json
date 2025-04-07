@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/placeholder-pdf-lib",
-    "version": "3.2.4",
+    "version": "3.2.6",
     "description": "Use PDF-LIB to insert a signature placeholder.",
     "repository": {
         "type": "git",
