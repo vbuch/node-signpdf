@@ -170,7 +170,11 @@ const pdflibAddPlaceholder = ({
   }
   const updatedFlags = _pdfLib.PDFNumber.of(sigFlags.asNumber() | _utils.SIG_FLAGS.SIGNATURES_EXIST | _utils.SIG_FLAGS.APPEND_ONLY);
   acroForm.set(_pdfLib.PDFName.of('SigFlags'), updatedFlags);
-  const fields = acroForm.get(_pdfLib.PDFName.of('Fields'));
+  let fields = acroForm.get(_pdfLib.PDFName.of('Fields'));
+  if (!(fields instanceof _pdfLib.PDFArray)) {
+    fields = doc.context.obj([]);
+    acroForm.set(_pdfLib.PDFName.of('Fields'), fields);
+  }
   fields.push(widgetDictRef);
 };
 exports.pdflibAddPlaceholder = pdflibAddPlaceholder;
