@@ -7,15 +7,25 @@ import {
     SignPdfError,
 } from '@signpdf/utils';
 import {
-    PDFArray, PDFDict, PDFHexString, PDFName, PDFNumber, PDFInvalidObject, PDFString,
-} from 'pdf-lib';
+    PDFArray, PDFHexString, PDFName, PDFNumber, PDFInvalidObject, PDFString,
+} from '@adnsistemas/pdf-lib';
 
 /**
- * @typedef {import('pdf-lib').PDFDocument} PDFDocument
+ * @typedef {import('@adnsistemas/pdf-lib').PDFDocument} PDFDocument
  */
 
 /**
- * @typedef {import('pdf-lib').PDFPage} PDFPage
+ * @typedef {import('@adnsistemas/pdf-lib').PDFPage} PDFPage
+ */
+
+/**
+ * @typedef {( pdfDoc,
+ *             pdfPage,
+ *             reason,
+ *             contactInfo,
+ *             name,
+ *             location,
+ *             signingTime) => void} signaturePDFLibVisualRep
  */
 
 /**
@@ -32,6 +42,15 @@ import {
  * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
  * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
  * @property {string} [appName] Name of the application generating the signature
+ * @property {string} [widgetName] Name to use for the Widget representing the signature,
+ *  'Signature1' if not specified
+ * @property {string} [signDescription] Descriptive texto to show for widget on visualization,
+ *  instead of widgetName
+ * @property {number[]} [newPageDims] If not specified page[0] is used for signature,
+ *  otherwise a new page, with this dimensiones is used
+ * @property {signaturePDFLibVisualRep} [visualRepresentation] If provided,
+ *  and new page is generated, is invoked to put the visual representation of the signature,
+ *  on the new page
  */
 
 /**
@@ -69,6 +88,10 @@ export const pdflibAddPlaceholder = ({
     subFilter = SUBFILTER_ADOBE_PKCS7_DETACHED,
     widgetRect = [0, 0, 0, 0],
     appName = undefined,
+    widgetName = undefined,
+    signDescription = undefined,
+    newPageDims = undefined,
+    visualRepresentation = undefined,
 }) => {
     if (pdfDoc === undefined && pdfPage === undefined) {
         throw new SignPdfError(
@@ -77,8 +100,11 @@ export const pdflibAddPlaceholder = ({
         );
     }
     const doc = pdfDoc ?? pdfPage.doc;
-    const page = pdfPage ?? doc.getPages()[0];
-
+    const page = pdfPage ?? (newPageDims ? doc.addPage(newPageDims) : doc.getPages()[0]);
+    const timeStamp = signingTime ?? new Date();
+    if (newPageDims && visualRepresentation) {
+        visualRepresentation(doc, page, reason, contactInfo, name, location, timeStamp);
+    }
     // Create a placeholder where the the last 3 parameters of the
     // actual range will be replaced when signing is done.
     const byteRange = PDFArray.withContext(doc.context);
@@ -99,7 +125,7 @@ export const pdflibAddPlaceholder = ({
         ByteRange: byteRange,
         Contents: placeholder,
         Reason: PDFString.of(reason),
-        M: PDFString.fromDate(signingTime ?? new Date()),
+        M: PDFString.fromDate(timeStamp),
         ContactInfo: PDFString.of(contactInfo),
         Name: PDFString.of(name),
         Location: PDFString.of(location),
@@ -128,11 +154,14 @@ export const pdflibAddPlaceholder = ({
         FT: 'Sig',
         Rect: rect,
         V: signatureDictRef,
-        T: PDFString.of('Signature1'),
+        T: PDFString.of(widgetName ?? 'Signature1'),
         F: ANNOTATION_FLAGS.PRINT,
         P: page.ref,
         AP: {N: doc.context.register(apStream)}, // Required for PDF/A compliance
     });
+    if (signDescription) {
+        widgetDict.set(PDFName.of('TU'), PDFString.of(signDescription));
+    }
     const widgetDictRef = doc.context.register(widgetDict);
 
     // Annotate the widget on the given page
@@ -144,21 +173,15 @@ export const pdflibAddPlaceholder = ({
     page.node.set(PDFName.of('Annots'), annotations);
 
     // Add an AcroForm or update the existing one
-    let acroForm = doc.catalog.lookupMaybe(PDFName.of('AcroForm'), PDFDict);
-    if (typeof acroForm === 'undefined') {
-        // Need to create a new AcroForm
-        acroForm = doc.context.obj({Fields: []});
-        const acroFormRef = doc.context.register(acroForm);
-        doc.catalog.set(PDFName.of('AcroForm'), acroFormRef);
-    }
+    const acroForm = doc.catalog.getOrCreateAcroForm();
 
     /**
      * @type {PDFNumber}
      */
     let sigFlags;
-    if (acroForm.has(PDFName.of('SigFlags'))) {
+    if (acroForm.dict.has(PDFName.of('SigFlags'))) {
         // Already has some flags, will merge
-        sigFlags = acroForm.get(PDFName.of('SigFlags'));
+        sigFlags = acroForm.dict.get(PDFName.of('SigFlags'));
     } else {
         // Create blank flags
         sigFlags = PDFNumber.of(0);
@@ -166,11 +189,11 @@ export const pdflibAddPlaceholder = ({
     const updatedFlags = PDFNumber.of(
         sigFlags.asNumber() | SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
     );
-    acroForm.set(PDFName.of('SigFlags'), updatedFlags);
-    let fields = acroForm.get(PDFName.of('Fields'));
+    acroForm.dict.set(PDFName.of('SigFlags'), updatedFlags);
+    let fields = acroForm.dict.get(PDFName.of('Fields'));
     if (!(fields instanceof PDFArray)) {
         fields = doc.context.obj([]);
-        acroForm.set(PDFName.of('Fields'), fields);
+        acroForm.dict.set(PDFName.of('Fields'), fields);
     }
     fields.push(widgetDictRef);
 };

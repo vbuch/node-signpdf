@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
-var PDFDocument = require('pdf-lib').PDFDocument;
-var pdflibAddPlaceholder = require('@signpdf/placeholder-pdf-lib').pdflibAddPlaceholder;
+var PDFDocument = require('@adnsistemas/pdf-lib').PDFDocument;
+var pdflibAddPlaceholder = require('@adnsistemas/placeholder-pdf-lib').pdflibAddPlaceholder;
 var signpdf = require('@signpdf/signpdf').default;
 var P12Signer = require('@signpdf/signer-p12').P12Signer;
 
@@ -16,7 +16,7 @@ function work() {
     var signer = new P12Signer(certificateBuffer);
 
     // Load the document into PDF-LIB
-    PDFDocument.load(pdfBuffer).then(function (pdfDoc) {
+    PDFDocument.load(pdfBuffer, {forIncrementalUpdate: true}).then(function (pdfDoc) {
         // Add a placeholder for a signature.
         pdflibAddPlaceholder({
             pdfDoc: pdfDoc,

@@ -54,7 +54,7 @@ Start with `$ npm i -S @signpdf/signpdf @signpdf/placeholder-plain @signpdf/sign
 
 #### PDF-LIB
 
-`$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdf-lib pdf-lib @signpdf/signer-p12 node-forge` gets you started. Then comes the [the PDF-LIB example](/packages/examples/src/pdf-lib.js). PDF-LIB provides tremendous PDF API, it is very well documented and well supported.
+`$ npm i -S @signpdf/signpdf @adnsistemas/placeholder-pdf-lib @adnsistemas/pdf-lib @signpdf/signer-p12 node-forge` gets you started. Then comes the [the PDF-LIB example](/packages/examples/src/pdf-lib.js). PDF-LIB provides tremendous PDF API, it is very well documented and well supported.
   
 ## Packages
 
@@ -98,9 +98,9 @@ Works on top of `PDFKit 0.10.0` and given a `PDFDocument` that is in the works (
 
 Uses the process and knowledge from `placeholder-pdfkit010` on how to add e-signature placeholder but implements it with plain string operations (`.indexOf()`, `.replace()`, `.match()`, etc.). Because of the lack of semantics it is rather *fragile*. Additionally it doesn't support streams and only works on PDF version <= 1.3. Regardless of those disadvantages this helper seems to be the most popular among the users of `@signpdf`. When the placeholder is in place `@signpdf/signpdf` can complete the process.
 
-#### [@signpdf/placeholder-pdf-lib](/packages/placeholder-pdf-lib)
+#### [@adnsistemas/placeholder-pdf-lib](/packages/placeholder-pdf-lib)
 
-[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib)
+[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://npmjs.com/@adnsistemas%2Fplaceholder-pdf-lib)
 
 Works with PDF-LIB and given a loaded `PDFDocument`, adds an e-signature placeholder. When the placeholder is in place `@signpdf/signpdf` can complete the process.
 

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.2.7]
+
+- [placeholder-pdf-lib] Change library to @adnsistemas/pdf-lib
+
 ## [3.2.6]
 
 - [placeholder-pdf-lib] Fix AcroForm `/Fields` handling

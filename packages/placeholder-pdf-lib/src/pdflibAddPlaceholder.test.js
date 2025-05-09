@@ -1,6 +1,6 @@
 import {
     PDFArray, PDFDict, PDFDocument, PDFName, PDFObjectParser, PDFStream, PDFString,
-} from 'pdf-lib';
+} from '@adnsistemas/pdf-lib';
 import {readTestResource} from '@signpdf/internal-utils';
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER, SUBFILTER_ETSI_CADES_DETACHED, SignPdfError} from '@signpdf/utils';
 import {pdflibAddPlaceholder} from './pdflibAddPlaceholder';
@@ -35,6 +35,26 @@ describe(pdflibAddPlaceholder, () => {
         const input = readTestResource('w3dummy.pdf');
         expect(input.indexOf('/ByteRange')).toBe(-1);
         const pdfDoc = await PDFDocument.load(input);
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+        });
+        // Convert the PDFDocument to bytes
+        const pdfBytes = await pdfDoc.save({useObjectStreams: false});
+        // and then to buffer
+        const buffer = Buffer.from(pdfBytes);
+
+        expect(buffer).toBeInstanceOf(Buffer);
+        expect(buffer.indexOf('/ByteRange')).not.toBe(-1);
+        expect(buffer.indexOf('/Subtype /Widget')).not.toBe(-1);
+        expect(buffer.indexOf('/Filter /Adobe.PPKLite')).not.toBe(-1);
+    });
+
+    it('adds placeholder to a prepared document when open for incremental update', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        expect(input.indexOf('/ByteRange')).toBe(-1);
+        const pdfDoc = await PDFDocument.load(input, {forIncrementalUpdate: true});
 
         pdflibAddPlaceholder({
             pdfDoc,
@@ -94,6 +114,38 @@ describe(pdflibAddPlaceholder, () => {
         const input = readTestResource('w3dummy.pdf');
         expect(input.indexOf('/ByteRange')).toBe(-1);
         const pdfDoc = await PDFDocument.load(input);
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+        });
+
+        /**
+         * @type {PDFArray}
+         */
+        const annots = pdfDoc.getPage(0).node.lookup(PDFName.of('Annots'));
+
+        /**
+         * @type {PDFDict}
+         */
+        const widget = annots.lookup(annots.size() - 1, PDFDict);
+
+        /**
+         * @type {PDFDict}
+         */
+        const widgetData = parseObject(pdfDoc, widget.lookup(PDFName.of('V')));
+
+        expect(widget.get(PDFName.of('Subtype'))).toEqual(PDFName.of('Widget'));
+        expect(widgetData.get(PDFName.of('Reason'))).toEqual(PDFString.of(defaults.reason));
+        expect(widgetData.get(PDFName.of('ContactInfo'))).toEqual(PDFString.of(defaults.contactInfo));
+        expect(widgetData.get(PDFName.of('Location'))).toEqual(PDFString.of(defaults.location));
+        expect(widgetData.get(PDFName.of('Name'))).toEqual(PDFString.of(defaults.name));
+    });
+
+    it('placeholder contains reason, contactInfo, name, location, when using incremental updates', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        expect(input.indexOf('/ByteRange')).toBe(-1);
+        const pdfDoc = await PDFDocument.load(input, {forIncrementalUpdate: true});
 
         pdflibAddPlaceholder({
             pdfDoc,
@@ -344,6 +396,7 @@ describe(pdflibAddPlaceholder, () => {
             PDFName.of(DEFAULT_BYTE_RANGE_PLACEHOLDER).asString(),
         ]);
     });
+
     it('creates a new AcroForm Fields array when missing', async () => {
         const input = readTestResource('w3dummy.pdf');
         const pdfDoc = await PDFDocument.load(input);
@@ -382,5 +435,69 @@ describe(pdflibAddPlaceholder, () => {
 
         expect(fields).toBeInstanceOf(PDFArray);
         expect(fields.size()).toBe(1);
+    });
+
+    it('creates a new page when dims are provided', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input, {forIncrementalUpdate: true});
+        const ipc = pdfDoc.getPages().length;
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+            newPageDims: [500, 500],
+        });
+
+        const newipc = pdfDoc.getPages().length;
+        const newpage = pdfDoc.getPage(newipc - 1);
+        expect(newipc).toBe(ipc + 1);
+        expect(newpage.getWidth()).toBe(500);
+        expect(newpage.getHeight()).toBe(500);
+    });
+
+    it('sets the widget description when provided', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input, {forIncrementalUpdate: true});
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+            widgetName: 'SignTest1',
+            signDescription: 'Description Test',
+        });
+
+        const annotations = pdfDoc
+            .getPage(0).node
+            .lookup(PDFName.of('Annots'), PDFArray);
+        const widgetDict = annotations.lookup(annotations.size() - 1, PDFDict);
+        expect(widgetDict.get(PDFName.of('TU'))).toEqual(PDFString.of('Description Test'));
+    });
+
+    it('sets the visual representation, when function is provided', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input, {forIncrementalUpdate: true});
+
+        let called = 0;
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...defaults,
+            newPageDims: [500, 500],
+            visualRepresentation: (
+                doc,
+                pdfPage,
+                /* reason,
+                contactInfo,
+                name,
+                location,
+                signingTime, */
+            ) => {
+                pdfPage.drawText('Visual Representation', {x: 50, y: 50});
+                called += 1;
+            },
+        });
+        const newpage = pdfDoc.getPage(pdfDoc.getPages().length - 1);
+        expect(newpage.getWidth()).toBe(500);
+        expect(newpage.getHeight()).toBe(500);
+        expect(called).toBe(1);
     });
 });
