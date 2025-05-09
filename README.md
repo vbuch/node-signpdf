@@ -100,7 +100,7 @@ Uses the process and knowledge from `placeholder-pdfkit010` on how to add e-sign
 
 #### [@adnsistemas/placeholder-pdf-lib](/packages/placeholder-pdf-lib)
 
-[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://npmjs.com/@adnsistemas%2Fplaceholder-pdf-lib)
+[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://www.npmjs.com/package/@adnsistemas%2Fplaceholder-pdf-lib)
 
 Works with PDF-LIB and given a loaded `PDFDocument`, adds an e-signature placeholder. When the placeholder is in place `@signpdf/signpdf` can complete the process.
 

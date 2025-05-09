@@ -2,7 +2,7 @@
 
 for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/resources/logo-horizontal.svg?sanitize=true)](https://github.com/vbuch/node-signpdf/)
 
-[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://npmjs.com/@adnsistemas%2Fplaceholder-pdf-lib)
+[![npm version](https://badge.fury.io/js/@signpdf%2Fplaceholder-pdf-lib.svg)](https://www.npmjs.com/package/@adnsistemas%2Fplaceholder-pdf-lib)
 
 Works with `PDF-LIB` (@adnsistemas/pdf-lib) and given a PDFDocument that is in the works, adds an e-signature placeholder. When the PDF is ready you can convert it to Buffer and pass it to `@signpdf/signpdf` to complete the process.
 
