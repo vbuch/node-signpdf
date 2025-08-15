@@ -6,14 +6,16 @@ jobs:
   do-de-stuff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - run: yarn
       - run: ./node_modules/.bin/lerna run lint
       - run: ./node_modules/.bin/lerna run test -- --coverage
       - name: Coveralls (signpdf)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: signpdf
@@ -22,7 +24,7 @@ jobs:
           path-to-lcov: packages/signpdf/coverage/lcov.info
       - name: Coveralls (utils)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: utils
@@ -31,7 +33,7 @@ jobs:
           path-to-lcov: packages/utils/coverage/lcov.info
       - name: Coveralls (placeholder-pdfkit010)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: placeholder-pdfkit010
@@ -40,7 +42,7 @@ jobs:
           path-to-lcov: packages/placeholder-pdfkit010/coverage/lcov.info
       - name: Coveralls (placeholder-pdfkit)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: placeholder-pdfkit
@@ -49,7 +51,7 @@ jobs:
           path-to-lcov: packages/placeholder-pdfkit/coverage/lcov.info
       - name: Coveralls (placeholder-plain)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: placeholder-plain
@@ -58,7 +60,7 @@ jobs:
           path-to-lcov: packages/placeholder-plain/coverage/lcov.info
       - name: Coveralls (placeholder-pdf-lib)
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: placeholder-pdf-lib
@@ -67,14 +69,16 @@ jobs:
           path-to-lcov: packages/placeholder-pdf-lib/coverage/lcov.info
       - name: Close Coveralls
         if: ${{ !cancelled() }}
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
           carryforward: "signpdf,utils,placeholder-pdfkit010,placeholder-pdfkit,placeholder-plain"
   windows-test:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - run: yarn
       - run: ./node_modules/.bin/lerna run test

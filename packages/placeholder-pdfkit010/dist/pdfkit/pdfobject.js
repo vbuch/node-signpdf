@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _abstract_reference = _interopRequireDefault(require("./abstract_reference"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /*
 PDFObject by Devon Govett used below.
 The class is part of pdfkit. See https://github.com/foliojs/pdfkit

@@ -12,7 +12,7 @@ var _getPageRef = _interopRequireDefault(require("./getPageRef"));
 var _createBufferRootWithAcroform = _interopRequireDefault(require("./createBufferRootWithAcroform"));
 var _createBufferPageWithAnnotation = _interopRequireDefault(require("./createBufferPageWithAnnotation"));
 var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /* eslint-disable no-underscore-dangle */
 
 /**

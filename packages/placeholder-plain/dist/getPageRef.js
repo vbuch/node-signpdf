@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = getPageRef;
 var _getPagesDictionaryRef = _interopRequireDefault(require("./getPagesDictionaryRef"));
 var _findObject = _interopRequireDefault(require("./findObject"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /**
  * Finds the reference to a page.
  *

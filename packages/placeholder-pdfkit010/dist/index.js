@@ -37,4 +37,4 @@ Object.keys(_pdfkitReferenceMock).forEach(function (key) {
   });
 });
 var _pdfobject = _interopRequireDefault(require("./pdfkit/pdfobject"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
