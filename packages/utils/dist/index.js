@@ -16,7 +16,7 @@ Object.defineProperty(exports, "PDFAbstractReference", {
 Object.defineProperty(exports, "PDFObject", {
   enumerable: true,
   get: function () {
-    return _PDFObject.default;
+    return _PDFObject.PDFObject;
   }
 });
 var _const = require("./const");
@@ -103,7 +103,7 @@ Object.keys(_Signer).forEach(function (key) {
     }
   });
 });
-var _PDFObject = _interopRequireDefault(require("./PDFObject"));
+var _PDFObject = require("./PDFObject");
 var _PDFAbstractReference = _interopRequireDefault(require("./PDFAbstractReference"));
 var _PDFKitReferenceMock = require("./PDFKitReferenceMock");
 Object.keys(_PDFKitReferenceMock).forEach(function (key) {

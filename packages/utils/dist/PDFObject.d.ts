@@ -1,4 +1,4 @@
-export default class PDFObject {
+export class PDFObject {
     static convert(object: any, encryptFn?: any): any;
     static number(n: any): number;
 }

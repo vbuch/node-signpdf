@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.PDFObject = void 0;
 var _PDFAbstractReference = _interopRequireDefault(require("./PDFAbstractReference"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /*
@@ -131,4 +131,4 @@ class PDFObject {
     throw new Error(`unsupported number: ${n}`);
   }
 }
-exports.default = PDFObject;
+exports.PDFObject = PDFObject;
