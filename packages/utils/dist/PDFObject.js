@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _abstract_reference = _interopRequireDefault(require("./abstract_reference"));
+var _PDFAbstractReference = _interopRequireDefault(require("./PDFAbstractReference"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /*
 PDFObject by Devon Govett used below.
@@ -76,7 +76,7 @@ class PDFObject {
     if (Buffer.isBuffer(object)) {
       return `<${object.toString('hex')}>`;
     }
-    if (object instanceof _abstract_reference.default) {
+    if (object instanceof _PDFAbstractReference.default) {
       return object.toString();
     }
     if (object instanceof Date) {

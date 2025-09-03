@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.PDFKitReferenceMock = void 0;
-var _abstract_reference = _interopRequireDefault(require("./pdfkit/abstract_reference"));
+var _PDFAbstractReference = _interopRequireDefault(require("./PDFAbstractReference"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-class PDFKitReferenceMock extends _abstract_reference.default {
+class PDFKitReferenceMock extends _PDFAbstractReference.default {
   constructor(index, additionalData = undefined) {
     super();
     this.index = index;

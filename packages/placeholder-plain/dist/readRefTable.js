@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.getXref = exports.getLastTrailerPosition = exports.getFullXrefTable = exports.default = void 0;
 var _utils = require("@signpdf/utils");
 var _xrefToRefMap = _interopRequireDefault(require("./xrefToRefMap"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const getLastTrailerPosition = pdf => {
   const trailerStart = pdf.lastIndexOf(Buffer.from('trailer', 'utf8'));
   const trailer = pdf.slice(trailerStart, pdf.length - 6);

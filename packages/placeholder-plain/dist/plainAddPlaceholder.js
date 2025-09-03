@@ -12,7 +12,7 @@ var _getPageRef = _interopRequireDefault(require("./getPageRef"));
 var _createBufferRootWithAcroform = _interopRequireDefault(require("./createBufferRootWithAcroform"));
 var _createBufferPageWithAnnotation = _interopRequireDefault(require("./createBufferPageWithAnnotation"));
 var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /* eslint-disable no-underscore-dangle */
 
 /**
@@ -77,11 +77,11 @@ const plainAddPlaceholder = ({
       const index = knownIndex != null ? knownIndex : info.xref.maxIndex;
       addedReferences.set(index, pdf.length + 1); // + 1 new line
 
-      pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${index} 0 obj\n`), Buffer.from(_placeholderPdfkit.PDFObject.convert(input)), Buffer.from('\nendobj\n')]);
-      return new _placeholderPdfkit.PDFKitReferenceMock(info.xref.maxIndex);
+      pdf = Buffer.concat([pdf, Buffer.from('\n'), Buffer.from(`${index} 0 obj\n`), Buffer.from(_utils.PDFObject.convert(input)), Buffer.from('\nendobj\n')]);
+      return new _utils.PDFKitReferenceMock(info.xref.maxIndex);
     },
     page: {
-      dictionary: new _placeholderPdfkit.PDFKitReferenceMock(pageIndex, {
+      dictionary: new _utils.PDFKitReferenceMock(pageIndex, {
         data: {
           Annots: []
         }

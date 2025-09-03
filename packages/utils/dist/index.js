@@ -3,9 +3,26 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var _exportNames = {
+  PDFObject: true,
+  PDFAbstractReference: true
+};
+Object.defineProperty(exports, "PDFAbstractReference", {
+  enumerable: true,
+  get: function () {
+    return _PDFAbstractReference.default;
+  }
+});
+Object.defineProperty(exports, "PDFObject", {
+  enumerable: true,
+  get: function () {
+    return _PDFObject.default;
+  }
+});
 var _const = require("./const");
 Object.keys(_const).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _const[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -17,6 +34,7 @@ Object.keys(_const).forEach(function (key) {
 var _convertBuffer = require("./convertBuffer");
 Object.keys(_convertBuffer).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _convertBuffer[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -28,6 +46,7 @@ Object.keys(_convertBuffer).forEach(function (key) {
 var _extractSignature = require("./extractSignature");
 Object.keys(_extractSignature).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _extractSignature[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -39,6 +58,7 @@ Object.keys(_extractSignature).forEach(function (key) {
 var _findByteRange = require("./findByteRange");
 Object.keys(_findByteRange).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _findByteRange[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -50,6 +70,7 @@ Object.keys(_findByteRange).forEach(function (key) {
 var _removeTrailingNewLine = require("./removeTrailingNewLine");
 Object.keys(_removeTrailingNewLine).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _removeTrailingNewLine[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -61,6 +82,7 @@ Object.keys(_removeTrailingNewLine).forEach(function (key) {
 var _SignPdfError = require("./SignPdfError");
 Object.keys(_SignPdfError).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _SignPdfError[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -72,6 +94,7 @@ Object.keys(_SignPdfError).forEach(function (key) {
 var _Signer = require("./Signer");
 Object.keys(_Signer).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _Signer[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -80,3 +103,18 @@ Object.keys(_Signer).forEach(function (key) {
     }
   });
 });
+var _PDFObject = _interopRequireDefault(require("./PDFObject"));
+var _PDFAbstractReference = _interopRequireDefault(require("./PDFAbstractReference"));
+var _PDFKitReferenceMock = require("./PDFKitReferenceMock");
+Object.keys(_PDFKitReferenceMock).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _PDFKitReferenceMock[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _PDFKitReferenceMock[key];
+    }
+  });
+});
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }

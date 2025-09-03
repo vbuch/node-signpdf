@@ -4,9 +4,8 @@ import {
     SIG_FLAGS,
     SUBFILTER_ADOBE_PKCS7_DETACHED,
     ANNOTATION_FLAGS,
+    PDFKitReferenceMock,
 } from '@signpdf/utils';
-// eslint-disable-next-line import/no-unresolved
-import {PDFKitReferenceMock} from './pdfkitReferenceMock';
 
 /**
 * @typedef {object} InputType

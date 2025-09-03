@@ -5,4 +5,7 @@ export * from "./findByteRange";
 export * from "./removeTrailingNewLine";
 export * from "./SignPdfError";
 export * from "./Signer";
+export * from "./PDFKitReferenceMock";
+export { default as PDFObject } from "./PDFObject";
+export { default as PDFAbstractReference } from "./PDFAbstractReference";
 //# sourceMappingURL=index.d.ts.map
