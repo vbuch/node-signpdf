@@ -5,6 +5,6 @@ export * from './findByteRange';
 export * from './removeTrailingNewLine';
 export * from './SignPdfError';
 export * from './Signer';
-export {default as PDFObject} from './PDFObject';
+export {PDFObject} from './PDFObject';
 export {default as PDFAbstractReference} from './PDFAbstractReference';
 export * from './PDFKitReferenceMock';
