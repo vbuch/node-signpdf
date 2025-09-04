@@ -1,5 +1,4 @@
 import {PDFObject} from './PDFObject';
-import {PDFAbstractReference} from './PDFAbstractReference';
 import {PDFKitReferenceMock} from './PDFKitReferenceMock';
 
 describe('PDFObject', () => {
@@ -27,21 +26,21 @@ describe('PDFObject', () => {
         });
 
         it('converts String objects to PDF strings with escaping', () => {
-            expect(PDFObject.convert(new String('hello'))).toBe('(hello)');
-            expect(PDFObject.convert(new String(''))).toBe('()');
-            expect(PDFObject.convert(new String('line1\nline2'))).toBe('(line1\\nline2)');
-            expect(PDFObject.convert(new String('tab\there'))).toBe('(tab\\there)');
-            expect(PDFObject.convert(new String('return\rhere'))).toBe('(return\\rhere)');
-            expect(PDFObject.convert(new String('backspace\bhere'))).toBe('(backspace\\bhere)');
-            expect(PDFObject.convert(new String('formfeed\fhere'))).toBe('(formfeed\\fhere)');
-            expect(PDFObject.convert(new String('paren(test)'))).toBe('(paren\\(test\\))');
-            expect(PDFObject.convert(new String('backslash\\test'))).toBe('(backslash\\\\test)');
+            expect(PDFObject.convert(Object('hello'))).toBe('(hello)');
+            expect(PDFObject.convert(Object(''))).toBe('()');
+            expect(PDFObject.convert(Object('line1\nline2'))).toBe('(line1\\nline2)');
+            expect(PDFObject.convert(Object('tab\there'))).toBe('(tab\\there)');
+            expect(PDFObject.convert(Object('return\rhere'))).toBe('(return\\rhere)');
+            expect(PDFObject.convert(Object('backspace\bhere'))).toBe('(backspace\\bhere)');
+            expect(PDFObject.convert(Object('formfeed\fhere'))).toBe('(formfeed\\fhere)');
+            expect(PDFObject.convert(Object('paren(test)'))).toBe('(paren\\(test\\))');
+            expect(PDFObject.convert(Object('backslash\\test'))).toBe('(backslash\\\\test)');
         });
 
         it('converts Buffers to hex strings', () => {
             const buffer = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f]);
             expect(PDFObject.convert(buffer)).toBe('<48656c6c6f>');
-            
+
             const emptyBuffer = Buffer.from([]);
             expect(PDFObject.convert(emptyBuffer)).toBe('<>');
         });
@@ -81,13 +80,13 @@ describe('PDFObject', () => {
                 Parent: mockRef,
                 Resources: {
                     Font: {
-                        F1: 'Helvetica'
-                    }
+                        F1: 'Helvetica',
+                    },
                 },
                 MediaBox: [0, 0, 612, 792],
-                Contents: Buffer.from([0x48, 0x69])
+                Contents: Buffer.from([0x48, 0x69]),
             };
-            
+
             const result = PDFObject.convert(complexObj);
             expect(result).toContain('/Type /Page');
             expect(result).toContain('/Parent 42 0 R');
@@ -97,24 +96,66 @@ describe('PDFObject', () => {
 
         it('handles encryption function when provided with String objects', () => {
             const encryptFn = jest.fn((buffer) => Buffer.from(buffer.toString().toUpperCase()));
-            
+
             // Test with String object (not primitive string)
-            const result = PDFObject.convert(new String('hello'), encryptFn);
+            const result = PDFObject.convert(Object('hello'), encryptFn);
             expect(encryptFn).toHaveBeenCalledWith(Buffer.from('hello', 'ascii'));
             expect(result).toBe('(HELLO)');
         });
 
         it('handles encryption function with dates', () => {
-            const encryptFn = jest.fn((buffer) => buffer); // Pass through
+            const encryptFn = jest.fn(() => Buffer.from('test\\with()chars\n')); // Return string with escapable chars
             const date = new Date('2023-01-15T10:30:45.000Z');
-            
+
             const result = PDFObject.convert(date, encryptFn);
             expect(encryptFn).toHaveBeenCalledWith(Buffer.from('D:20230115103045Z', 'ascii'));
-            expect(result).toBe('(D:20230115103045Z)');
+            expect(result).toBe('(test\\\\with\\(\\)chars\\n)'); // Escaped version
         });
 
         it('properly handles undefined values', () => {
             expect(PDFObject.convert(undefined)).toBe('undefined');
+        });
+
+        it('handles unicode strings in String objects', () => {
+            const unicodeString = Object('Hello 世界');
+            const result = PDFObject.convert(unicodeString);
+            // Unicode strings should be wrapped in parentheses and contain BOM
+            expect(result.startsWith('(')).toBe(true);
+            expect(result.endsWith(')')).toBe(true);
+            expect(result.length).toBeGreaterThan(12); // Should be longer due to unicode encoding
+        });
+
+        it('handles objects with values containing << (nested objects)', () => {
+            const objWithNestedDict = {
+                Type: 'Catalog',
+                NestedDict: '<<\n/Type /Page\n>>',
+            };
+            const result = PDFObject.convert(objWithNestedDict);
+            expect(result).toContain('/NestedDict <<\n/Type /Page\n>>');
+        });
+
+        it('handles objects with stream key', () => {
+            const objWithStream = {
+                Length: 12,
+                stream: 'Hello World!',
+            };
+            const result = PDFObject.convert(objWithStream);
+            expect(result).toContain('stream\nHello World!\nendstream');
+            expect(result).toContain('/Length 12');
+        });
+
+        it('handles all convert method branches properly', () => {
+            // Test the final fallback case with types that don't match other branches
+            expect(PDFObject.convert(() => {})).toBe('() => {}');
+            // Symbol conversion will throw, but we want to test normal fallback
+            expect(PDFObject.convert('nonMatchingCase')).toBe('/nonMatchingCase');
+        });
+
+        it('covers Date formatting with all pad function calls', () => {
+            // Test Date with single digits to ensure pad function is fully tested
+            const date = new Date('2001-02-03T04:05:06.000Z');
+            const result = PDFObject.convert(date);
+            expect(result).toBe('(D:20010203040506Z)');
         });
     });
 
