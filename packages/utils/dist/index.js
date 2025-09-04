@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var _exportNames = {
-  getVersion: true,
-  isUtilsPackage: true,
   PDFObject: true
 };
 Object.defineProperty(exports, "PDFObject", {
@@ -14,7 +12,6 @@ Object.defineProperty(exports, "PDFObject", {
     return _PDFObject.PDFObject;
   }
 });
-exports.isUtilsPackage = exports.getVersion = void 0;
 var _const = require("./const");
 Object.keys(_const).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -124,12 +121,3 @@ Object.keys(_PDFKitReferenceMock).forEach(function (key) {
     }
   });
 });
-// Export all utilities from various modules
-
-// Add a testable function to ensure coverage
-const getVersion = () => '3.2.4';
-
-// Utility function that can be tested
-exports.getVersion = getVersion;
-const isUtilsPackage = packageName => packageName === '@signpdf/utils';
-exports.isUtilsPackage = isUtilsPackage;

@@ -29,11 +29,6 @@ describe('index exports', () => {
         expect(utils.DEFAULT_SIGNATURE_LENGTH).toBeDefined();
         expect(typeof utils.DEFAULT_BYTE_RANGE_PLACEHOLDER).toBe('string');
         expect(typeof utils.DEFAULT_SIGNATURE_LENGTH).toBe('number');
-
-        // Test the new utility functions
-        expect(utils.getVersion()).toBe('3.2.4');
-        expect(utils.isUtilsPackage('@signpdf/utils')).toBe(true);
-        expect(utils.isUtilsPackage('other-package')).toBe(false);
     });
 
     it('can instantiate and use exported classes', () => {
