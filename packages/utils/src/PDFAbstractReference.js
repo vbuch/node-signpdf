@@ -9,7 +9,7 @@ Modifications may have been applied for the purposes of node-signpdf.
 PDFAbstractReference - abstract class for PDF reference
 */
 
-class PDFAbstractReference {
+export class PDFAbstractReference {
     toString() {
         throw new Error('Must be implemented by subclasses');
     }
@@ -18,5 +18,3 @@ class PDFAbstractReference {
         // noop
     }
 }
-
-export default PDFAbstractReference;

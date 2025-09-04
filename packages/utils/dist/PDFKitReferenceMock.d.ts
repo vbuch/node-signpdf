@@ -3,5 +3,5 @@ export class PDFKitReferenceMock extends PDFAbstractReference {
     index: any;
     toString(): string;
 }
-import PDFAbstractReference from './PDFAbstractReference';
+import { PDFAbstractReference } from './PDFAbstractReference';
 //# sourceMappingURL=PDFKitReferenceMock.d.ts.map

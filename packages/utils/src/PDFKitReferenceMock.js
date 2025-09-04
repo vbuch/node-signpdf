@@ -1,4 +1,4 @@
-import PDFAbstractReference from './PDFAbstractReference';
+import {PDFAbstractReference} from './PDFAbstractReference';
 
 export class PDFKitReferenceMock extends PDFAbstractReference {
     constructor(index, additionalData = undefined) {

@@ -1,5 +1,4 @@
-export default PDFAbstractReference;
-declare class PDFAbstractReference {
+export class PDFAbstractReference {
     toString(): void;
     end(): void;
 }

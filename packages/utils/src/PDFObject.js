@@ -5,7 +5,7 @@ LICENSE: MIT. Included in this folder.
 Modifications may have been applied for the purposes of node-signpdf.
 */
 
-import PDFAbstractReference from './PDFAbstractReference';
+import {PDFAbstractReference} from './PDFAbstractReference';
 /*
 PDFObject - converts JavaScript types into their corresponding PDF types.
 By Devon Govett
