@@ -9,7 +9,7 @@ var _exportNames = {
 Object.defineProperty(exports, "PDFObject", {
   enumerable: true,
   get: function () {
-    return _pdfobject.default;
+    return _utils.PDFObject;
   }
 });
 var _pdfkitAddPlaceholder = require("./pdfkitAddPlaceholder");
@@ -24,5 +24,4 @@ Object.keys(_pdfkitAddPlaceholder).forEach(function (key) {
     }
   });
 });
-var _pdfobject = _interopRequireDefault(require("./pdfkit/pdfobject"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _utils = require("@signpdf/utils");
