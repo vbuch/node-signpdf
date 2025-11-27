@@ -1,6 +1,6 @@
 {
     "name": "@signpdf/placeholder-plain",
-    "version": "3.2.4",
+    "version": "3.2.5",
     "description": "Try to add a signature placeholder to a PDF using plain string modifications.",
     "repository": {
         "type": "git",
@@ -48,7 +48,7 @@
         "build:types:verify": "tsd --files=index.test-d.ts"
     },
     "dependencies": {
-        "@signpdf/placeholder-pdfkit010": "^3.2.4",
+        "@signpdf/placeholder-pdfkit010": "^3.2.5",
         "@signpdf/utils": "^3.2.4"
     },
     "devDependencies": {

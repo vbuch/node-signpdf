@@ -116,6 +116,7 @@ export const pdfkitAddPlaceholder = ({
         const acroFormFields = acroForm.slice(acroForm.indexOf('/Fields [') + 9, acroForm.indexOf(']'));
         fieldIds = acroFormFields
             .split(' ')
+            .filter(Boolean)
             .filter((element, i) => i % 3 === 0)
             .map((fieldId) => new PDFKitReferenceMock(fieldId));
     }

@@ -71,3 +71,10 @@ jobs:
         with:
           parallel-finished: true
           carryforward: "signpdf,utils,placeholder-pdfkit010,placeholder-pdfkit,placeholder-plain"
+  windows-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - run: yarn
+      - run: ./node_modules/.bin/lerna run test
