@@ -53,7 +53,6 @@
     "@signpdf/eslint-config": "^3.2.3",
     "@signpdf/internal-utils": "^3.2.0",
     "@types/node": ">=12.0.0",
-    "@types/node-forge": "^1.2.1",
     "assertion-error": "^1.1.0",
     "babel-jest": "^27.3.1",
     "babel-plugin-module-resolver": "^3.1.1",
@@ -65,7 +64,6 @@
     "eslint-plugin-jest": "^25.2.4",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
-    "node-forge": "^1.2.1",
     "pdfkit": "~0.10.0",
     "typescript": "^5.2.2"
   },
