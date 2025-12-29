@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [3.3.0]
+
+- [placeholder-plain] Decouple from placeholder-pdfkit010 and pdfkit
+- Bumped dependencies (@babel/runtime, @babel/helpers, node-forge)
+
 ## [3.2.6]
 
 - [placeholder-pdf-lib] Fix AcroForm `/Fields` handling

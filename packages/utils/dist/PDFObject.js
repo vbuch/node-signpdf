@@ -3,9 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
-var _abstract_reference = _interopRequireDefault(require("./abstract_reference"));
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+exports.PDFObject = void 0;
+var _PDFAbstractReference = require("./PDFAbstractReference");
 /*
 PDFObject by Devon Govett used below.
 The class is part of pdfkit. See https://github.com/foliojs/pdfkit
@@ -76,7 +75,7 @@ class PDFObject {
     if (Buffer.isBuffer(object)) {
       return `<${object.toString('hex')}>`;
     }
-    if (object instanceof _abstract_reference.default) {
+    if (object instanceof _PDFAbstractReference.PDFAbstractReference) {
       return object.toString();
     }
     if (object instanceof Date) {
@@ -131,4 +130,4 @@ class PDFObject {
     throw new Error(`unsupported number: ${n}`);
   }
 }
-exports.default = PDFObject;
+exports.PDFObject = PDFObject;

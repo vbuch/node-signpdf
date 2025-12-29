@@ -1,13 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 import {
     pdfkitAddPlaceholder,
-    PDFKitReferenceMock,
-    PDFObject,
 } from '@signpdf/placeholder-pdfkit010';
 import {
     removeTrailingNewLine,
     DEFAULT_SIGNATURE_LENGTH,
     SUBFILTER_ADOBE_PKCS7_DETACHED,
+    PDFKitReferenceMock,
+    PDFObject,
 } from '@signpdf/utils';
 
 import getIndexFromRef from './getIndexFromRef';
