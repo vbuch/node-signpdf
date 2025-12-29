@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/placeholder-pdfkit",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "Use foliojs/PDFKit 0.11+ to insert a signature placeholder.",
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "build:types:verify": "tsd --files=index.test-d.ts"
   },
   "dependencies": {
-    "@signpdf/utils": "^3.2.4"
+    "@signpdf/utils": "^3.3.0"
   },
   "peerDependencies": {
     "pdfkit": "^0.11.0"

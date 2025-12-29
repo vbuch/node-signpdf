@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/signer-p12",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "Sign using a P12 certificate.",
   "repository": {
     "type": "git",
@@ -50,7 +50,7 @@
     "build:types:verify": "tsd --files=index.test-d.ts"
   },
   "dependencies": {
-    "@signpdf/utils": "^3.2.4"
+    "@signpdf/utils": "^3.3.0"
   },
   "peerDependencies": {
     "node-forge": "^1.3.3"

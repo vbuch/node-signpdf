@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/utils",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "Utilities for the @signpdf packages.",
   "repository": {
     "type": "git",

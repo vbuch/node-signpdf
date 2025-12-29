@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/signpdf",
-  "version": "3.2.5",
+  "version": "3.3.0",
   "description": "Simple signing of PDFs in node.",
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
     "build:types:verify": "tsd --files=index.test-d.ts"
   },
   "dependencies": {
-    "@signpdf/utils": "^3.2.4"
+    "@signpdf/utils": "^3.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
@@ -59,9 +59,9 @@
     "@babel/preset-env": "^7.4.2",
     "@signpdf/eslint-config": "^3.2.3",
     "@signpdf/internal-utils": "^3.2.0",
-    "@signpdf/placeholder-pdfkit010": "^3.2.5",
-    "@signpdf/placeholder-plain": "^3.2.5",
-    "@signpdf/signer-p12": "^3.2.4",
+    "@signpdf/placeholder-pdfkit010": "^3.3.0",
+    "@signpdf/placeholder-plain": "^3.3.0",
+    "@signpdf/signer-p12": "^3.3.0",
     "@types/node": ">=12.0.0",
     "assertion-error": "^1.1.0",
     "babel-jest": "^27.3.1",
