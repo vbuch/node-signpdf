@@ -49,6 +49,23 @@ import {
 */
 
 /**
+ * Returns true if the string contains non-ASCII characters that require HEX encoding.
+ * @param {string} str
+ * @returns {boolean}
+ */
+const needsHexEncoding = (str) => str.split('').some((c) => c.charCodeAt(0) > 127);
+
+/**
+ * Creates the appropriate PDFString type based on the content.
+ * Uses PDFHexString for Unicode text and PDFString for ASCII-only text.
+ * @param {string} str
+ * @returns {PDFHexString|PDFString}
+ */
+const createPDFString = (str) => (
+    needsHexEncoding(str) ? PDFHexString.fromText(str) : PDFString.of(str)
+);
+
+/**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.
  *
  * Alters the passed pdfDoc and returns void.
@@ -98,11 +115,11 @@ export const pdflibAddPlaceholder = ({
         SubFilter: subFilter,
         ByteRange: byteRange,
         Contents: placeholder,
-        Reason: PDFHexString.fromText(reason),
+        Reason: createPDFString(reason),
         M: PDFString.fromDate(signingTime ?? new Date()),
-        ContactInfo: PDFHexString.fromText(contactInfo),
-        Name: PDFHexString.fromText(name),
-        Location: PDFHexString.fromText(location),
+        ContactInfo: createPDFString(contactInfo),
+        Name: createPDFString(name),
+        Location: createPDFString(location),
         Prop_Build: {
             Filter: {Name: 'Adobe.PPKLite'},
             ...appBuild,

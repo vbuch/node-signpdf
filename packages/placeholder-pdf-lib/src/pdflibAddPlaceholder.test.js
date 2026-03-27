@@ -116,10 +116,10 @@ describe(pdflibAddPlaceholder, () => {
         const widgetData = parseObject(pdfDoc, widget.lookup(PDFName.of('V')));
 
         expect(widget.get(PDFName.of('Subtype'))).toEqual(PDFName.of('Widget'));
-        expect(widgetData.get(PDFName.of('Reason'))).toEqual(PDFHexString.fromText(defaults.reason));
-        expect(widgetData.get(PDFName.of('ContactInfo'))).toEqual(PDFHexString.fromText(defaults.contactInfo));
-        expect(widgetData.get(PDFName.of('Location'))).toEqual(PDFHexString.fromText(defaults.location));
-        expect(widgetData.get(PDFName.of('Name'))).toEqual(PDFHexString.fromText(defaults.name));
+        expect(widgetData.get(PDFName.of('Reason'))).toEqual(PDFString.of(defaults.reason));
+        expect(widgetData.get(PDFName.of('ContactInfo'))).toEqual(PDFString.of(defaults.contactInfo));
+        expect(widgetData.get(PDFName.of('Location'))).toEqual(PDFString.of(defaults.location));
+        expect(widgetData.get(PDFName.of('Name'))).toEqual(PDFString.of(defaults.name));
     });
 
     it('allows defining signing time', async () => {
@@ -425,10 +425,10 @@ describe(pdflibAddPlaceholder, () => {
         const location = widgetData.get(PDFName.of('Location'));
 
         // These should be PDFHexString instances, not PDFString
-        expect(reason.constructor.name).toBe('PDFHexString');
-        expect(contactInfo.constructor.name).toBe('PDFHexString');
-        expect(name.constructor.name).toBe('PDFHexString');
-        expect(location.constructor.name).toBe('PDFHexString');
+        expect(reason).toBeInstanceOf(PDFHexString);
+        expect(contactInfo).toBeInstanceOf(PDFHexString);
+        expect(name).toBeInstanceOf(PDFHexString);
+        expect(location).toBeInstanceOf(PDFHexString);
 
         // The decoded text should match the original Japanese text
         expect(reason.decodeText()).toBe(japaneseDefaults.reason);

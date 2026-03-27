@@ -45,6 +45,21 @@ var _pdfLib = require("pdf-lib");
 */
 
 /**
+ * Returns true if the string contains non-ASCII characters that require HEX encoding.
+ * @param {string} str
+ * @returns {boolean}
+ */
+const needsHexEncoding = str => str.split('').some(c => c.charCodeAt(0) > 127);
+
+/**
+ * Creates the appropriate PDFString type based on the content.
+ * Uses PDFHexString for Unicode text and PDFString for ASCII-only text.
+ * @param {string} str
+ * @returns {PDFHexString|PDFString}
+ */
+const createPDFString = str => needsHexEncoding(str) ? _pdfLib.PDFHexString.fromText(str) : _pdfLib.PDFString.of(str);
+
+/**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.
  *
  * Alters the passed pdfDoc and returns void.
@@ -95,11 +110,11 @@ const pdflibAddPlaceholder = ({
     SubFilter: subFilter,
     ByteRange: byteRange,
     Contents: placeholder,
-    Reason: _pdfLib.PDFHexString.fromText(reason),
+    Reason: createPDFString(reason),
     M: _pdfLib.PDFString.fromDate(signingTime !== null && signingTime !== void 0 ? signingTime : new Date()),
-    ContactInfo: _pdfLib.PDFHexString.fromText(contactInfo),
-    Name: _pdfLib.PDFHexString.fromText(name),
-    Location: _pdfLib.PDFHexString.fromText(location),
+    ContactInfo: createPDFString(contactInfo),
+    Name: createPDFString(name),
+    Location: createPDFString(location),
     Prop_Build: {
       Filter: {
         Name: 'Adobe.PPKLite'
@@ -121,7 +136,6 @@ const pdflibAddPlaceholder = ({
     BBox: widgetRect,
     Resources: {} // Necessary to avoid Acrobat bug (see https://stackoverflow.com/a/73011571)
   });
-
   const widgetDict = doc.context.obj({
     Type: 'Annot',
     Subtype: 'Widget',
@@ -135,7 +149,6 @@ const pdflibAddPlaceholder = ({
       N: doc.context.register(apStream)
     } // Required for PDF/A compliance
   });
-
   const widgetDictRef = doc.context.register(widgetDict);
 
   // Annotate the widget on the given page
