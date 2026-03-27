@@ -38,7 +38,7 @@
         "node": ">=12"
     },
     "scripts": {
-        "test": "./node_modules/.bin/jest",
+        "test": "jest",
         "build": "yarn build:clean && yarn build:compile && yarn build:types",
         "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./",
         "build:clean": "rm -rf ./dist/*",
