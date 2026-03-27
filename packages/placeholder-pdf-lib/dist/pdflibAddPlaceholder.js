@@ -95,11 +95,11 @@ const pdflibAddPlaceholder = ({
     SubFilter: subFilter,
     ByteRange: byteRange,
     Contents: placeholder,
-    Reason: _pdfLib.PDFString.of(reason),
+    Reason: _pdfLib.PDFHexString.fromText(reason),
     M: _pdfLib.PDFString.fromDate(signingTime !== null && signingTime !== void 0 ? signingTime : new Date()),
-    ContactInfo: _pdfLib.PDFString.of(contactInfo),
-    Name: _pdfLib.PDFString.of(name),
-    Location: _pdfLib.PDFString.of(location),
+    ContactInfo: _pdfLib.PDFHexString.fromText(contactInfo),
+    Name: _pdfLib.PDFHexString.fromText(name),
+    Location: _pdfLib.PDFHexString.fromText(location),
     Prop_Build: {
       Filter: {
         Name: 'Adobe.PPKLite'

@@ -1,5 +1,5 @@
 import {
-    PDFArray, PDFDict, PDFDocument, PDFName, PDFObjectParser, PDFStream, PDFString,
+    PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFObjectParser, PDFStream, PDFString,
 } from 'pdf-lib';
 import {readTestResource} from '@signpdf/internal-utils';
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER, SUBFILTER_ETSI_CADES_DETACHED, SignPdfError} from '@signpdf/utils';
@@ -116,10 +116,10 @@ describe(pdflibAddPlaceholder, () => {
         const widgetData = parseObject(pdfDoc, widget.lookup(PDFName.of('V')));
 
         expect(widget.get(PDFName.of('Subtype'))).toEqual(PDFName.of('Widget'));
-        expect(widgetData.get(PDFName.of('Reason'))).toEqual(PDFString.of(defaults.reason));
-        expect(widgetData.get(PDFName.of('ContactInfo'))).toEqual(PDFString.of(defaults.contactInfo));
-        expect(widgetData.get(PDFName.of('Location'))).toEqual(PDFString.of(defaults.location));
-        expect(widgetData.get(PDFName.of('Name'))).toEqual(PDFString.of(defaults.name));
+        expect(widgetData.get(PDFName.of('Reason'))).toEqual(PDFHexString.fromText(defaults.reason));
+        expect(widgetData.get(PDFName.of('ContactInfo'))).toEqual(PDFHexString.fromText(defaults.contactInfo));
+        expect(widgetData.get(PDFName.of('Location'))).toEqual(PDFHexString.fromText(defaults.location));
+        expect(widgetData.get(PDFName.of('Name'))).toEqual(PDFHexString.fromText(defaults.name));
     });
 
     it('allows defining signing time', async () => {
@@ -382,5 +382,58 @@ describe(pdflibAddPlaceholder, () => {
 
         expect(fields).toBeInstanceOf(PDFArray);
         expect(fields.size()).toBe(1);
+    });
+
+    it('handles Japanese characters in signature info fields', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const pdfDoc = await PDFDocument.load(input);
+
+        const japaneseDefaults = {
+            reason: '日本語の理由', // Japanese reason
+            contactInfo: '連絡先@example.com', // Japanese contact info
+            name: '田中太郎', // Japanese name
+            location: '東京、日本', // Japanese location (Tokyo, Japan)
+        };
+
+        pdflibAddPlaceholder({
+            pdfDoc,
+            ...japaneseDefaults,
+        });
+
+        /**
+         * @type {PDFArray}
+         */
+        const annots = pdfDoc.getPage(0).node.lookup(PDFName.of('Annots'));
+
+        /**
+         * @type {PDFDict}
+         */
+        const widget = annots.lookup(annots.size() - 1, PDFDict);
+
+        /**
+         * @type {PDFDict}
+         */
+        const widgetData = parseObject(pdfDoc, widget.lookup(PDFName.of('V')));
+
+        expect(widget.get(PDFName.of('Subtype'))).toEqual(PDFName.of('Widget'));
+
+        // The signature fields should be properly encoded as hex strings
+        // to preserve Japanese characters
+        const reason = widgetData.get(PDFName.of('Reason'));
+        const contactInfo = widgetData.get(PDFName.of('ContactInfo'));
+        const name = widgetData.get(PDFName.of('Name'));
+        const location = widgetData.get(PDFName.of('Location'));
+
+        // These should be PDFHexString instances, not PDFString
+        expect(reason.constructor.name).toBe('PDFHexString');
+        expect(contactInfo.constructor.name).toBe('PDFHexString');
+        expect(name.constructor.name).toBe('PDFHexString');
+        expect(location.constructor.name).toBe('PDFHexString');
+
+        // The decoded text should match the original Japanese text
+        expect(reason.decodeText()).toBe(japaneseDefaults.reason);
+        expect(contactInfo.decodeText()).toBe(japaneseDefaults.contactInfo);
+        expect(name.decodeText()).toBe(japaneseDefaults.name);
+        expect(location.decodeText()).toBe(japaneseDefaults.location);
     });
 });
