@@ -35,7 +35,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=22"
   },
   "scripts": {
     "test": "./node_modules/.bin/jest",
@@ -59,7 +59,7 @@
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "^7.4.2",
     "@signpdf/internal-utils": "^3.2.0",
-    "@types/node": ">=12.0.0",
+    "@types/node": ">=22.0.0",
     "assertion-error": "^1.1.0",
     "babel-jest": "^27.3.1",
     "babel-plugin-module-resolver": "^3.1.1",
