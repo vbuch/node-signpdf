@@ -9,7 +9,7 @@
     "lint": "eslint -c .eslintrc --ignore-path ../../.eslintignore ./"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=22"
   },
   "repository": {
     "type": "git",

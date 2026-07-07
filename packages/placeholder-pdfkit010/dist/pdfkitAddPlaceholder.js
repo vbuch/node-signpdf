@@ -126,7 +126,6 @@ const pdfkitAddPlaceholder = ({
     F: _utils.ANNOTATION_FLAGS.PRINT,
     P: pdf.page.dictionary // eslint-disable-line no-underscore-dangle
   });
-
   pdf.page.dictionary.data.Annots = [widget];
   // Include the widget in a page
   let form;

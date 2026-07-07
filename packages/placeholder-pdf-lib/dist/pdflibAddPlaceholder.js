@@ -121,7 +121,6 @@ const pdflibAddPlaceholder = ({
     BBox: widgetRect,
     Resources: {} // Necessary to avoid Acrobat bug (see https://stackoverflow.com/a/73011571)
   });
-
   const widgetDict = doc.context.obj({
     Type: 'Annot',
     Subtype: 'Widget',
@@ -135,7 +134,6 @@ const pdflibAddPlaceholder = ({
       N: doc.context.register(apStream)
     } // Required for PDF/A compliance
   });
-
   const widgetDictRef = doc.context.register(widgetDict);
 
   // Annotate the widget on the given page
