@@ -163,7 +163,7 @@ const signedPdf = await signpdf.sign(pdfBuffer, signer);
 
 ### pdfsign.js
 
-The signing flow of `@signpdf/signpdf` and `@signpdf/signer-p12` is a rework of what was already [in pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek).
+The signing flow of `@signpdf/signpdf` and `@signpdf/signer-p12` is a rework of what was already in [pdfsign.js](https://github.com/Communication-Systems-Group/pdfsign.js/blob/master/src/js/main.js#L594) so thanks go to [@tbocek](https://github.com/tbocek).
 
 ## [Contributing](/CONTRIBUTING.md)
 
