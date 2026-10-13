@@ -89,4 +89,26 @@ describe(extractSignature, () => {
         const extracted = extractSignature(makeFakeSignedPdf(der, 0));
         expect(Buffer.from(extracted.signature, 'binary')).toEqual(der);
     });
+
+    it('preserves the zero length byte of an empty DER SEQUENCE', () => {
+        const der = Buffer.from('3000', 'hex');
+        const extracted = extractSignature(makeFakeSignedPdf(der, 4));
+
+        expect(Buffer.from(extracted.signature, 'binary')).toEqual(der);
+    });
+
+    it.each([
+        ['empty contents', '', ''],
+        ['truncated SEQUENCE header', '30', '30'],
+        ['non-SEQUENCE contents', '0401ab0000', '0401ab'],
+        ['indefinite length', '30800401ab0000', '30800401ab'],
+        ['truncated long-form length', '308201', '308201'],
+        ['short-form length exceeding contents', '3005040100', '30050401'],
+        ['long-form length exceeding contents', '3082010000', '308201'],
+    ])('falls back to trailing-zero removal for %s', (description, hex, expectedHex) => {
+        const pdf = makeFakeSignedPdf(Buffer.from(hex, 'hex'), 0);
+        const extracted = extractSignature(pdf);
+
+        expect(Buffer.from(extracted.signature, 'binary')).toEqual(Buffer.from(expectedHex, 'hex'));
+    });
 });
