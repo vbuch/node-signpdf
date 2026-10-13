@@ -3,6 +3,19 @@ on: [push, pull_request]
 name: monorepo
 
 jobs:
+  pdfkit-compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pdfkit: ['0.11.0', '0.12.3', '0.13.0', '0.14.0', '0.15.0']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: yarn --frozen-lockfile
+      - run: yarn workspace @signpdf/placeholder-pdfkit add --dev pdfkit@${{ matrix.pdfkit }}
+      - run: yarn workspace @signpdf/placeholder-pdfkit test --runInBand --coverage
   do-de-stuff:
     runs-on: ubuntu-latest
     steps:
