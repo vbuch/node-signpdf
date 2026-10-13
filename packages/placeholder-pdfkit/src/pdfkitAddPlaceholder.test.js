@@ -11,6 +11,24 @@ describe(pdfkitAddPlaceholder, () => {
         location: 'test Location',
     };
 
+    it.each([false, true])('finishes the PDF stream (existing AcroForm: %s)', async (existingForm) => {
+        const {pdf, ended} = createPdfkitDocument(PDFDocument, {});
+        // The shared helper clears this date, but newer PDFKit releases require a Date.
+        pdf.info.CreationDate = new Date('2026-01-02T03:04:05Z');
+        if (existingForm) {
+            pdf.initForm();
+        }
+        pdfkitAddPlaceholder({...defaults, pdf, reason: 'Compatibility test'});
+        pdf.end();
+
+        const buffer = await ended;
+        const content = buffer.toString('latin1');
+        expect(content).toContain('/ByteRange [0 /********** /********** /**********]');
+        expect(content).toContain('/FT /Sig');
+        expect(content).toContain('/Reason (Compatibility test)');
+        expect(content.trimEnd()).toMatch(/%%EOF$/);
+    });
+
     it('adds placeholder to PDFKit document', () => {
         const {pdf} = createPdfkitDocument(PDFDocument, {});
 
