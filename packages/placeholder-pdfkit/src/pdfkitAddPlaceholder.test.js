@@ -58,6 +58,18 @@ describe(pdfkitAddPlaceholder, () => {
         expect(widgetData.SubFilter).toEqual(SUBFILTER_ADOBE_PKCS7_DETACHED);
     });
 
+    it('uses the supplied signing time', () => {
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
+        const signingTime = new Date('2026-01-02T03:04:05Z');
+        const {signature} = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            signingTime,
+        });
+
+        expect(signature.data.M).toEqual(signingTime);
+    });
+
     it('allows defining signature SubFilter', () => {
         const {pdf} = createPdfkitDocument(PDFDocument, {});
 
