@@ -49,6 +49,17 @@ import {
 */
 
 /**
+ * Preserve literal strings for ASCII and encode Unicode as UTF-16BE with a BOM.
+ * @param {string} text
+ * @returns {PDFHexString|PDFString}
+ */
+const createPdfString = (text) => (
+    text.split('').some((character) => character.charCodeAt(0) > 127)
+        ? PDFHexString.fromText(text)
+        : PDFString.of(text)
+);
+
+/**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.
  *
  * Alters the passed pdfDoc and returns void.
@@ -98,11 +109,11 @@ export const pdflibAddPlaceholder = ({
         SubFilter: subFilter,
         ByteRange: byteRange,
         Contents: placeholder,
-        Reason: PDFString.of(reason),
+        Reason: createPdfString(reason),
         M: PDFString.fromDate(signingTime ?? new Date()),
-        ContactInfo: PDFString.of(contactInfo),
-        Name: PDFString.of(name),
-        Location: PDFString.of(location),
+        ContactInfo: createPdfString(contactInfo),
+        Name: createPdfString(name),
+        Location: createPdfString(location),
         Prop_Build: {
             Filter: {Name: 'Adobe.PPKLite'},
             ...appBuild,

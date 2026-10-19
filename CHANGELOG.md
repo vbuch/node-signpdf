@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [3.4.0]
+
+- [utils] Fix `extractSignature()` corrupting signatures that end in zero bytes by reading the DER-encoded length instead of stripping trailing zero bytes;
+- [placeholder-pdf-lib] Preserve Unicode characters in signature `reason`, `contactInfo`, `name` and `location`;
+- [placeholder-pdfkit] Expand the PDFKit peer dependency range to `>=0.11.0 <0.16.0`, with compatibility checks for PDFKit 0.11 through 0.15;
+- [placeholder-pdfkit, placeholder-pdfkit010] Restore full test coverage and enforce coverage thresholds;
+- Bumped dependencies (node-forge, axios, follow-redirects, lodash, picomatch, handlebars, flatted, diff, ws, @babel/core, @babel/plugin-transform-modules-systemjs, @tootallnate/once, baseline-browser-mapping).
+
 ## [3.3.0]
 
 - [placeholder-plain] Decouple from placeholder-pdfkit010 and pdfkit

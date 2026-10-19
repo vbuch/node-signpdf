@@ -1,5 +1,5 @@
 import {
-    PDFArray, PDFDict, PDFDocument, PDFName, PDFObjectParser, PDFStream, PDFString,
+    PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFObjectParser, PDFStream, PDFString,
 } from 'pdf-lib';
 import {readTestResource} from '@signpdf/internal-utils';
 import {DEFAULT_BYTE_RANGE_PLACEHOLDER, SUBFILTER_ETSI_CADES_DETACHED, SignPdfError} from '@signpdf/utils';
@@ -21,6 +21,38 @@ describe(pdflibAddPlaceholder, () => {
         name: 'test name',
         location: 'test Location',
     };
+
+    describe.each([false, true])('saved metadata (object streams: %s)', (useObjectStreams) => {
+        it.each([
+            ['ASCII', 'John Doe', PDFString],
+            ['empty', '', PDFString],
+            ['Japanese', '日本語の理由・田中太郎・東京', PDFHexString],
+            ['accented Latin', 'José à Montréal', PDFHexString],
+            ['Cyrillic', 'Подписано в София', PDFHexString],
+            ['emoji', 'Approved 👍', PDFHexString],
+            ['mixed text', '署名 (approved) \\ 東京@example.com', PDFHexString],
+        ])('preserves %s text in every signature field', async (label, text, StringType) => {
+            const pdfDoc = await PDFDocument.create();
+            pdfDoc.addPage();
+            pdflibAddPlaceholder({
+                pdfDoc,
+                reason: text,
+                contactInfo: text,
+                name: text,
+                location: text,
+            });
+
+            const reloaded = await PDFDocument.load(await pdfDoc.save({useObjectStreams}));
+            const annots = reloaded.getPage(0).node.lookup(PDFName.of('Annots'), PDFArray);
+            const widget = annots.lookup(0, PDFDict);
+            const signature = widget.lookup(PDFName.of('V'), PDFDict);
+            ['Reason', 'ContactInfo', 'Name', 'Location'].forEach((key) => {
+                const value = signature.get(PDFName.of(key));
+                expect(value).toBeInstanceOf(StringType);
+                expect(value.decodeText()).toBe(text);
+            });
+        });
+    });
 
     it('expects a pdf document or page', async () => {
         try {

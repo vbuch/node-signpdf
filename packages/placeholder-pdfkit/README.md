@@ -6,6 +6,8 @@ for [![@signpdf](https://raw.githubusercontent.com/vbuch/node-signpdf/master/res
 
 Works on top of `PDFKit 0.11+` and given a PDFDocument that is in the works, adds an e-signature placeholder. When the PDF is ready you can pass it to `@signpdf/signpdf` to complete the process.
 
+Supported PDFKit versions are `>=0.11.0 <0.16.0`, including `0.15.x`.
+
 ## Usage
 
 You will need `$ npm i -S @signpdf/signpdf @signpdf/placeholder-pdfkit node-forge`. This works in an identical way to the pdfkit010 package and the [pdfkit010.js example](/packages/examples/pdfkit010.js) is still relevant.

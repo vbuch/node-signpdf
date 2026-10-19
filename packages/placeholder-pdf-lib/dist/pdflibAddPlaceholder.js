@@ -45,6 +45,13 @@ var _pdfLib = require("pdf-lib");
 */
 
 /**
+ * Preserve literal strings for ASCII and encode Unicode as UTF-16BE with a BOM.
+ * @param {string} text
+ * @returns {PDFHexString|PDFString}
+ */
+const createPdfString = text => text.split('').some(character => character.charCodeAt(0) > 127) ? _pdfLib.PDFHexString.fromText(text) : _pdfLib.PDFString.of(text);
+
+/**
  * Adds a signature placeholder to a PDF-LIB PDFDocument.
  *
  * Alters the passed pdfDoc and returns void.
@@ -95,11 +102,11 @@ const pdflibAddPlaceholder = ({
     SubFilter: subFilter,
     ByteRange: byteRange,
     Contents: placeholder,
-    Reason: _pdfLib.PDFString.of(reason),
+    Reason: createPdfString(reason),
     M: _pdfLib.PDFString.fromDate(signingTime !== null && signingTime !== void 0 ? signingTime : new Date()),
-    ContactInfo: _pdfLib.PDFString.of(contactInfo),
-    Name: _pdfLib.PDFString.of(name),
-    Location: _pdfLib.PDFString.of(location),
+    ContactInfo: createPdfString(contactInfo),
+    Name: createPdfString(name),
+    Location: createPdfString(location),
     Prop_Build: {
       Filter: {
         Name: 'Adobe.PPKLite'
@@ -121,7 +128,6 @@ const pdflibAddPlaceholder = ({
     BBox: widgetRect,
     Resources: {} // Necessary to avoid Acrobat bug (see https://stackoverflow.com/a/73011571)
   });
-
   const widgetDict = doc.context.obj({
     Type: 'Annot',
     Subtype: 'Widget',
@@ -135,7 +141,6 @@ const pdflibAddPlaceholder = ({
       N: doc.context.register(apStream)
     } // Required for PDF/A compliance
   });
-
   const widgetDictRef = doc.context.register(widgetDict);
 
   // Annotate the widget on the given page
