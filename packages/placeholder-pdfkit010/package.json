@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/placeholder-pdfkit010",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Use foliojs/PDFKit 0.10 to insert a signature placeholder.",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=22",
+    "node": ">=12",
     "yarn": ">=1.22.18"
   },
   "scripts": {
@@ -49,7 +49,7 @@
     "build:types:verify": "tsd --files=index.test-d.ts"
   },
   "dependencies": {
-    "@signpdf/utils": "^3.3.0"
+    "@signpdf/utils": "^3.4.0"
   },
   "peerDependencies": {
     "pdfkit": "~0.10.0"
@@ -63,7 +63,7 @@
     "@babel/preset-env": "^7.4.2",
     "@signpdf/eslint-config": "^3.2.3",
     "@signpdf/internal-utils": "^3.2.0",
-    "@types/node": ">=22.0.0",
+    "@types/node": ">=12.0.0",
     "assertion-error": "^1.1.0",
     "babel-jest": "^27.3.1",
     "babel-plugin-module-resolver": "^3.1.1",
