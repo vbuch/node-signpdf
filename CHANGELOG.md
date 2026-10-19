@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [4.0.0]
+
+- **Breaking:** Raised the minimum supported Node.js version from 12 to 22. Applications on older Node.js versions can continue using 3.4.0.
+
 ## [3.4.0]
 
 - [utils] Fix `extractSignature()` corrupting signatures that end in zero bytes by reading the DER-encoded length instead of stripping trailing zero bytes;
