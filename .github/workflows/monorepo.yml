@@ -21,6 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          node-version: 22
       - run: yarn
       - run: ./node_modules/.bin/lerna run lint
       - run: ./node_modules/.bin/lerna run test -- --coverage
@@ -89,5 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          node-version: 22
       - run: yarn
       - run: ./node_modules/.bin/lerna run test

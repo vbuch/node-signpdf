@@ -15,7 +15,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=12"
+    "node": ">=22"
   },
   "scripts": {
     "prepare": "husky install",

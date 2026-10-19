@@ -1,6 +1,6 @@
 {
   "name": "@signpdf/utils",
-  "version": "3.4.0",
+  "version": "4.0.0",
   "description": "Utilities for the @signpdf packages.",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=12",
+    "node": ">=22",
     "yarn": ">=1.22.18"
   },
   "scripts": {
