@@ -17,6 +17,16 @@ of `@signpdf/signpdf`
 - `$ yarn workspace @signpdf/signpdf add @signpdf/some-new-subpackage@* -D` adds a `@signpdf/some-new-subpackage` as a dev dependency of `@signpdf/signpdf`. Note the `@*` version specifier.
 - `$ npm publish --access public` is needed the first time a package get published as our packages are scoped and that is private by default. See: https://bit.ly/47ScKPF
 
+## Lint configuration
+
+ESLint 9 uses the root `eslint.config.cjs` for all workspaces. The shared configuration
+in `packages/eslint-config` keeps the existing Airbnb rule choices, import checks,
+and Jest checks. Examples use ESLint's recommended rules.
+
+Run `yarn lint` for all packages or `yarn workspace @signpdf/utils lint` for one
+package. Manage ESLint dependencies at the repository root and plugin dependencies
+in `packages/eslint-config`.
+
 ## Contributors
 
 * [vbuch](https://github.com/vbuch)

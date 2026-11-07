@@ -130,7 +130,7 @@ export const pdfkitAddPlaceholder = ({
         V: signature,
         T: new String(signatureName + (fieldIds.length + 1)), // eslint-disable-line no-new-wrappers
         F: ANNOTATION_FLAGS.PRINT,
-        P: pdf.page.dictionary, // eslint-disable-line no-underscore-dangle
+        P: pdf.page.dictionary,
     });
     pdf.page.dictionary.data.Annots = [widget];
     // Include the widget in a page

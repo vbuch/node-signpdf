@@ -48,7 +48,7 @@ export const pdfkitAddPlaceholder = ({
     widgetRect = [0, 0, 0, 0],
     appName = undefined,
 }) => {
-    /* eslint-disable no-underscore-dangle,no-param-reassign */
+    /* eslint-disable no-underscore-dangle */
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
@@ -109,5 +109,5 @@ export const pdfkitAddPlaceholder = ({
         form,
         widget,
     };
-    /* eslint-enable no-underscore-dangle,no-param-reassign */
+    /* eslint-enable no-underscore-dangle */
 };
