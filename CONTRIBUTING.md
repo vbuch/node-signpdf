@@ -27,6 +27,9 @@ Run `yarn lint` for all packages or `yarn workspace @signpdf/utils lint` for one
 package. Manage ESLint dependencies at the repository root and plugin dependencies
 in `packages/eslint-config`.
 
+The root Yarn resolution keeps `typescript-estree` on a patched `minimatch`
+release for CVE-2026-118764. Review this override when updating the Jest lint plugin.
+
 ## Contributors
 
 * [vbuch](https://github.com/vbuch)
