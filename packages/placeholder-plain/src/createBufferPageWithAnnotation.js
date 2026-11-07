@@ -5,8 +5,9 @@ const createBufferPageWithAnnotation = (pdf, info, pagesRef, widget) => {
     const pagesDictionary = findObject(pdf, info.xref, pagesRef).toString();
 
     // Extend page dictionary with newly created annotations
-    let annotsStart; let annotsEnd; let
-        annots;
+    let annotsStart;
+    let annotsEnd;
+    let annots;
     annotsStart = pagesDictionary.indexOf('/Annots');
     if (annotsStart > -1) {
         annotsEnd = pagesDictionary.indexOf(']', annotsStart);

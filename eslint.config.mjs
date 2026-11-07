@@ -1,6 +1,7 @@
-const js = require('@eslint/js');
-const globals = require('globals');
-const sharedConfig = require('@signpdf/eslint-config');
+import js from '@eslint/js';
+import {defineConfig} from 'eslint/config';
+import globals from 'globals';
+import sharedConfig from '@signpdf/eslint-config';
 
 const packageFiles = [
     'packages/placeholder-pdf-lib/**/*.js',
@@ -12,7 +13,7 @@ const packageFiles = [
     'packages/utils/**/*.js',
 ];
 
-module.exports = [
+export default defineConfig([
     {
         ignores: [
             '**/node_modules/**',
@@ -23,17 +24,17 @@ module.exports = [
         ],
     },
     {
-        ...sharedConfig,
         files: packageFiles,
+        extends: [sharedConfig],
     },
     {
         name: 'signpdf/examples',
         files: ['packages/examples/**/*.js'],
+        extends: [js.configs.recommended],
         languageOptions: {
             ecmaVersion: 2019,
             sourceType: 'commonjs',
             globals: globals.node,
         },
-        rules: js.configs.recommended.rules,
     },
-];
+]);

@@ -1,8 +1,8 @@
 import {SignPdfError} from './SignPdfError';
 
 const getSubstringIndex = (str, substring, n) => {
-    let times = 0; let
-        index = null;
+    let times = 0;
+    let index = null;
 
     while (times < n && index !== -1) {
         index = str.indexOf(substring, index + 1);

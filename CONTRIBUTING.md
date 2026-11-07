@@ -19,9 +19,9 @@ of `@signpdf/signpdf`
 
 ## Lint configuration
 
-ESLint 9 uses the root `eslint.config.cjs` for all workspaces. The shared configuration
-in `packages/eslint-config` keeps the existing Airbnb rule choices, import checks,
-and Jest checks. Examples use ESLint's recommended rules.
+ESLint 9 uses the root `eslint.config.mjs` for all workspaces. The shared configuration
+in `packages/eslint-config` combines ESLint recommended, Stylistic, import, and Jest
+presets with a few project overrides. Examples use ESLint's recommended rules.
 
 Run `yarn lint` for all packages or `yarn workspace @signpdf/utils lint` for one
 package. Manage ESLint dependencies at the repository root and plugin dependencies

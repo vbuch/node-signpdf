@@ -5,7 +5,7 @@ const createTestReference = (id, generation) => {
     const ref = Object.create(PDFAbstractReference.prototype);
     ref.id = id;
     ref.generation = generation;
-    ref.toString = function() {
+    ref.toString = function () {
         return `${this.id} ${this.generation} R`;
     };
     return ref;

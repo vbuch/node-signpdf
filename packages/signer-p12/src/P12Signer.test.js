@@ -6,7 +6,6 @@ import {P12Signer} from './P12Signer';
 describe(P12Signer, () => {
     it('expects P12 certificate to be Buffer', () => {
         try {
-            // eslint-disable-next-line no-new
             new P12Signer(['non-buffer']);
             expect('here').not.toBe('here');
         } catch (e) {
