@@ -98,7 +98,7 @@ export default class PDFObject {
 
             // @todo this can probably be refactored into a reduce
             Object.entries(object).forEach(([key, val]) => {
-                let checkedValue = '';
+                let checkedValue;
 
                 if (val.toString().indexOf('<<') !== -1) {
                     checkedValue = val;

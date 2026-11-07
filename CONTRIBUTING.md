@@ -19,16 +19,19 @@ of `@signpdf/signpdf`
 
 ## Lint configuration
 
-ESLint 9 uses the root `eslint.config.mjs` for all workspaces. The shared configuration
+ESLint 10 uses the root `eslint.config.mjs` for all workspaces. The shared configuration
 in `packages/eslint-config` combines ESLint recommended, Stylistic, import, and Jest
 presets with a few project overrides. Examples use ESLint's recommended rules.
+
+For development, use Node.js 22.13 or later in the 22.x line, or Node.js 24 or later.
 
 Run `yarn lint` for all packages or `yarn workspace @signpdf/utils lint` for one
 package. Manage ESLint dependencies at the repository root and plugin dependencies
 in `packages/eslint-config`.
 
-The root Yarn resolution keeps `typescript-estree` on a patched `minimatch`
-release for CVE-2026-118764. Review this override when updating the Jest lint plugin.
+The root Yarn resolutions keep the `minimatch` dependencies used by ESLint and
+`typescript-estree` on a patched release for CVE-2026-118764. Review these overrides
+when updating lint dependencies.
 
 ## Contributors
 

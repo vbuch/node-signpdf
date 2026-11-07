@@ -15,7 +15,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": "^22.13.0 || >=24"
   },
   "scripts": {
     "prepare": "husky install",
@@ -24,10 +24,10 @@
     "test": "lerna run test"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
+    "@eslint/js": "^10.0.1",
     "@signpdf/eslint-config": "^3.2.3",
     "coveralls": "^3.0.2",
-    "eslint": "^9.39.5",
+    "eslint": "^10.14.0",
     "globals": "^17.14.0",
     "husky": "^7.0.4",
     "lerna": "^7.3.0",
@@ -35,6 +35,8 @@
   },
   "dependencies": {},
   "resolutions": {
+    "**/@eslint/config-array/minimatch": "^11.0.5",
+    "**/eslint/minimatch": "^11.0.5",
     "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.5"
   }
 }
