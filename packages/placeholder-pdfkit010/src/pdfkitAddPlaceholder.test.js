@@ -142,7 +142,7 @@ describe(pdfkitAddPlaceholder, () => {
             SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
             Fields: [],
         });
-        // eslint-disable-next-line no-underscore-dangle
+
         pdf._root.data.AcroForm = form;
 
         const refs = pdfkitAddPlaceholder({
@@ -207,7 +207,6 @@ endobj`;
             Fields: [],
         });
 
-        /* eslint-disable no-underscore-dangle */
         pdf._root.data.AcroForm = existingForm;
 
         const refs = pdfkitAddPlaceholder({

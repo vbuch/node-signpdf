@@ -48,7 +48,6 @@ export const pdfkitAddPlaceholder = ({
     widgetRect = [0, 0, 0, 0],
     appName = undefined,
 }) => {
-    /* eslint-disable no-underscore-dangle,no-param-reassign */
     // Generate the signature placeholder
     const signature = pdf.ref({
         Type: 'Sig',
@@ -61,11 +60,11 @@ export const pdfkitAddPlaceholder = ({
             byteRangePlaceholder,
         ],
         Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
-        Reason: new String(reason), // eslint-disable-line no-new-wrappers
+        Reason: new String(reason),
         M: signingTime ?? new Date(),
-        ContactInfo: new String(contactInfo), // eslint-disable-line no-new-wrappers
-        Name: new String(name), // eslint-disable-line no-new-wrappers
-        Location: new String(location), // eslint-disable-line no-new-wrappers
+        ContactInfo: new String(contactInfo),
+        Name: new String(name),
+        Location: new String(location),
         Prop_Build: {
             Filter: {Name: 'Adobe.PPKLite'},
             ...(
@@ -95,7 +94,7 @@ export const pdfkitAddPlaceholder = ({
         FT: 'Sig',
         Rect: widgetRect,
         V: signature,
-        T: new String(signatureName), // eslint-disable-line no-new-wrappers
+        T: new String(signatureName),
         P: pdf.page.dictionary,
     });
 
@@ -109,5 +108,4 @@ export const pdfkitAddPlaceholder = ({
         form,
         widget,
     };
-    /* eslint-enable no-underscore-dangle,no-param-reassign */
 };

@@ -24,9 +24,17 @@
     "test": "lerna run test"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@signpdf/eslint-config": "^3.2.3",
     "coveralls": "^3.0.2",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
     "husky": "^7.0.4",
-    "lerna": "^7.3.0"
+    "lerna": "^7.3.0",
+    "typescript": "^5.2.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "resolutions": {
+    "**/@typescript-eslint/typescript-estree/minimatch": "^11.0.5"
+  }
 }
