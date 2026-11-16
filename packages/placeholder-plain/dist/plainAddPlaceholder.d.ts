@@ -1,4 +1,4 @@
-export function plainAddPlaceholder({ pdfBuffer, reason, contactInfo, name, location, signingTime, signatureLength, subFilter, widgetRect, appName, }: InputType): Buffer;
+export function plainAddPlaceholder({ pdfBuffer, reason, contactInfo, name, location, signingTime, signatureLength, subFilter, widgetRect, widgetPage, appName, }: InputType): Buffer;
 export type InputType = {
     pdfBuffer: Buffer;
     reason: string;
@@ -15,6 +15,10 @@ export type InputType = {
      * [x1, y1, x2, y2] widget rectangle
      */
     widgetRect?: number[];
+    /**
+     * Page number where the widget should be placed
+     */
+    widgetPage?: number;
     /**
      * Name of the application generating the signature
      */
