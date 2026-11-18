@@ -1,5 +1,6 @@
 export * from "./const";
 export * from "./convertBuffer";
+export * from "./escapePdfName";
 export * from "./extractSignature";
 export * from "./findByteRange";
 export * from "./removeTrailingNewLine";
