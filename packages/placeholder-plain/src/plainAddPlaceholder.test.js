@@ -71,4 +71,17 @@ describe(plainAddPlaceholder, () => {
         expect(output.indexOf('/Name /Adobe.PPKLite')).not.toBe(-1);
         expect(output.indexOf('/Name /app-name-signpdf')).not.toBe(-1);
     });
+
+    it('escapes an appName that is not a valid PDF name', async () => {
+        const input = readTestResource('w3dummy.pdf');
+        const output = plainAddPlaceholder({
+            pdfBuffer: input,
+            reason: 'Because I can',
+            location: 'some place',
+            name: 'example name',
+            contactInfo: 'emailfromp1289@gmail.com',
+            appName: 'My App (v2)',
+        });
+        expect(output.toString('latin1')).toMatch(/\/App\s*<<\s*\/Name \/My#20App#20#28v2#29\s*>>/);
+    });
 });

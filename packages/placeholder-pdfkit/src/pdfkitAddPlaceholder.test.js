@@ -200,4 +200,17 @@ describe(pdfkitAddPlaceholder, () => {
         expect(propBuild.Filter.Name).toEqual('Adobe.PPKLite');
         expect(propBuild.App.Name).toEqual('signpdf');
     });
+
+    it('escapes an appName that is not a valid PDF name', () => {
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+            appName: 'My App',
+        });
+
+        expect(refs.signature.data.Prop_Build.App.Name).toEqual('My#20App');
+    });
 });

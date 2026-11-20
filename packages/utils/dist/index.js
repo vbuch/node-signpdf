@@ -36,6 +36,18 @@ Object.keys(_convertBuffer).forEach(function (key) {
     }
   });
 });
+var _escapePdfName = require("./escapePdfName");
+Object.keys(_escapePdfName).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _escapePdfName[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _escapePdfName[key];
+    }
+  });
+});
 var _extractSignature = require("./extractSignature");
 Object.keys(_extractSignature).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
