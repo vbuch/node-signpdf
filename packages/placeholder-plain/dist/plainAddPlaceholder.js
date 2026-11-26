@@ -39,6 +39,7 @@ const getAcroFormRef = slice => {
 * @property {number} [signatureLength]
 * @property {string} [subFilter] One of SUBFILTER_* from \@signpdf/utils
 * @property {number[]} [widgetRect] [x1, y1, x2, y2] widget rectangle
+* @property {number} [widgetPage] Page number where the widget should be placed
 * @property {string} [appName] Name of the application generating the signature
 */
 
@@ -64,11 +65,12 @@ const plainAddPlaceholder = ({
   signatureLength = _utils.DEFAULT_SIGNATURE_LENGTH,
   subFilter = _utils.SUBFILTER_ADOBE_PKCS7_DETACHED,
   widgetRect = [0, 0, 0, 0],
+  widgetPage = 0,
   appName = undefined
 }) => {
   let pdf = (0, _utils.removeTrailingNewLine)(pdfBuffer);
   const info = (0, _readPdf.default)(pdf);
-  const pageRef = (0, _getPageRef.default)(pdf, info);
+  const pageRef = (0, _getPageRef.default)(pdf, info, widgetPage);
   const pageIndex = (0, _getIndexFromRef.default)(info.xref, pageRef);
   const addedReferences = new Map();
   const pdfKitMock = {
@@ -109,6 +111,7 @@ const plainAddPlaceholder = ({
     signatureLength,
     subFilter,
     widgetRect,
+    widgetPage,
     appName
   });
   if (!getAcroFormRef(pdf.toString())) {
