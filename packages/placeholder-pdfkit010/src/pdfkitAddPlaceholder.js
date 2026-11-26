@@ -5,6 +5,7 @@ import {
     SUBFILTER_ADOBE_PKCS7_DETACHED,
     ANNOTATION_FLAGS,
     PDFKitReferenceMock,
+    escapePdfName,
 } from '@signpdf/utils';
 
 /**
@@ -71,7 +72,7 @@ export const pdfkitAddPlaceholder = ({
         Prop_Build: {
             Filter: {Name: 'Adobe.PPKLite'},
             ...(
-                appName ? {App: {Name: appName}} : {}
+                appName ? {App: {Name: escapePdfName(appName)}} : {}
             ),
         },
     });

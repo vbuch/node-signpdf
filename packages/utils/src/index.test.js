@@ -4,6 +4,7 @@ describe('index exports', () => {
     it('exports all required utilities', () => {
         // Check that all expected exports are present
         expect(utils.convertBuffer).toBeDefined();
+        expect(utils.escapePdfName).toBeDefined();
         expect(utils.extractSignature).toBeDefined();
         expect(utils.findByteRange).toBeDefined();
         expect(utils.removeTrailingNewLine).toBeDefined();
@@ -15,6 +16,7 @@ describe('index exports', () => {
 
         // Check that functions work as expected
         expect(typeof utils.convertBuffer).toBe('function');
+        expect(typeof utils.escapePdfName).toBe('function');
         expect(typeof utils.extractSignature).toBe('function');
         expect(typeof utils.findByteRange).toBe('function');
         expect(typeof utils.removeTrailingNewLine).toBe('function');
