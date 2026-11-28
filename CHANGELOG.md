@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [4.1.0]
+
+- [placeholder-pdfkit, placeholder-pdfkit010, placeholder-plain] Fixed how `appName` is written to signature metadata. Names containing spaces, PDF delimiters, or non-ASCII characters now round-trip correctly.
+- [utils] Added `escapePdfName()` to encode a string for use as a PDF name.
+- Updated the Yarn lockfile for `node-forge` (1.4.3), `follow-redirects` (1.16.2), `form-data` (3.0.5), `brace-expansion` (1.1.21), and `browserslist` (4.29.3). Migrated repository linting to ESLint 9.
+
 ## [4.0.0]
 
 - **Breaking:** Raised the minimum supported Node.js version from 12 to 22. Applications on older Node.js versions can continue using 3.4.0.

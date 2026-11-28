@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "@signpdf/eslint-config": "^3.2.3",
+    "@signpdf/eslint-config": "^4.1.0",
     "coveralls": "^3.0.2",
     "eslint": "^9.39.5",
     "globals": "^17.14.0",
