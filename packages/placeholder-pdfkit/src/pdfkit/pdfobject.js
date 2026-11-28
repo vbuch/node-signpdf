@@ -35,7 +35,8 @@ export default class PDFObject {
             return `/${object}`;
 
             // String objects are converted to PDF strings (UTF-16)
-        } if (object instanceof String) {
+        }
+        if (object instanceof String) {
             let string = object;
             // Detect if this is a unicode string
             let isUnicode = false;
@@ -67,11 +68,14 @@ export default class PDFObject {
             return `(${string})`;
 
             // Buffers are converted to PDF hex strings
-        } if (Buffer.isBuffer(object)) {
+        }
+        if (Buffer.isBuffer(object)) {
             return `<${object.toString('hex')}>`;
-        } if (object instanceof PDFAbstractReference) {
+        }
+        if (object instanceof PDFAbstractReference) {
             return object.toString();
-        } if (object instanceof Date) {
+        }
+        if (object instanceof Date) {
             let string = `D:${pad(object.getUTCFullYear(), 4)}${pad(object.getUTCMonth() + 1, 2)}${pad(object.getUTCDate(), 2)}${pad(object.getUTCHours(), 2)}${pad(object.getUTCMinutes(), 2)}${pad(object.getUTCSeconds(), 2)}Z`;
 
             // Encrypt the string when necessary
@@ -83,10 +87,12 @@ export default class PDFObject {
             }
 
             return `(${string})`;
-        } if (Array.isArray(object)) {
+        }
+        if (Array.isArray(object)) {
             const items = object.map((e) => PDFObject.convert(e, encryptFn)).join(' ');
             return `[${items}]`;
-        } if ({}.toString.call(object) === '[object Object]') {
+        }
+        if ({}.toString.call(object) === '[object Object]') {
             const out = ['<<'];
             let streamData;
 
@@ -112,7 +118,8 @@ export default class PDFObject {
                 out.push(streamData);
             }
             return out.join('\n');
-        } if (typeof object === 'number') {
+        }
+        if (typeof object === 'number') {
             return PDFObject.number(object);
         }
         return `${object}`;

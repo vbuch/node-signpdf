@@ -142,7 +142,7 @@ describe(pdfkitAddPlaceholder, () => {
             SigFlags: SIG_FLAGS.SIGNATURES_EXIST | SIG_FLAGS.APPEND_ONLY,
             Fields: [],
         });
-        // eslint-disable-next-line no-underscore-dangle
+
         pdf._root.data.AcroForm = form;
 
         const refs = pdfkitAddPlaceholder({
@@ -190,6 +190,19 @@ describe(pdfkitAddPlaceholder, () => {
         expect(propBuild.App.Name).toEqual('signpdf');
     });
 
+    it('escapes an appName that is not a valid PDF name', () => {
+        const {pdf} = createPdfkitDocument(PDFDocument, {});
+        const refs = pdfkitAddPlaceholder({
+            ...defaults,
+            pdf,
+            pdfBuffer: Buffer.from([pdf]),
+            reason: 'test reason',
+            appName: 'My App',
+        });
+
+        expect(refs.signature.data.Prop_Build.App.Name).toEqual('My#20App');
+    });
+
     it('parses field ids with wrapping spaces', () => {
         const {pdf} = createPdfkitDocument(PDFDocument, {});
         const fakeAcroFormStr = `
@@ -207,7 +220,6 @@ endobj`;
             Fields: [],
         });
 
-        /* eslint-disable no-underscore-dangle */
         pdf._root.data.AcroForm = existingForm;
 
         const refs = pdfkitAddPlaceholder({

@@ -13,8 +13,6 @@ var _createBufferRootWithAcroform = _interopRequireDefault(require("./createBuff
 var _createBufferPageWithAnnotation = _interopRequireDefault(require("./createBufferPageWithAnnotation"));
 var _createBufferTrailer = _interopRequireDefault(require("./createBufferTrailer"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-/* eslint-disable no-underscore-dangle */
-
 /**
  * @param {string} pdf
  * @returns {string | undefined}
